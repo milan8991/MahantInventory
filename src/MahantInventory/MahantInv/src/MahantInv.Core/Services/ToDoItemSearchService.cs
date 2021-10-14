@@ -24,12 +24,14 @@ namespace MahantInv.Core.Services
         {
             if (string.IsNullOrEmpty(searchString))
             {
-                var errors = new List<ValidationError>();
-                errors.Add(new ValidationError()
+                List<ValidationError> errors = new()
                 {
-                    Identifier = nameof(searchString),
-                    ErrorMessage = $"{nameof(searchString)} is required."
-                });
+                    new ValidationError()
+                    {
+                        Identifier = nameof(searchString),
+                        ErrorMessage = $"{nameof(searchString)} is required."
+                    }
+                };
                 return Result<List<ToDoItem>>.Invalid(errors);
             }
 

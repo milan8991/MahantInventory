@@ -14,7 +14,7 @@ namespace MahantInv.Infrastructure
     public class DefaultInfrastructureModule : Module
     {
         private readonly bool _isDevelopment = false;
-        private readonly List<Assembly> _assemblies = new List<Assembly>();
+        private readonly List<Assembly> _assemblies = new();
 
         public DefaultInfrastructureModule(bool isDevelopment, Assembly callingAssembly = null)
         {

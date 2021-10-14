@@ -11,7 +11,7 @@ namespace MahantInv.Core.ProjectAggregate
     {
         public string Name { get; private set; }
 
-        private List<ToDoItem> _items = new List<ToDoItem>();
+        private List<ToDoItem> _items = new();
         public IEnumerable<ToDoItem> Items => _items.AsReadOnly();
         public ProjectStatus Status => _items.All(i => i.IsDone) ? ProjectStatus.Complete : ProjectStatus.InProgress;
 
