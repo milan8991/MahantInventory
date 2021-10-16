@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Formatting.Compact;
 using System;
 
 namespace MahantInv.Web
@@ -12,6 +14,11 @@ namespace MahantInv.Web
     {
         public static void Main(string[] args)
         {
+            Log.Logger = new LoggerConfiguration()
+           .MinimumLevel.Information()
+           .WriteTo.Debug(new RenderedCompactJsonFormatter())
+           .WriteTo.File("logs\\logs.txt", rollingInterval: RollingInterval.Day)
+           .CreateLogger();
             var host = CreateHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())

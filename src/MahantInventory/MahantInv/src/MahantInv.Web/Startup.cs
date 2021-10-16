@@ -38,7 +38,7 @@ namespace MahantInv.Web
             });
 
             string connectionString = Configuration.GetConnectionString("MahantInventoryDB");  //Configuration.GetConnectionString("DefaultConnection");
-
+            services.UseSqlServerUOW(connectionString);
             services.AddDbContext(connectionString);
 
             services.AddControllersWithViews().AddNewtonsoftJson();
