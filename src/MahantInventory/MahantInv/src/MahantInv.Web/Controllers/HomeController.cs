@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MahantInv.Web.Controllers
 {
@@ -10,6 +11,7 @@ namespace MahantInv.Web.Controllers
     /// </summary>
     public class HomeController : Controller
     {
+        [Authorize]
         public IActionResult Index()
         {
             return View();
