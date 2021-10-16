@@ -23,7 +23,7 @@ namespace MahantInv.Web
                     var context = services.GetRequiredService<AppDbContext>();
                     //                    context.Database.Migrate();
                     context.Database.EnsureCreated();
-                    SeedData.Initialize(services);
+                    //SeedData.Initialize(services);
                 }
                 catch (Exception ex)
                 {

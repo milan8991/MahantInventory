@@ -2,6 +2,7 @@
 using MahantInv.Core.ProjectAggregate;
 using MahantInv.SharedKernel;
 using MediatR;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Infrastructure.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         private readonly IMediator _mediator;
 
@@ -23,8 +24,8 @@ namespace MahantInv.Infrastructure.Data
             _mediator = mediator;
         }
 
-        public DbSet<ToDoItem> ToDoItems { get; set; }
-        public DbSet<Project> Projects { get; set; }
+        //public DbSet<ToDoItem> ToDoItems { get; set; }
+        //public DbSet<Project> Projects { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
