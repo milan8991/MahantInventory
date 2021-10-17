@@ -2,5 +2,5 @@
 (
 	[Code] varchar(12) NOT NULL,
 	[Name] varchar(128) not null
-	Constraint PK_UnitTypes_Id Primary Key(Code)
+	Constraint PK_UnitTypes_Code Primary Key(Code)
 )
