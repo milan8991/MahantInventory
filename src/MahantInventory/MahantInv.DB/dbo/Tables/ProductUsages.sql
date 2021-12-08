@@ -12,4 +12,3 @@
 	Constraint FK_ProductUsages_ProductId Foreign Key(ProductId) references Products(Id),
 	CONSTRAINT FK_ProductUsages_LastModifiedById FOREIGN KEY (LastModifiedById) REFERENCES AspNetUsers(Id),
 )
-WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.[ProductUsages_History] , DATA_CONSISTENCY_CHECK = ON ))

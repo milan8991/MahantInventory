@@ -19,4 +19,4 @@
 	Constraint FK_Orders_PayerId Foreign Key(PayerId) references Payers(Id),
 	CONSTRAINT FK_Orders_LastModifiedById FOREIGN KEY (LastModifiedById) REFERENCES AspNetUsers(Id),
 )
-WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.[Orders_History] , DATA_CONSISTENCY_CHECK = ON ))
+

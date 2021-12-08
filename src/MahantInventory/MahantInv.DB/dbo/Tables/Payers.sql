@@ -12,4 +12,3 @@
 	Constraint UNQ_PrimaryContact Unique (PrimaryContact),
 	CONSTRAINT FK_Payers_LastModifiedById FOREIGN KEY (LastModifiedById) REFERENCES AspNetUsers(Id),
 )
-WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.[Payers_History] , DATA_CONSISTENCY_CHECK = ON ))

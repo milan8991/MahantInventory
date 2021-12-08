@@ -20,4 +20,3 @@
 	Constraint FK_Products_StorageId  Foreign Key(StorageId) references Storages(Id),
 	CONSTRAINT FK_Products_LastModifiedById FOREIGN KEY (LastModifiedById) REFERENCES AspNetUsers(Id),
 )
-WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.[Products_History] , DATA_CONSISTENCY_CHECK = ON ))

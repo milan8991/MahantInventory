@@ -2,6 +2,7 @@
 using MahantInv.Infrastructure.Repository;
 using MahantInv.SharedKernel.Interfaces;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -26,8 +27,25 @@ namespace MahantInv.Infrastructure
                 return serviceProvider.GetRequiredService<UnitOfWork>();
             });
         }
+        public static void UseSQLiteUOW(this IServiceCollection services, string connectionString)
+        {
+            services.AddScoped<UnitOfWork>((serviceProvider) =>
+            {
+                return new UnitOfWork(SqliteFactory.Instance, connectionString);
+            });
+
+            services.AddScoped<IUnitOfWork>((serviceProvider) =>
+            {
+                return serviceProvider.GetRequiredService<UnitOfWork>();
+            });
+
+            services.AddScoped<IDapperUnitOfWork>((serviceProvider) =>
+            {
+                return serviceProvider.GetRequiredService<UnitOfWork>();
+            });
+        }
         public static void AddDbContext(this IServiceCollection services, string connectionString) =>
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(connectionString)); // will be created in web project root
+                options.UseSqlite(connectionString)); // will be created in web project root
     }
 }
