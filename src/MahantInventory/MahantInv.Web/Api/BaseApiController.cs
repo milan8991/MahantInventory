@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MahantInv.Web.Api
 {
@@ -6,9 +7,14 @@ namespace MahantInv.Web.Api
     /// If your API controllers will use a consistent route convention and the [ApiController] attribute (they should)
     /// then it's a good idea to define and use a common base controller class like this one.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
-    public abstract class BaseApiController : Controller
+    public abstract class BaseApiController : ControllerBase
     {
+        protected readonly IMapper _mapper;
+        public BaseApiController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
     }
 }

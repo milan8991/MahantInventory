@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace MahantInv.Web.Api
 {
     public class MetaController : BaseApiController
     {
+        public MetaController(IMapper mapper) : base(mapper)
+        {
+        }
+
         /// <summary>
         /// A sample API Controller. Consider using API Endpoints (see Endpoints folder) for a more SOLID approach to building APIs
         /// https://github.com/ardalis/ApiEndpoints

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MahantInv.Web.Controllers
@@ -9,8 +10,12 @@ namespace MahantInv.Web.Controllers
     /// rather than spread between 3 different folders in your Web project. Look in /Pages to see examples.
     /// See: https://ardalis.com/aspnet-core-razor-pages-%E2%80%93-worth-checking-out/
     /// </summary>
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
+        public HomeController(IMapper mapper) : base(mapper)
+        {
+        }
+
         [Authorize]
         public IActionResult Index()
         {

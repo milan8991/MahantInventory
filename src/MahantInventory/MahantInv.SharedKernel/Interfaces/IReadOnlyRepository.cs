@@ -1,11 +1,19 @@
 ﻿using Ardalis.Specification;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MahantInv.SharedKernel.Interfaces
 {
-    // from Ardalis.Specification
-    public interface IRepository<T> : IRepositoryBase<T> where T : class, IAggregateRoot
+    public interface IReadOnlyRepository<T> where T : class
     {
+        Task<T> GetByIdAsync(object id, CancellationToken cancellationToken = default);
+        Task<int> CountAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<T>> ListRangeAsync(IEnumerable<object> ids, CancellationToken cancellationToken = default);
+        Task<IEnumerable<T>> ListAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<T>> ListAllAsync(bool isActive, CancellationToken cancellationToken = default);
     }
+
 
     // generic methods approach option
     //public interface IRepository

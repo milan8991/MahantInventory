@@ -33,7 +33,7 @@
 
         </div>
     </nav>
-    <div class="container body-content">
+    <div class="col-md-12 body-content">
         @RenderBody()
         <hr />
         <footer>
@@ -57,7 +57,11 @@
         </script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
-
+    <script type="text/javascript">
+        var baseUrl = '@Url.Content("~/")';
+    </script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
+    <script src="https://unpkg.com/@@ag-grid-enterprise/all-modules@26.2.0/dist/ag-grid-enterprise.min.js">
+    </script>
 </body>
 </html>

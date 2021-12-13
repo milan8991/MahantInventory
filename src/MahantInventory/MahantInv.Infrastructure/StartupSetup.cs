@@ -1,5 +1,4 @@
 ﻿using MahantInv.Infrastructure.Data;
-using MahantInv.Infrastructure.Repository;
 using MahantInv.SharedKernel.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.Data.Sqlite;

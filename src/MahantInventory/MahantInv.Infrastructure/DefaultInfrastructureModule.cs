@@ -44,9 +44,9 @@ namespace MahantInv.Infrastructure
 
         private void RegisterCommonDependencies(ContainerBuilder builder)
         {
-            builder.RegisterGeneric(typeof(EfRepository<>))
-                .As(typeof(IRepository<>))
-                .As(typeof(IReadRepository<>))
+            builder.RegisterGeneric(typeof(DapperRepository<>))
+                .As(typeof(IAsyncRepository<>))
+                .As(typeof(IReadOnlyRepository<>))
                 .InstancePerLifetimeScope();
 
             builder
