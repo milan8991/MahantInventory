@@ -3,9 +3,11 @@
 }
 <div class="card border-dark">
     <div class="card-header">
-        <span>Products</span>
+        <span class="font-weight-bold">Products</span>
         <span class="float-right">
-            <button class="btn btn-primary btn-xs" type="button" onclick="Common.OpenModal(this)" data-target="AddEditProduct"><i class="bi bi-plus-square-fill"></i></button>
+            <button class="btn btn-primary btn-sm" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditProduct">
+                <span>New</span>
+                </button>
         </span>
     </div>
     <div class="card-body ag-theme-alpine" id="productsdata">

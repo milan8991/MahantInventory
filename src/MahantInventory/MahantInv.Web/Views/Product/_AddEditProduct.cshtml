@@ -10,25 +10,32 @@
                 </button>
             </div>
             <div class="modal-body">
+                <input type="hidden" asp-for="@Model.Id" />
                 <div class="form-group">
                     <label asp-for="@Model.Name"></label>
-                    <input asp-for="@Model.Name" class="form-control" placeholder="Name" />
+                    <input asp-for="@Model.Name" class="form-control form-control-sm" placeholder="Name" />
                 </div>
                 <div class="form-group">
                     <label asp-for="@Model.Description"></label>
-                    <textarea rows="3" asp-for="@Model.Description" class="form-control" placeholder="Description"></textarea>
+                    <textarea rows="3" asp-for="@Model.Description" class="form-control form-control-sm" placeholder="Description"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.Size"></label>
-                            <input asp-for="@Model.Size" class="form-control" placeholder="Size" />
+                            <input asp-for="@Model.Size" class="form-control form-control-sm" placeholder="Size" />
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.UnitTypeCode"></label>
-                            <input asp-for="@Model.UnitTypeCode" class="form-control" placeholder="Unit Type" />
+                            <select id="UnitTypeCode" class="form-control form-control-sm" placeholder="Storage">
+                                <option value="">Select Unit Type</option>
+                                @foreach (var item in (ViewBag.UnitTypes as ICollection<MahantInv.Core.SimpleAggregates.UnitType>))
+                                {
+                                    <option value="@item.Code">@item.Name</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -36,13 +43,13 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.ReorderLevel"></label>
-                            <input asp-for="@Model.ReorderLevel" class="form-control" placeholder="Reorder Level" />
+                            <input asp-for="@Model.ReorderLevel" class="form-control form-control-sm" placeholder="Reorder Level" />
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-check">
                             <br />
-                            <input type="checkbox" asp-for="@Model.IsDisposable" class="form-check-input"/>
+                            <input type="checkbox" asp-for="@Model.IsDisposable" class="form-check-input" />
                             <label asp-for="@Model.IsDisposable" class="form-check-label"></label>
                         </div>
                     </div>
@@ -51,19 +58,25 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.Company"></label>
-                            <input asp-for="@Model.Company" class="form-control" placeholder="Company" />
+                            <input asp-for="@Model.Company" class="form-control form-control-sm" placeholder="Company" />
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.StorageId"></label>
-                            <input asp-for="@Model.StorageId" class="form-control" placeholder="Storage" />
+                            <select id="StorageId" class="form-control form-control-sm" placeholder="Storage">
+                                <option value="">Select Storage</option>
+                                @foreach (var item in (ViewBag.Storages as ICollection<MahantInv.Core.SimpleAggregates.Storage>).Where(s => s.Enabled))
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-primary" onclick="Common.SaveProduct()">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>

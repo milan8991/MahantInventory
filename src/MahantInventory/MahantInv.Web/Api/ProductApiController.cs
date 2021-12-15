@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MahantInv.Web.Api
@@ -35,7 +36,7 @@ namespace MahantInv.Web.Api
                 return BadRequest("Unexpected Error " + GUID);
             }
         }
-        [HttpPost("product/add")]
+        [HttpPost("product/save")]
         public async Task<object> AddProduct([FromBody] Product product)
         {
             try
@@ -47,7 +48,7 @@ namespace MahantInv.Web.Api
                           .ToList();
                     return BadRequest(errors);
                 }
-                product.LastModifiedById = User.FindFirst("Id").Value;
+                product.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 product.ModifiedAt = DateTime.UtcNow;
                 await _productRepository.AddAsync(product);
                 return Ok();

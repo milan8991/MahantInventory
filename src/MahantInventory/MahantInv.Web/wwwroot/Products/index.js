@@ -1,5 +1,22 @@
-﻿class Common {
-
+﻿class Product {
+    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId) {
+        this.Id = parseInt(Id);
+        this.Name = Common.ParseValue(Name);
+        this.Description = Common.ParseValue(Description);
+        this.Size = Common.ParseValue(Size);
+        this.UnitTypeCode = Common.ParseValue(UnitTypeCode);
+        this.ReorderLevel = ReorderLevel;
+        this.IsDisposable = IsDisposable;
+        this.Company = Common.ParseValue(Company);
+        this.StorageId = Common.ParseValue(StorageId);
+    }    
+}
+class Common {
+    static ParseValue(val) {
+        if (val == null) return null;
+        if (val == '') return null;
+        return val.trim();
+    }
     static calcDataTableHeight(decreaseTableHeight) {
         return ($(window).innerHeight() - 150) - decreaseTableHeight;
     };
@@ -7,10 +24,8 @@
     static OpenModal(mthis) {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
+        Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
     }
-
-}
-class Product {    
 
     static ApplyAGGrid() {
         var gridOptions = {
@@ -125,15 +140,59 @@ class Product {
             });
     }
 
-
+    static BindValuesToProductForm(model) {
+        $('#Id').val(model.Id);
+        $('#Name').val(model.Name);
+        $('#Description').val(model.Description);
+        $('#Size').val(model.Size);
+        $('#UnitTypeCode').val(model.UnitTypeCode);
+        $('#ReorderLevel').val(model.ReorderLevel);
+        $('#IsDisposable').val(model.IsDisposable);
+        $('#Company').val(model.Company);
+        $('#StorageId').val(model.StorageId);
+    }
 
     static init() {
         $('#productsdata').height(Common.calcDataTableHeight(27));
     }
 
+    static async SaveProduct() {
+        let Id = $('#Id').val();
+        let Name = $('#Name').val();
+        let Description = $('#Description').val();
+        let Size = $('#Size').val();
+        let UnitTypeCode = $('#UnitTypeCode').val();
+        let ReorderLevel = $('#ReorderLevel').val();
+        let IsDisposable = false;//$('#IsDisposable').val();
+        let Company = $('#Company').val();
+        let StorageId = $('#StorageId').val();
+        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
+        
+        var response = await fetch(baseUrl + 'api/product/save', {
+            method: 'POST',
+            body: JSON.stringify(product),
+            headers: {
+                //'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '<br/>';
+                });
+                //toastr.error(errorHtml);
+            }
+        }
+        if (response.ok) {
+            alert("Saved");
+        }
+    }
+
 }
 
 jQuery(document).ready(function () {
-    Product.init();
-    Product.ApplyAGGrid();
+    Common.init();
+    Common.ApplyAGGrid();
 });
