@@ -8,7 +8,6 @@ namespace MahantInv.Web.Utility
         public AutoMapperProfile()
         {
             //CreateMap<destination, source>();
-            CreateMap<ProductVM, dynamic>();
         }
     }
 }

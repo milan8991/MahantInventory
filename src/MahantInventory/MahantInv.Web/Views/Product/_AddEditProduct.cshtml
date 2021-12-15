@@ -1,0 +1,71 @@
+﻿@model MahantInv.Core.SimpleAggregates.Product
+
+<div id="AddEditProduct" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add/Edit Product</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label asp-for="@Model.Name"></label>
+                    <input asp-for="@Model.Name" class="form-control" placeholder="Name" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Description"></label>
+                    <textarea rows="3" asp-for="@Model.Description" class="form-control" placeholder="Description"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Size"></label>
+                            <input asp-for="@Model.Size" class="form-control" placeholder="Size" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.UnitTypeCode"></label>
+                            <input asp-for="@Model.UnitTypeCode" class="form-control" placeholder="Unit Type" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReorderLevel"></label>
+                            <input asp-for="@Model.ReorderLevel" class="form-control" placeholder="Reorder Level" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <br />
+                            <input type="checkbox" asp-for="@Model.IsDisposable" class="form-check-input"/>
+                            <label asp-for="@Model.IsDisposable" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Company"></label>
+                            <input asp-for="@Model.Company" class="form-control" placeholder="Company" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.StorageId"></label>
+                            <input asp-for="@Model.StorageId" class="form-control" placeholder="Storage" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

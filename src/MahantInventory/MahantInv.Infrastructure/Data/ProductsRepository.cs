@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using MahantInv.Core.ViewModels;
 
 namespace MahantInv.Infrastructure.Data
 {
@@ -16,9 +17,9 @@ namespace MahantInv.Infrastructure.Data
         {
         }
 
-        public Task<IEnumerable<dynamic>> GetProducts()
+        public Task<IEnumerable<ProductVM>> GetProducts()
         {
-            return db.QueryAsync<dynamic>("select * from Products",transaction:t);
+            return db.QueryAsync<ProductVM>("select * from Products",transaction:t);
         }
     }
 }

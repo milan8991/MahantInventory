@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.6.0/css/bootstrap.min.css"
+toprel="styleshebottom="https://ajax.aspnetcdn.com/ajax/bootstrap/4.6.0/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
@@ -24,21 +24,13 @@
         </button>
 
         <div class="container collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="nav navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link text-white" href="#">Home</a>
-                </li>
-            </ul>
+            @await Html.PartialAsync("_Menu")
             @await Html.PartialAsync("_LoginPartial")
 
         </div>
     </nav>
-    <div class="col-md-12 body-content">
+    <div class="col-md-12 body-content" style="padding-top:5px;padding-bottom:5px;">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2021 - Mahant Inventory</p>
-        </footer>
     </div>
 
     <environment names="Development">

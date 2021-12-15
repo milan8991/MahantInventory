@@ -78,6 +78,8 @@ namespace MahantInv.Infrastructure
 
             builder.RegisterType<EmailSender>().As<IEmailSender>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<ProductsRepository>().As<IProductsRepository>()
+                .InstancePerLifetimeScope();
         }
 
         private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)

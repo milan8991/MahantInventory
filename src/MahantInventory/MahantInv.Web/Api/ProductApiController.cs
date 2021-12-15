@@ -25,8 +25,7 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                var model = await _productRepository.GetProducts();
-                var data = _mapper.Map<ProductVM>(model);
+                var data = await _productRepository.GetProducts();
                 return Ok(data);
             }
             catch (Exception e)

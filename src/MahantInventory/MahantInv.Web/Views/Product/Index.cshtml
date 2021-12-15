@@ -1,15 +1,17 @@
 ﻿@{
     ViewData["Title"] = "Products";
 }
-<div class="card">
+<div class="card border-dark">
     <div class="card-header">
-        <h3>Products</h3>
+        <span>Products</span>
+        <span class="float-right">
+            <button class="btn btn-primary btn-xs" type="button" onclick="Common.OpenModal(this)" data-target="AddEditProduct"><i class="bi bi-plus-square-fill"></i></button>
+        </span>
     </div>
-  <div class="card-body ag-theme-alpine" id="productsdata" >
-    
-  </div>
+    <div class="card-body ag-theme-alpine" id="productsdata">
+    </div>
 </div>
-
+@await Html.PartialAsync("_AddEditProduct",new MahantInv.Core.SimpleAggregates.Product())
 @section Scripts{
-    <script src="~/Products/index.js" type="text/javascript" asp-append-version="true"></script>
+<script src="~/Products/index.js" type="text/javascript" asp-append-version="true"></script>
 }

@@ -1,4 +1,5 @@
 ﻿using MahantInv.Core.SimpleAggregates;
+using MahantInv.Core.ViewModels;
 using MahantInv.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace MahantInv.Core.Interfaces
 {
     public interface IProductsRepository: IAsyncRepository<Product>
     {
-        Task<IEnumerable<dynamic>> GetProducts();
+        Task<IEnumerable<ProductVM>> GetProducts();
     }
 }

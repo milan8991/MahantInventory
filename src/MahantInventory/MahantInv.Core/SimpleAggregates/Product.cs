@@ -13,7 +13,7 @@ namespace MahantInv.Core.SimpleAggregates
     [Table("Products")]
     public class Product : BaseEntity, IAggregateRoot
     {
-        [Required(ErrorMessage = "Product Name field is required")]
+        [Required(ErrorMessage = "Product Name field is required"),Display(Name ="Product Name")]
         public string Name { get; set; }
         public decimal? Size { get; set; }
         public string Description { get; set; }
