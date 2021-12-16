@@ -3,12 +3,12 @@
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
         this.Description = Common.ParseValue(Description);
-        this.Size = Common.ParseValue(Size);
+        this.Size = Size;
         this.UnitTypeCode = Common.ParseValue(UnitTypeCode);
         this.ReorderLevel = ReorderLevel;
         this.IsDisposable = IsDisposable;
         this.Company = Common.ParseValue(Company);
-        this.StorageId = Common.ParseValue(StorageId);
+        this.StorageId = StorageId;
     }
 }
 class Common {
@@ -29,7 +29,7 @@ class Common {
             Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
         }
         else {
-            GetProductById(id);
+            Common.GetProductById(id);
         }
     }
 
@@ -48,14 +48,17 @@ class Common {
                     headerName: 'Size', field: 'size', filter: 'agTextColumnFilter', headerTooltip: 'Size'
                 },
                 {
-                    headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agTextColumnFilter', headerTooltip: 'Unit Type'
+                    headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
+                },
+                {
+                    headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
                 },
                 {
                     headerName: 'Reorder Level',
                     field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
                 },
                 {
-                    headerName: 'Is Disposable', field: 'isDisposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
+                    headerName: 'Is Disposable?', field: 'disposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
                 },
                 {
                     headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
@@ -64,9 +67,9 @@ class Common {
                     headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
                 },
                 {
-                    headerName: 'Last Modified By', field: 'lastModifiedById', filter: 'agTextColumnFilter', headerTooltip: 'Last Modified By'
+                    headerName: '', field: 'id', headerTooltip: 'Action',
+                    cellRenderer: 'actionCellRenderer',
                 }
-
             ],
             sideBar: { toolPanels: ['columns', 'filters'] },
 
@@ -89,9 +92,12 @@ class Common {
             defaultColGroupDef: {
                 marryChildren: true
             },
+            getRowNodeId: function (data) {
+                return data.id;
+            },
             suppressContextMenu: true,
             components: {
-
+                actionCellRenderer: ActionCellRenderer
             },
             columnTypes: {
                 numberColumn: {
@@ -131,10 +137,33 @@ class Common {
                 <h5 class="text-center"><b>No Products found.</b></h5>
             </div>`
         };
+
+        function ActionCellRenderer() { }
+
+        ActionCellRenderer.prototype.init = function (params) {
+            this.params = params;
+
+            this.eGui = document.createElement('span');
+            this.eGui.innerHTML = '<button class="btn btn-sm btn-primary" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditProduct">Edit</button>';
+
+            //this.btnClickedHandler = this.btnClickedHandler.bind(this);
+            //this.eGui.addEventListener('click', this.btnClickedHandler);
+        }
+
+        ActionCellRenderer.prototype.getGui = function () {
+            return this.eGui;
+        }
+        //ActionCellRenderer.prototype.destroy = function () {
+        //    this.eGui.removeEventListener('click', this.btnClickedHandler);
+        //}
+
+        //ActionCellRenderer.prototype.btnClickedHandler = function (event) {
+        //    this.params.clicked(this.params.value);
+        //}
         var gridDiv = document.querySelector('#productsdata');
         new agGrid.Grid(gridDiv, gridOptions);
         fetch(baseUrl + 'api/products')
-            //.then(handleErrors)
+            .then((response) => response.json())
             .then(data => {
                 gridOptions.api.setRowData(data);
             })
@@ -153,7 +182,7 @@ class Common {
         $('#Size').val(model.Size);
         $('#UnitTypeCode').val(model.UnitTypeCode);
         $('#ReorderLevel').val(model.ReorderLevel);
-        $('#IsDisposable').val(model.IsDisposable);
+        $('#IsDisposable').prop("checked", model.IsDisposable);
         $('#Company').val(model.Company);
         $('#StorageId').val(model.StorageId);
     }
@@ -162,7 +191,7 @@ class Common {
         $('#productsdata').height(Common.calcDataTableHeight(27));
     }
 
-    static async SaveProduct() {
+    static async SaveProduct(mthis) {
         $('#ProductErrorSection').empty();
         let Id = $('#Id').val();
         let Name = $('#Name').val();
@@ -182,7 +211,7 @@ class Common {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(response => { return response.json() });
+        }).then(response => { return  response.json() });
         if (response.status > 399 && response.status < 500) {
             if (response != null) {
                 var errorHtml = "";
@@ -193,23 +222,34 @@ class Common {
             }
         }
         if (response.ok) {
-            toastr.success("Product Saved");
+            toastr.success("Product Saved", '', { positionClass: 'toast-top-center' });
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
+            if (Id == 0) {
+                //Add
+                gridOptions.api.applyTransaction({ add: response });//addIndex
+            }
+            else {
+                //Update
+                gridOptions.api.applyTransaction({ update: response });
+            }
         }
     }
     static async GetProductById(id) {
-        var response = await fetch(baseUrl + 'api/product/byid' + id, {
+        await fetch(baseUrl + 'api/product/byid/' + id, {
             method: 'GET',
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(response => { return response.json() });
-        if (response.ok) {
-            Common.BindValuesToProductForm(new Product(response.id, response.name, response.description, response.size, response.unitTypeCode, response.reorderLevel, response.isDisposable, response.company, response.storageId));
-        }
-        else {
-            toastr.success("Unexpected error");
-        }
+        }).then(response => { return response.json() })
+            .then(data => {
+                Common.BindValuesToProductForm(new Product(data.id, data.name, data.description, data.size, data.unitTypeCode, data.reorderLevel, data.isDisposable, data.company, data.storageId));
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });                
+            });        
     }
 
 }

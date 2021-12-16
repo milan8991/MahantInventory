@@ -11,5 +11,14 @@ namespace MahantInv.Core.ViewModels
     {
         public string Storage { get; set; }
         public string LastModifiedBy { get; set; }
+        public decimal CurrentStock { get; set; }
+        public string UnitTypeName { get; set; }
+        public string Disposable
+        {
+            get
+            {
+                return this.IsDisposable ? "Yes" : "No";
+            }
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace MahantInv.Core.Interfaces
     public interface IProductsRepository: IAsyncRepository<Product>
     {
         Task<IEnumerable<ProductVM>> GetProducts();
+        Task<ProductVM> GetProductById(int productId);
     }
 }

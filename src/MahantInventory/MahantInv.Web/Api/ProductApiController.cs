@@ -56,13 +56,14 @@ namespace MahantInv.Web.Api
                 product.Enabled = true;
                 if (product.Id == 0)
                 {
-                    await _productRepository.AddAsync(product);
+                    product.Id = await _productRepository.AddAsync(product);
                 }
                 else
                 {
                     await _productRepository.UpdateAsync(product);
                 }
-                return Ok();
+                ProductVM productVM = await _productRepository.GetProductById(product.Id);
+                return Ok(productVM);
             }
             catch (Exception e)
             {
@@ -71,8 +72,8 @@ namespace MahantInv.Web.Api
                 return BadRequest("Unexpected Error " + GUID);
             }
         }
-        [HttpGet("product/byid")]
-        public async Task<object> ProductGetById([FromQuery] int productId)
+        [HttpGet("product/byid/{productId}")]
+        public async Task<object> ProductGetById(int productId)
         {
             try
             {
