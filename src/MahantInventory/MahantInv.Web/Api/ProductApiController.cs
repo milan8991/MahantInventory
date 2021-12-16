@@ -63,7 +63,7 @@ namespace MahantInv.Web.Api
                     await _productRepository.UpdateAsync(product);
                 }
                 ProductVM productVM = await _productRepository.GetProductById(product.Id);
-                return Ok(productVM);
+                return Ok(new {success=true, data = productVM });
             }
             catch (Exception e)
             {
