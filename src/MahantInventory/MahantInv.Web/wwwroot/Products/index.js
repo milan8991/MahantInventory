@@ -157,6 +157,7 @@ class Common {
     }
 
     static async SaveProduct() {
+        $('#ProductErrorSection').empty();
         let Id = $('#Id').val();
         let Name = $('#Name').val();
         let Description = $('#Description').val();
@@ -182,11 +183,11 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                //toastr.error(errorHtml);
+                $('#ProductErrorSection').html(errorHtml);
             }
         }
         if (response.ok) {
-            alert("Saved");
+            toastr.success("Product Saved");
         }
     }
 
