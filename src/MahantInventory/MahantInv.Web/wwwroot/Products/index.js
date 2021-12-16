@@ -9,7 +9,7 @@
         this.IsDisposable = IsDisposable;
         this.Company = Common.ParseValue(Company);
         this.StorageId = Common.ParseValue(StorageId);
-    }    
+    }
 }
 class Common {
     static ParseValue(val) {
@@ -22,9 +22,15 @@ class Common {
     };
 
     static OpenModal(mthis) {
+        let id = $(mthis).data('id');
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
-        Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
+        if (id == 0) {
+            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
+        }
+        else {
+            GetProductById(id);
+        }
     }
 
     static ApplyAGGrid() {
@@ -168,7 +174,7 @@ class Common {
         let Company = $('#Company').val();
         let StorageId = $('#StorageId').val();
         let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
-        
+
         var response = await fetch(baseUrl + 'api/product/save', {
             method: 'POST',
             body: JSON.stringify(product),
@@ -188,6 +194,21 @@ class Common {
         }
         if (response.ok) {
             toastr.success("Product Saved");
+        }
+    }
+    static async GetProductById(id) {
+        var response = await fetch(baseUrl + 'api/product/byid' + id, {
+            method: 'GET',
+            headers: {
+                //'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        if (response.ok) {
+            Common.BindValuesToProductForm(new Product(response.id, response.name, response.description, response.size, response.unitTypeCode, response.reorderLevel, response.isDisposable, response.company, response.storageId));
+        }
+        else {
+            toastr.success("Unexpected error");
         }
     }
 
