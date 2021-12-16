@@ -164,7 +164,7 @@ class Common {
         let Size = $('#Size').val();
         let UnitTypeCode = $('#UnitTypeCode').val();
         let ReorderLevel = $('#ReorderLevel').val();
-        let IsDisposable = false;//$('#IsDisposable').val();
+        let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
         let StorageId = $('#StorageId').val();
         let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
