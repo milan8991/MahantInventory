@@ -246,9 +246,20 @@ class Common {
             });
     }
 
+    static async InitSelect2() {
+        $('#ProductUsageSelect').select2({
+            placeholder: 'Search Product',
+            minimumInputLength: 1,
+            minimumResultsForSearch:10,
+            theme: "classic",
+            //data: data,
+            closeOnSelect: true
+        });
+    }
 }
 
 jQuery(document).ready(function () {
     Common.init();
     Common.ApplyAGGrid();
+    Common.InitSelect2();
 });
