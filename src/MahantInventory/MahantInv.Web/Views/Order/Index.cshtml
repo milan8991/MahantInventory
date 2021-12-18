@@ -1,0 +1,19 @@
+﻿@{
+    ViewData["Title"] = "Orders";
+}
+<div class="card border-dark">
+    <div class="card-header">
+        <span class="font-weight-bold">Orders</span>
+        <span class="float-right">
+            <button class="btn btn-primary btn-sm" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditOrder">
+                <span>New</span>
+                </button>
+        </span>
+    </div>
+    <div class="card-body ag-theme-alpine" id="ordersdata">
+    </div>
+</div>
+@await Html.PartialAsync("_AddEditOrder",new MahantInv.Core.SimpleAggregates.Order())
+@section Scripts{
+<script src="~/Orders/index.js" type="text/javascript" asp-append-version="true"></script>
+}

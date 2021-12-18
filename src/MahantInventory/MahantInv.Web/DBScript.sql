@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sat Dec 11 15:22:53 2021
+-- File generated with SQLiteStudio v3.3.3 on Sat Dec 18 14:14:25 2021
 --
 -- Text encoding used: System
 --
@@ -174,7 +174,7 @@ INSERT INTO AspNetUsers (
                             'system',
                             'SYSTEM',
                             'system@mi.com',
-                            'system@mi.com',
+                            'SYSTEM@MI.COM',
                             0,
                             'AQAAAAEAACcQAAAAECVTjeOiQf2c9CxG3k3mFFR2rw5oVW9B2Mh0jtvg41+9mwxrbaWgWQrNzCvhrMbWkw==',
                             '6Y4OGMER2NU26ZYZG7FQSEY6EE7ADDT6',
@@ -330,6 +330,42 @@ CREATE TABLE PaymentTypes (
     )
 );
 
+INSERT INTO PaymentTypes (
+                             Id,
+                             Title
+                         )
+                         VALUES (
+                             'Seva',
+                             'Seva'
+                         );
+
+INSERT INTO PaymentTypes (
+                             Id,
+                             Title
+                         )
+                         VALUES (
+                             'Cash',
+                             'Cash'
+                         );
+
+INSERT INTO PaymentTypes (
+                             Id,
+                             Title
+                         )
+                         VALUES (
+                             'Check',
+                             'Check'
+                         );
+
+INSERT INTO PaymentTypes (
+                             Id,
+                             Title
+                         )
+                         VALUES (
+                             'Online',
+                             'Online'
+                         );
+
 
 -- Table: ProductInventory
 DROP TABLE IF EXISTS ProductInventory;
@@ -363,7 +399,7 @@ DROP TABLE IF EXISTS Products;
 CREATE TABLE Products (
     Id               INTEGER         NOT NULL,
     Name             VARCHAR (255)   NOT NULL,
-    Size             INTEGER,
+    Size             NUMERIC (10, 2),
     Description      VARCHAR (900),
     UnitTypeCode     VARCHAR (12)    NOT NULL,
     ReorderLevel     NUMERIC (10, 2) NOT NULL,
@@ -432,6 +468,17 @@ CREATE TABLE Storages (
     )
 );
 
+INSERT INTO Storages (
+                         Id,
+                         Name,
+                         Enabled
+                     )
+                     VALUES (
+                         1,
+                         'A',
+                         1
+                     );
+
 
 -- Table: UnitTypes
 DROP TABLE IF EXISTS UnitTypes;
@@ -443,6 +490,24 @@ CREATE TABLE UnitTypes (
         Code
     )
 );
+
+INSERT INTO UnitTypes (
+                          Code,
+                          Name
+                      )
+                      VALUES (
+                          'kgs',
+                          'Kilograms'
+                      );
+
+INSERT INTO UnitTypes (
+                          Code,
+                          Name
+                      )
+                      VALUES (
+                          'gms',
+                          'Grams'
+                      );
 
 
 -- Index: CUK_Name_UnitTypeCode

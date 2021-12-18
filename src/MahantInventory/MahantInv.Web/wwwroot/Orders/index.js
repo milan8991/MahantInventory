@@ -4,18 +4,14 @@ ActionCellRenderer.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('span');
-    this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditProduct">Edit</button>';
+    this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditOrder">Edit</button>';
 }
 
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-function onSelectionChanged() {
-    const selectedRows = productGridOptions.api.getSelectedRows();
-    $('#ProductUsageSelect').val(selectedRows[0].id);
-    $('#ProductUsageSelect').trigger('change');
-}
-var productGridOptions = {
+
+var orderGridOptions = {
 
     // define grid columns
     columnDefs: [
@@ -74,7 +70,7 @@ var productGridOptions = {
     defaultColGroupDef: {
         marryChildren: true
     },
-    onSelectionChanged: onSelectionChanged,
+
     getRowNodeId: function (data) {
         return data.id;
     },
@@ -122,17 +118,17 @@ var productGridOptions = {
 };
 
 
-class Product {
-    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId) {
+class Order {
+    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark) {
         this.Id = parseInt(Id);
-        this.Name = Common.ParseValue(Name);
-        this.Description = Common.ParseValue(Description);
-        this.Size = Size;
-        this.UnitTypeCode = Common.ParseValue(UnitTypeCode);
-        this.ReorderLevel = ReorderLevel;
+        this.ProductId = ProductId;
+        this.Quantity = Quantity;
+        this.PaymentTypeId = PaymentTypeId;
+        this.PayerId = PayerId;
+        this.PaidAmount = PaidAmount;
         this.IsDisposable = IsDisposable;
-        this.Company = Common.ParseValue(Company);
-        this.StorageId = StorageId;
+        this.OrderDate = OrderDate;
+        this.Remark = Common.ParseValue(Remark);
     }
 }
 class Common {
@@ -150,25 +146,24 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null));
         }
         else {
-            Common.GetProductById(id);
+            Common.GetOrderById(id);
         }
     }
 
     static ApplyAGGrid() {
 
-        var gridDiv = document.querySelector('#productsdata');
-        new agGrid.Grid(gridDiv, productGridOptions);
-        fetch(baseUrl + 'api/products')
+        var gridDiv = document.querySelector('#ordersdata');
+        new agGrid.Grid(gridDiv, orderGridOptions);
+        fetch(baseUrl + 'api/orders')
             .then((response) => response.json())
             .then(data => {
-                productGridOptions.api.setRowData(data);
-                Common.InitSelect2();
+                orderGridOptions.api.setRowData(data);
             })
             .catch(error => {
-                productGridOptions.api.setRowData([])
+                orderGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
                 //});
@@ -176,38 +171,36 @@ class Common {
 
     }
 
-    static BindValuesToProductForm(model) {
+    static BindValuesToOrderForm(model) {
         $('#Id').val(model.Id);
-        $('#Name').val(model.Name);
-        $('#Description').val(model.Description);
-        $('#Size').val(model.Size);
-        $('#UnitTypeCode').val(model.UnitTypeCode);
-        $('#ReorderLevel').val(model.ReorderLevel);
-        $('#IsDisposable').prop("checked", model.IsDisposable);
-        $('#Company').val(model.Company);
-        $('#StorageId').val(model.StorageId);
+        $('#ProductId').val(model.ProductId);
+        $('#Quantity').val(model.Quantity);
+        $('#PaymentTypeId').val(model.PaymentTypeId);
+        $('#PayerId').val(model.PayerId);
+        $('#PaidAmount').val(model.PaidAmount);
+        $('#OrderDate').val(model.OrderDate);
+        $('#Remark').val(model.Remark);
     }
 
     static init() {
-        $('#productsdata').height(Common.calcDataTableHeight(27));
+        $('#ordersdata').height(Common.calcDataTableHeight(27));
     }
 
     static async SaveProduct(mthis) {
-        $('#ProductErrorSection').empty();
+        $('#OrderErrorSection').empty();
         let Id = $('#Id').val();
-        let Name = $('#Name').val();
-        let Description = $('#Description').val();
-        let Size = $('#Size').val();
-        let UnitTypeCode = $('#UnitTypeCode').val();
-        let ReorderLevel = $('#ReorderLevel').val();
-        let IsDisposable = $('#IsDisposable').is(':checked');
-        let Company = $('#Company').val();
-        let StorageId = $('#StorageId').val();
-        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
+        let ProductId = $('#Name').val();
+        let Quantity = $('#Description').val();
+        let PaymentTypeId = $('#Size').val();
+        let PayerId = $('#UnitTypeCode').val();
+        let PaidAmount = $('#ReorderLevel').val();
+        let OrderDate = $('#Company').val();
+        let Remark = $('#StorageId').val();
+        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark);
 
-        var response = await fetch(baseUrl + 'api/product/save', {
+        var response = await fetch(baseUrl + 'api/order/save', {
             method: 'POST',
-            body: JSON.stringify(product),
+            body: JSON.stringify(order),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -220,25 +213,25 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#ProductErrorSection').html(errorHtml);
+                $('#OrderErrorSection').html(errorHtml);
             }
         }
         if (response.success) {
-            toastr.success("Product Saved", '', { positionClass: 'toast-top-center' });
+            toastr.success("Order Saved", '', { positionClass: 'toast-top-center' });
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
             if (Id == 0) {
-                productGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+                orderGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
             }
             else {
-                productGridOptions.api.applyTransaction({ update: [response.data] });
+                orderGridOptions.api.applyTransaction({ update: [response.data] });
             }
-            let rowNode = productGridOptions.api.getRowNode(response.data.id);
-            productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            let rowNode = orderGridOptions.api.getRowNode(response.data.id);
+            orderGridOptions.api.flashCells({ rowNodes: [rowNode] });
         }
     }
-    static async GetProductById(id) {
-        await fetch(baseUrl + 'api/product/byid/' + id, {
+    static async GetOrderById(id) {
+        await fetch(baseUrl + 'api/order/byid/' + id, {
             method: 'GET',
             headers: {
                 //'Accept': 'application/json',
@@ -246,39 +239,17 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                Common.BindValuesToProductForm(new Product(data.id, data.name, data.description, data.size, data.unitTypeCode, data.reorderLevel, data.isDisposable, data.company, data.storageId));
+                Common.BindValuesToOrderForm(new Order(data.id, data.productId, data.quantity, data.paymentTypeId, data.payerId, data.paidAmount, data.orderDate, data.remark));
             })
             .catch(error => {
                 console.log(error);
                 toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
             });
     }
-    static BindSelectData() {
-        var result = [];
-        productGridOptions.api.forEachNode((rowNode, index) => {
-            result.push({ id: rowNode.data.id, text: rowNode.data.name });
-        });
-        return result;
-    }
-    static async InitSelect2() {
-        $('#ProductUsageSelect').select2({
-            placeholder: 'Search Product',
-            minimumInputLength: 1,
-            maximumSelectionLength:1,
-            minimumResultsForSearch: 10,
-            theme: "classic",
-            data: Common.BindSelectData(),
-            closeOnSelect: true,
-            allowClear: true
-        });
-    }
-
-    static async UseProduct(mthis) {
-        //Usage
-    }
+    
 }
 
 jQuery(document).ready(function () {
     Common.init();
-    Common.ApplyAGGrid();    
+    Common.ApplyAGGrid();
 });

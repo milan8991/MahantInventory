@@ -1,0 +1,85 @@
+﻿@model MahantInv.Core.SimpleAggregates.Order
+
+<div id="AddEditOrder" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add/Edit Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="OrderErrorSection" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.Id" />
+                <div class="form-group">
+                    <label asp-for="@Model.Name"></label>
+                    <input asp-for="@Model.Name" class="form-control form-control-sm" placeholder="Name" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Description"></label>
+                    <textarea rows="3" asp-for="@Model.Description" class="form-control form-control-sm" placeholder="Description"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Size"></label>
+                            <input type="number" asp-for="@Model.Size" class="form-control form-control-sm" placeholder="Size" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.UnitTypeCode"></label>
+                            <select id="UnitTypeCode" class="form-control form-control-sm" placeholder="Storage">
+                                <option value="">Select Unit Type</option>
+                                @foreach (var item in (ViewBag.UnitTypes as ICollection<MahantInv.Core.SimpleAggregates.UnitType>))
+                                {
+                                    <option value="@item.Code">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReorderLevel"></label>
+                            <input type="number" asp-for="@Model.ReorderLevel" class="form-control form-control-sm" placeholder="Reorder Level" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <br />
+                            <input type="checkbox" asp-for="@Model.IsDisposable" class="form-check-input" />
+                            <label asp-for="@Model.IsDisposable" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Company"></label>
+                            <input asp-for="@Model.Company" class="form-control form-control-sm" placeholder="Company" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.StorageId"></label>
+                            <select id="StorageId" class="form-control form-control-sm" placeholder="Storage">
+                                <option value="">Select Storage</option>
+                                @foreach (var item in (ViewBag.Storages as ICollection<MahantInv.Core.SimpleAggregates.Storage>).Where(s => s.Enabled))
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="Common.SaveProduct(this)" data-target="AddEditProduct">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
