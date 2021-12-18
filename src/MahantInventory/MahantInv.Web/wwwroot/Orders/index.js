@@ -16,32 +16,41 @@ var orderGridOptions = {
     // define grid columns
     columnDefs: [
         {
-            headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
+            headerName: 'Product', field: 'productName', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
-            headerName: 'Description', field: 'description', filter: 'agTextColumnFilter', headerTooltip: 'Description'
+            headerName: 'Quantity', field: 'quantity', filter: 'agNumberColumnFilter', headerTooltip: 'Ordered Quantity'
         },
         {
-            headerName: 'Size', field: 'size', filter: 'agTextColumnFilter', headerTooltip: 'Size'
+            headerName: 'Received Quantity', field: 'eeceivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
         },
         {
-            headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
+            headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status'
         },
         {
-            headerName: 'Reorder Level',
-            field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
+            headerName: 'Payment Type',
+            field: 'paymentType', filter: 'agTextColumnFilter', headerTooltip: 'Payment Type'
         },
         {
-            headerName: 'Is Disposable?', field: 'disposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
+            headerName: 'Payer', field: 'payer', filter: 'agTextColumnFilter', headerTooltip: 'Payer'
         },
         {
-            headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
+            headerName: 'Paid Amount', field: 'paidAmount', filter: 'agNumberColumnFilter', headerTooltip: 'Paid Amount'
         },
         {
-            headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
+            headerName: 'Order Date', field: 'orderDate', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
+        },
+        {
+            headerName: 'Received Date', field: 'receivedDate', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
+        },
+        {
+            headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark'
+        },
+        {
+            headerName: 'Last Modified By', field: 'lastModifiedBy', filter: 'agSetColumnFilter', headerTooltip: 'LastModifiedBy'
         },
         {
             headerName: '', field: 'id', headerTooltip: 'Action',
@@ -110,10 +119,10 @@ var orderGridOptions = {
 
     },
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your products are loading</span>',
+        '<span class="ag-overlay-loading-center">Please wait while your orders are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>No Products found.</b></h5>
+                <h5 class="text-center"><b>Orders will be appear here.</b></h5>
             </div>`
 };
 
@@ -123,10 +132,9 @@ class Order {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
-        this.PaymentTypeId = PaymentTypeId;
+        this.PaymentTypeId = Common.ParseValue(PaymentTypeId);
         this.PayerId = PayerId;
         this.PaidAmount = PaidAmount;
-        this.IsDisposable = IsDisposable;
         this.OrderDate = OrderDate;
         this.Remark = Common.ParseValue(Remark);
     }
@@ -172,11 +180,12 @@ class Common {
     }
 
     static BindValuesToOrderForm(model) {
+        $('#OrderErrorSection').empty();
         $('#Id').val(model.Id);
-        $('#ProductId').val(model.ProductId);
+        $('#ProductId').val(model.ProductId).trigger('change');
         $('#Quantity').val(model.Quantity);
-        $('#PaymentTypeId').val(model.PaymentTypeId);
-        $('#PayerId').val(model.PayerId);
+        $('#PaymentTypeId').val(model.PaymentTypeId).trigger('change');
+        $('#PayerId').val(model.PayerId).trigger('change');
         $('#PaidAmount').val(model.PaidAmount);
         $('#OrderDate').val(model.OrderDate);
         $('#Remark').val(model.Remark);
@@ -184,18 +193,24 @@ class Common {
 
     static init() {
         $('#ordersdata').height(Common.calcDataTableHeight(27));
+        $('.select2').select2({
+            dropdownParent: $('#AddEditOrder'),
+            placeholder: 'Search option',
+            closeOnSelect: true,
+            allowClear: true
+        });
     }
 
-    static async SaveProduct(mthis) {
+    static async SaveOrder(mthis) {
         $('#OrderErrorSection').empty();
         let Id = $('#Id').val();
-        let ProductId = $('#Name').val();
-        let Quantity = $('#Description').val();
-        let PaymentTypeId = $('#Size').val();
-        let PayerId = $('#UnitTypeCode').val();
-        let PaidAmount = $('#ReorderLevel').val();
-        let OrderDate = $('#Company').val();
-        let Remark = $('#StorageId').val();
+        let ProductId = $('#ProductId').val();
+        let Quantity = $('#Quantity').val();
+        let PaymentTypeId = $('#PaymentTypeId').val();
+        let PayerId = $('#PayerId').val();
+        let PaidAmount = $('#PaidAmount').val();
+        let OrderDate = $('#OrderDate').val();
+        let Remark = $('#Remark').val();
         let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark);
 
         var response = await fetch(baseUrl + 'api/order/save', {
@@ -205,11 +220,12 @@ class Common {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(response => { return response.json() });
+        }).then(response => { console.log('response:', response); return response.ok ? response.json() : response; });
 
         if (response.status > 399 && response.status < 500) {
             if (response != null) {
                 var errorHtml = "";
+                console.log(response);
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
@@ -246,6 +262,7 @@ class Common {
                 toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
             });
     }
+
     
 }
 

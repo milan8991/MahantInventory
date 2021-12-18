@@ -10,10 +10,12 @@ ActionCellRenderer.prototype.init = function (params) {
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-function onSelectionChanged() {
+function onSelectionChanged(params) {
+    console.log(params);
     const selectedRows = productGridOptions.api.getSelectedRows();
-    $('#ProductUsageSelect').val(selectedRows[0].id);
-    $('#ProductUsageSelect').trigger('change');
+
+    //$('#ProductUsageSelect').val(selectedRows[0].id);
+    //$('#ProductUsageSelect').trigger('change');
 }
 var productGridOptions = {
 
@@ -117,7 +119,7 @@ var productGridOptions = {
         '<span class="ag-overlay-loading-center">Please wait while your products are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>No Products found.</b></h5>
+                <h5 class="text-center"><b>Products will be appear here.</b></h5>
             </div>`
 };
 
@@ -136,6 +138,7 @@ class Product {
     }
 }
 class Common {
+
     static ParseValue(val) {
         if (val == null) return null;
         if (val == '') return null;
@@ -177,6 +180,7 @@ class Common {
     }
 
     static BindValuesToProductForm(model) {
+        $('#ProductErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
         $('#Description').val(model.Description);
@@ -235,6 +239,10 @@ class Common {
             }
             let rowNode = productGridOptions.api.getRowNode(response.data.id);
             productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            $("#ProductUsageSelect").select2('destroy').empty();
+            setTimeout(function () {
+                Common.InitSelect2();
+            }, 1000);
         }
     }
     static async GetProductById(id) {
@@ -253,18 +261,22 @@ class Common {
                 toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
             });
     }
+
     static BindSelectData() {
+        console.log('call');
         var result = [];
         productGridOptions.api.forEachNode((rowNode, index) => {
             result.push({ id: rowNode.data.id, text: rowNode.data.name });
         });
+        console.log('result:', result);
         return result;
     }
     static async InitSelect2() {
+        console.log('init select');
         $('#ProductUsageSelect').select2({
             placeholder: 'Search Product',
             minimumInputLength: 1,
-            maximumSelectionLength:1,
+            maximumSelectionLength: 1,
             minimumResultsForSearch: 10,
             theme: "classic",
             data: Common.BindSelectData(),
@@ -280,5 +292,5 @@ class Common {
 
 jQuery(document).ready(function () {
     Common.init();
-    Common.ApplyAGGrid();    
+    Common.ApplyAGGrid();
 });

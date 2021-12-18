@@ -80,6 +80,8 @@ namespace MahantInv.Infrastructure
                 .InstancePerLifetimeScope();
             builder.RegisterType<ProductsRepository>().As<IProductsRepository>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<OrdersRepository>().As<IOrdersRepository>()
+                .InstancePerLifetimeScope();
         }
 
         private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)

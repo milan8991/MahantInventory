@@ -17,20 +17,20 @@ namespace MahantInv.Core.SimpleAggregates
         public int? ProductId { get; set; }
         [Required, Display(Name = "Quantity")]
         public decimal? Quantity { get; set; }
-        [Required, Display(Name = "Received Quantity")]
+        [Display(Name = "Received Quantity")]
         public decimal? ReceivedQuantity { get; set; }
         public string RefNo { get; set; }
         [Display(Name = "Status")]
         public string StatusId { get; set; }
         [Required, Display(Name = "Payment Type")]
-        public int? PaymentTypeId { get; set; }
+        public string PaymentTypeId { get; set; }
         [Required, Display(Name = "Payer")]
         public int? PayerId { get; set; }
         [Required, Display(Name = "Paid Amount")]
         public decimal? PaidAmount { get; set; }
         [Required, Display(Name = "Order Date")]
         public DateTime? OrderDate { get; set; }
-        [Required, Display(Name = "Received Date")]
+        [Display(Name = "Received Date")]
         public DateTime? ReceivedDate { get; set; }
         public string Remark { get; set; }
         [Display(Name = "Last Modified By")]

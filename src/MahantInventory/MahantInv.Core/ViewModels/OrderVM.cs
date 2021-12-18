@@ -14,5 +14,6 @@ namespace MahantInv.Core.ViewModels
         public string PaymentType { get; set; }
         public string Payer { get; set; }
         public string LastModifiedBy { get; set; }
+        public decimal? CurrentStock { get; set; }
     }
 }
