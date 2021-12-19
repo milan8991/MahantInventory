@@ -14,6 +14,7 @@
     </div>
 </div>
 @await Html.PartialAsync("_AddEditOrder",new MahantInv.Core.SimpleAggregates.Order())
+@await Html.PartialAsync("_ReceivedOrCancelledOrder",new MahantInv.Core.SimpleAggregates.Order())
 @section Scripts{
 <script src="~/Orders/index.js" type="text/javascript" asp-append-version="true"></script>
 }

@@ -4,7 +4,12 @@ ActionCellRenderer.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('span');
-    this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditOrder">Edit</button>';
+    if (params.data.status === 'Cancelled') {
+        this.eGui.innerHTML = '';
+    }
+    else {
+        this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditOrder">Edit</button>';
+    }
 }
 
 ActionCellRenderer.prototype.getGui = function () {
@@ -28,7 +33,16 @@ var orderGridOptions = {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
         },
         {
-            headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status'
+            headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
+            cellRenderer: function (params) {
+
+                if (params.value == 'Ordered') {
+                    return '<button type="button" class="btn btn-primary btn-sm" onclick="Common.OpenActionModal(this)" data-id="' + params.data.id + '">' + params.value + '</button>'
+                }
+
+                let cls = params.value == 'Received' ? 'success' : 'danger';
+                return '<span class="badge badge-' + cls + '">' + params.value + '</span>';
+            }
         },
         {
             headerName: 'Payment Type',
@@ -41,7 +55,7 @@ var orderGridOptions = {
             headerName: 'Paid Amount', field: 'paidAmount', filter: 'agNumberColumnFilter', headerTooltip: 'Paid Amount'
         },
         {
-            headerName: 'Order Date', field: 'orderDate', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
+            headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
         },
         {
             headerName: 'Received Date', field: 'receivedDate', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
@@ -53,7 +67,7 @@ var orderGridOptions = {
             headerName: 'Last Modified By', field: 'lastModifiedBy', filter: 'agSetColumnFilter', headerTooltip: 'LastModifiedBy'
         },
         {
-            headerName: '', field: 'id', headerTooltip: 'Action',
+            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
         }
     ],
@@ -72,7 +86,6 @@ var orderGridOptions = {
         autoHeight: true,
         floatingFilter: true,
     },
-    rowSelection: 'single',
     pagination: true,
     paginationAutoPageSize: true,
     animateRows: true,
@@ -83,40 +96,27 @@ var orderGridOptions = {
     getRowNodeId: function (data) {
         return data.id;
     },
+    autoSizeColumn: true,
     suppressContextMenu: true,
     components: {
         actionCellRenderer: ActionCellRenderer
     },
     columnTypes: {
         numberColumn: {
-            editable: false,
-            enableRowGroup: true,
-            enablePivot: true,
-            enableValue: true,
-            sortable: true,
-            resizable: true,
-            flex: 1,
             minWidth: 50,
-            wrapText: true,
-            autoHeight: true,
-            floatingFilter: true,
         },
         dateColumn: {
-            editable: false,
-            enableRowGroup: true,
-            enablePivot: true,
-            enableValue: true,
-            sortable: true,
-            resizable: true,
-            flex: 1,
             minWidth: 130,
-            wrapText: true,
-            autoHeight: true,
-            floatingFilter: true,
         }
     },
     onGridReady: function (params) {
+        const allColumnIds = [];
+        orderGridOptions.columnApi.getAllColumns().forEach((column) => {
+            if (column.colId != 'id')
+                allColumnIds.push(column.colId);
+        });
 
+        orderGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
         '<span class="ag-overlay-loading-center">Please wait while your orders are loading</span>',
@@ -160,6 +160,21 @@ class Common {
             Common.GetOrderById(id);
         }
     }
+    static OpenActionModal(mthis) {
+        let id = $(mthis).data('id');
+        $('#ReceivedOrCancelledOrder').modal('show');
+        let rowData = orderGridOptions.api.getRowNode(id).data;
+        $('#ActionId').val(rowData.id);
+        $('#ActionProductId').html(rowData.productName);
+        $('#ActionQuantity').val(rowData.quantity);
+        $('#ActionPaymentTypeId').val(rowData.paymentTypeId).trigger('change');
+        $('#ActionPayerId').val(rowData.payerId).trigger('change');
+        $('#ActionPaidAmount').val(rowData.paidAmount);
+        $('#ActionOrderDate').val(moment(rowData.orderDate).format("YYYY-MM-DD"));
+        $('#ActionReceivedQuantity').val(rowData.quantity);
+        $('#ActionReceivedDate').val(moment().format("YYYY-MM-DD"));
+        $('#ActionRemark').val(rowData.remark);
+    }
 
     static ApplyAGGrid() {
 
@@ -187,7 +202,7 @@ class Common {
         $('#PaymentTypeId').val(model.PaymentTypeId).trigger('change');
         $('#PayerId').val(model.PayerId).trigger('change');
         $('#PaidAmount').val(model.PaidAmount);
-        $('#OrderDate').val(model.OrderDate);
+        $('#OrderDate').val(moment(model.OrderDate).format("YYYY-MM-DD"));
         $('#Remark').val(model.Remark);
     }
 
@@ -195,6 +210,12 @@ class Common {
         $('#ordersdata').height(Common.calcDataTableHeight(27));
         $('.select2').select2({
             dropdownParent: $('#AddEditOrder'),
+            placeholder: 'Search option',
+            //closeOnSelect: true,
+            allowClear: true
+        });
+        $('.actionselect2').select2({
+            dropdownParent: $('#ReceivedOrCancelledOrder'),
             placeholder: 'Search option',
             closeOnSelect: true,
             allowClear: true
@@ -217,15 +238,13 @@ class Common {
             method: 'POST',
             body: JSON.stringify(order),
             headers: {
-                //'Accept': 'application/json',
+                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-        }).then(response => { console.log('response:', response); return response.ok ? response.json() : response; });
-
+        }).then(response => { return response.json() });
         if (response.status > 399 && response.status < 500) {
             if (response != null) {
                 var errorHtml = "";
-                console.log(response);
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
@@ -245,6 +264,13 @@ class Common {
             let rowNode = orderGridOptions.api.getRowNode(response.data.id);
             orderGridOptions.api.flashCells({ rowNodes: [rowNode] });
         }
+        if (response.success == false) {
+            var errorHtml = "";
+            $.each(response.errors, function (index, element) {
+                errorHtml += element[0].errorMessage + '<br/>';
+            });
+            $('#OrderErrorSection').html(errorHtml);
+        }
     }
     static async GetOrderById(id) {
         await fetch(baseUrl + 'api/order/byid/' + id, {
@@ -263,7 +289,7 @@ class Common {
             });
     }
 
-    
+
 }
 
 jQuery(document).ready(function () {

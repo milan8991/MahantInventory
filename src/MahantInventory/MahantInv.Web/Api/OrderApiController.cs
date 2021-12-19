@@ -49,11 +49,11 @@ namespace MahantInv.Web.Api
                     List<ModelErrorCollection> errors = ModelState.Select(x => x.Value.Errors)
                           .Where(y => y.Count > 0)
                           .ToList();
-                    return BadRequest(errors);
+                    return BadRequest(new { success = false, errors });
                 }
                 order.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 order.ModifiedAt = DateTime.UtcNow;
-                
+
                 if (order.Id == 0)
                 {
                     order.StatusId = OrderStatusTypes.Ordered;
@@ -70,7 +70,6 @@ namespace MahantInv.Web.Api
                     oldOrder.PaidAmount = order.PaidAmount;
                     oldOrder.OrderDate = order.OrderDate;
                     oldOrder.Remark = order.Remark;
-                    //oldOrder.RefNo = null;
                     oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                     oldOrder.ModifiedAt = DateTime.UtcNow;
                     await _orderRepository.UpdateAsync(oldOrder);
@@ -86,7 +85,7 @@ namespace MahantInv.Web.Api
                 List<ModelErrorCollection> errors = ModelState.Select(x => x.Value.Errors)
                           .Where(y => y.Count > 0)
                           .ToList();
-                return BadRequest(errors);
+                return BadRequest(new { success = false, errors });
             }
         }
         [HttpGet("order/byid/{orderId}")]

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.ViewModels
 {
-    public class OrderVM:Order
+    public class OrderVM : Order
     {
         public string ProductName { get; set; }
         public string Status { get; set; }
@@ -15,5 +15,12 @@ namespace MahantInv.Core.ViewModels
         public string Payer { get; set; }
         public string LastModifiedBy { get; set; }
         public decimal? CurrentStock { get; set; }
+        public string OrderDateFormat
+        {
+            get
+            {
+                return OrderDate.HasValue ? $"{OrderDate:dd/MM/yyyy}" : null;
+            }
+        }
     }
 }
