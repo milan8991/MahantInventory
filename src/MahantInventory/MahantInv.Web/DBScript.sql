@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sat Dec 18 14:14:25 2021
+-- File generated with SQLiteStudio v3.3.3 on Tue Dec 21 08:56:00 2021
 --
 -- Text encoding used: System
 --
@@ -393,6 +393,32 @@ CREATE TABLE ProductInventory (
 );
 
 
+-- Table: ProductInventoryHistory
+DROP TABLE IF EXISTS ProductInventoryHistory;
+
+CREATE TABLE ProductInventoryHistory (
+    Id               INTEGER         NOT NULL,
+    ProductId        INTEGER         NOT NULL,
+    Quantity         NUMERIC (10, 2) NOT NULL,
+    RefNo            VARCHAR (50)    NOT NULL,
+    LastModifiedById VARCHAR (450)   NOT NULL,
+    ModifiedAt       DATETIME        NOT NULL,
+    CONSTRAINT PK_ProductInventoryHistory_Id PRIMARY KEY (
+        Id
+    ),
+    CONSTRAINT FK_ProductInventoryHistory_ProductId FOREIGN KEY (
+        ProductId
+    )
+    REFERENCES Products (Id) ON DELETE NO ACTION
+                             ON UPDATE NO ACTION,
+    CONSTRAINT FK_ProductInventoryHistory_LastModifiedById FOREIGN KEY (
+        LastModifiedById
+    )
+    REFERENCES AspNetUsers (Id) ON DELETE NO ACTION
+                                ON UPDATE NO ACTION
+);
+
+
 -- Table: Products
 DROP TABLE IF EXISTS Products;
 
@@ -428,7 +454,6 @@ CREATE TABLE Products (
         Id
     )
 );
-
 
 -- Table: ProductUsages
 DROP TABLE IF EXISTS ProductUsages;

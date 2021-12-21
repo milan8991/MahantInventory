@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using MahantInv.Core.Interfaces;
 using MahantInv.Core.SimpleAggregates;
+using MahantInv.Core.Utility;
 using MahantInv.Core.ViewModels;
+using MahantInv.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,10 +21,16 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<OrderApiController> _logger;
         private readonly IOrdersRepository _orderRepository;
-        public OrderApiController(IMapper mapper, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
+        private readonly IProductInventoryRepository _productInventoryRepository;
+        private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public OrderApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IProductInventoryRepository productInventoryRepository, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
         {
             _logger = logger;
             _orderRepository = orderRepository;
+            _productInventoryRepository = productInventoryRepository;
+            _unitOfWork = unitOfWork;
+            _productInventoryHistoryRepository = productInventoryHistoryRepository;
         }
         [HttpGet("orders")]
         public async Task<object> GetallOrders()
@@ -36,7 +44,7 @@ namespace MahantInv.Web.Api
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
         [HttpPost("order/save")]
@@ -100,7 +108,102 @@ namespace MahantInv.Web.Api
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
+            }
+        }
+        [HttpPost("order/receive")]
+        public async Task<object> ReceiveOrder([FromBody] Order order)
+        {
+            try
+            {
+
+                if (order.ReceivedQuantity <= 0)
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Received Quantity larger than 0" } });
+                }
+                Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
+                if (!oldOrder.StatusId.Equals(OrderStatusTypes.Ordered))
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Order not in Ordered state." } });
+                }
+                oldOrder.Quantity = order.Quantity;
+                oldOrder.PaymentTypeId = order.PaymentTypeId;
+                oldOrder.PayerId = order.PayerId;
+                oldOrder.PaidAmount = order.PaidAmount;
+                oldOrder.OrderDate = order.OrderDate;
+                oldOrder.Remark = order.Remark;
+                oldOrder.StatusId = Meta.OrderStatusTypes.Received;
+                oldOrder.ReceivedDate = order.ReceivedDate;
+                oldOrder.ReceivedQuantity = order.ReceivedQuantity;
+                oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                oldOrder.ModifiedAt = DateTime.UtcNow;
+
+                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(oldOrder.ProductId.Value);
+
+                await _unitOfWork.BeginAsync();
+                if (productInventory == null)
+                {
+                    await _productInventoryRepository.AddAsync(new ProductInventory
+                    {
+                        ProductId = oldOrder.ProductId.Value,
+                        Quantity = order.ReceivedQuantity,
+                        RefNo = oldOrder.RefNo,
+                        LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                        ModifiedAt = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    await _productInventoryHistoryRepository.AddAsync(new ProductInventoryHistory
+                    {
+                        ProductId = productInventory.ProductId.Value,
+                        LastModifiedById = productInventory.LastModifiedById,
+                        ModifiedAt = productInventory.ModifiedAt,
+                        Quantity = productInventory.Quantity,
+                        RefNo = productInventory.RefNo
+                    });
+
+                    productInventory.Quantity += order.ReceivedQuantity;
+                    productInventory.RefNo = oldOrder.RefNo;
+                    productInventory.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    productInventory.ModifiedAt = DateTime.UtcNow;
+                    await _productInventoryRepository.UpdateAsync(productInventory);
+                }
+                await _orderRepository.UpdateAsync(oldOrder);
+
+                await _unitOfWork.CommitAsync();
+                OrderVM orderVM = await _orderRepository.GetOrderById(order.Id);
+                return Ok(new { success = true, data = orderVM });
+            }
+            catch (Exception e)
+            {
+                string GUID = Guid.NewGuid().ToString();
+                _logger.LogError(e, GUID, null);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
+            }
+        }
+        [HttpPost("order/cancel")]
+        public async Task<object> CancelOrder([FromBody] int orderId)
+        {
+            try
+            {
+                Order oldOrder = await _orderRepository.GetByIdAsync(orderId);
+                if (!oldOrder.StatusId.Equals(Meta.OrderStatusTypes.Ordered))
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Order not in Ordered state." } });
+                }
+                oldOrder.StatusId = Meta.OrderStatusTypes.Cancelled;
+                oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                oldOrder.ModifiedAt = DateTime.UtcNow;
+                await _orderRepository.UpdateAsync(oldOrder);
+                Order order = await _orderRepository.GetByIdAsync(orderId);
+                return Ok(order);
+            }
+            catch (Exception e)
+            {
+                string GUID = Guid.NewGuid().ToString();
+                _logger.LogError(e, GUID, null);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
     }
