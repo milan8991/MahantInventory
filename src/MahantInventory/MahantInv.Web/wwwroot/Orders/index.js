@@ -169,8 +169,9 @@ class Common {
         let id = $(mthis).data('id');
         $('#ReceivedOrCancelledOrder').modal('show');
         let rowData = orderGridOptions.api.getRowNode(id).data;
-        $('#ActionId').val(rowData.id);
-        $('#ActionProductId').html(rowData.productName);
+        $('#ActionOrderId').val(rowData.id);
+        $('#ActionProductId').val(rowData.productId);
+        $('#ActionProductName').html(rowData.productName);
         $('#ActionQuantity').val(rowData.quantity);
         $('#ActionPaymentTypeId').val(rowData.paymentTypeId).trigger('change');
         $('#ActionPayerId').val(rowData.payerId).trigger('change');
@@ -295,6 +296,18 @@ class Common {
     }
 
     static async ReceiveOrder(mthis) {
+        $('#ActionErrorSection').empty();
+        let Id = $('#Id').val();
+        let ProductId = $('#ProductId').val();
+        let Quantity = $('#Quantity').val();
+        let PaymentTypeId = $('#PaymentTypeId').val();
+        let PayerId = $('#PayerId').val();
+        let PaidAmount = $('#PaidAmount').val();
+        let OrderDate = $('#OrderDate').val();
+        let Remark = $('#Remark').val();
+        let Remark = $('#Remark').val();
+        let Remark = $('#Remark').val();
+        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, null, null);
 
     }
     static async CancelOrder(mthis) {

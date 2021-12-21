@@ -11,12 +11,13 @@
             </div>
             <div class="modal-body">
                 <div id="ActionOrderErrorSection" class="text-danger"></div>
-                <input type="hidden" id="ActionId" />
+                <input type="hidden" id="ActionOrderId" />
+                <input type="hidden" id="ActionProductId" />
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.ProductId"></label>
-                            <label id='ActionProductId' asp-for="@Model.ProductId" class="form-control form-control-sm"></label>
+                            <label id="ActionProductName" asp-for="@Model.ProductId" class="form-control form-control-sm"></label>
                         </div>
                     </div>
                     <div class="col-md-6">
