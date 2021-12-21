@@ -117,7 +117,7 @@ namespace MahantInv.Web.Api
 
                 if (productInventory == null)
                 {
-                    return BadRequest(new { success = false, errors = new[] { "Product not found" } });
+                    return BadRequest(new { success = false, errors = new[] { "Product/Stock not available" } });
                 }
 
                 ProductInventoryHistory productInventoryHistory = new()
