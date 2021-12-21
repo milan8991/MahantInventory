@@ -128,7 +128,7 @@ var orderGridOptions = {
 
 
 class Order {
-    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark) {
+    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity,ReceivedDate) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
@@ -137,7 +137,12 @@ class Order {
         this.PaidAmount = PaidAmount;
         this.OrderDate = OrderDate;
         this.Remark = Common.ParseValue(Remark);
+        this.ReceivedQuantity = ReceivedQuantity;
+        this.ReceivedDate = ReceivedDate;
     }
+}
+class ReceiveOrder {
+
 }
 class Common {
     static ParseValue(val) {
@@ -154,7 +159,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null,null,null));
         }
         else {
             Common.GetOrderById(id);
@@ -232,7 +237,7 @@ class Common {
         let PaidAmount = $('#PaidAmount').val();
         let OrderDate = $('#OrderDate').val();
         let Remark = $('#Remark').val();
-        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark);
+        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark,null,null);
 
         var response = await fetch(baseUrl + 'api/order/save', {
             method: 'POST',
@@ -289,6 +294,12 @@ class Common {
             });
     }
 
+    static async ReceiveOrder(mthis) {
+
+    }
+    static async CancelOrder(mthis) {
+
+    }
 
 }
 

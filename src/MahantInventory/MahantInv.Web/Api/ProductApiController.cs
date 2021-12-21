@@ -2,6 +2,7 @@
 using MahantInv.Core.Interfaces;
 using MahantInv.Core.SimpleAggregates;
 using MahantInv.Core.ViewModels;
+using MahantInv.SharedKernel.Interfaces;
 using MahantInv.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,18 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<ProductApiController> _logger;
         private readonly IProductsRepository _productRepository;
-        public ProductApiController(IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
+        private readonly IProductInventoryRepository _productInventoryRepository;
+        private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
+        private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public ProductApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductUsage> productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IProductInventoryRepository productInventoryRepository, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
         {
             _logger = logger;
             _productRepository = productRepository;
+            _productInventoryHistoryRepository = productInventoryHistoryRepository;
+            _productInventoryRepository = productInventoryRepository;
+            _productUsageRepository = productUsageRepository;
+            _unitOfWork = unitOfWork;
         }
         [HttpGet("products")]
         public async Task<object> GetAllProducats()
@@ -63,7 +72,7 @@ namespace MahantInv.Web.Api
                     await _productRepository.UpdateAsync(product);
                 }
                 ProductVM productVM = await _productRepository.GetProductById(product.Id);
-                return Ok(new {success=true, data = productVM });
+                return Ok(new { success = true, data = productVM });
             }
             catch (Exception e)
             {
@@ -82,6 +91,61 @@ namespace MahantInv.Web.Api
             }
             catch (Exception e)
             {
+                string GUID = Guid.NewGuid().ToString();
+                _logger.LogError(e, GUID, null);
+                return BadRequest("Unexpected Error " + GUID);
+            }
+        }
+        [HttpPost("product/usage")]
+        public async Task<object> ProductUsage(int productId, decimal quantity)
+        {
+            try
+            {
+                if (quantity <= 0)
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Quantity larger than 0" } });
+                }
+                ProductUsage productUsage = new()
+                {
+                    ProductId = productId,
+                    Quantity = quantity,
+                    RefNo = Guid.NewGuid().ToString(),
+                    LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
+                    ModifiedAt = DateTime.UtcNow
+                };
+                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(productId);
+
+                if (productInventory == null)
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Product not found" } });
+                }
+
+                ProductInventoryHistory productInventoryHistory = new()
+                {
+                    ProductId = productInventory.ProductId.Value,
+                    LastModifiedById = productInventory.LastModifiedById,
+                    ModifiedAt = productInventory.ModifiedAt,
+                    Quantity = productInventory.Quantity,
+                    RefNo = productInventory.RefNo
+                };
+
+                productInventory.Quantity -= quantity;
+                productInventory.RefNo = productUsage.RefNo;
+                productInventory.LastModifiedById = productUsage.LastModifiedById;
+                productInventory.ModifiedAt = productUsage.ModifiedAt;
+
+                await _unitOfWork.BeginAsync();
+                await _productInventoryHistoryRepository.AddAsync(productInventoryHistory);
+                await _productInventoryRepository.UpdateAsync(productInventory);
+                await _productUsageRepository.AddAsync(productUsage);
+                await _unitOfWork.CommitAsync();
+
+                ProductVM productVM = await _productRepository.GetProductById(productId);
+                return Ok(new { success = true, data = productVM });
+            }
+            catch (Exception e)
+            {
+                await _unitOfWork.RollbackAsync();
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
                 return BadRequest("Unexpected Error " + GUID);
