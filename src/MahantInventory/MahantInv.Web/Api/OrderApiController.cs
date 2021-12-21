@@ -216,8 +216,8 @@ namespace MahantInv.Web.Api
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 oldOrder.ModifiedAt = DateTime.UtcNow;
                 await _orderRepository.UpdateAsync(oldOrder);
-                Order order = await _orderRepository.GetByIdAsync(orderId);
-                return Ok(order);
+                OrderVM orderVM = await _orderRepository.GetOrderById(orderId);
+                return Ok(new { success = true, data = orderVM });
             }
             catch (Exception e)
             {

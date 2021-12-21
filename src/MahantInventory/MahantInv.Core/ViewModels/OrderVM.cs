@@ -22,5 +22,12 @@ namespace MahantInv.Core.ViewModels
                 return OrderDate.HasValue ? $"{OrderDate:dd/MM/yyyy}" : null;
             }
         }
+        public string ReceivedDateFormat
+        {
+            get
+            {
+                return ReceivedDate.HasValue ? $"{ReceivedDate:dd/MM/yyyy}" : null;
+            }
+        }
     }
 }

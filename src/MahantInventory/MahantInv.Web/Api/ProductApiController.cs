@@ -97,23 +97,23 @@ namespace MahantInv.Web.Api
             }
         }
         [HttpPost("product/usage")]
-        public async Task<object> ProductUsage(int productId, decimal quantity)
+        public async Task<object> ProductUsage([FromBody] ProductUsageModel productUsageModel)
         {
             try
             {
-                if (quantity <= 0)
+                if (productUsageModel.Quantity <= 0)
                 {
-                    return BadRequest(new { success = false, errors = new[] { "Quantity larger than 0" } });
+                    return BadRequest(new { success = false, errors = new[] { "Quantity must be larger than 0" } });
                 }
                 ProductUsage productUsage = new()
                 {
-                    ProductId = productId,
-                    Quantity = quantity,
+                    ProductId = productUsageModel.ProductId,
+                    Quantity = productUsageModel.Quantity,
                     RefNo = Guid.NewGuid().ToString(),
                     LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
                     ModifiedAt = DateTime.UtcNow
                 };
-                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(productId);
+                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(productUsageModel.ProductId);
 
                 if (productInventory == null)
                 {
@@ -129,7 +129,7 @@ namespace MahantInv.Web.Api
                     RefNo = productInventory.RefNo
                 };
 
-                productInventory.Quantity -= quantity;
+                productInventory.Quantity -= productUsageModel.Quantity;
                 productInventory.RefNo = productUsage.RefNo;
                 productInventory.LastModifiedById = productUsage.LastModifiedById;
                 productInventory.ModifiedAt = productUsage.ModifiedAt;
@@ -140,7 +140,7 @@ namespace MahantInv.Web.Api
                 await _productUsageRepository.AddAsync(productUsage);
                 await _unitOfWork.CommitAsync();
 
-                ProductVM productVM = await _productRepository.GetProductById(productId);
+                ProductVM productVM = await _productRepository.GetProductById(productUsageModel.ProductId);
                 return Ok(new { success = true, data = productVM });
             }
             catch (Exception e)
@@ -148,7 +148,7 @@ namespace MahantInv.Web.Api
                 await _unitOfWork.RollbackAsync();
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
 

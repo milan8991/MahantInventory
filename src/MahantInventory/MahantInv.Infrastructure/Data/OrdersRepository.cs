@@ -33,12 +33,14 @@ namespace MahantInv.Infrastructure.Data
         public Task<IEnumerable<OrderVM>> GetOrders()
         {
             return db.QueryAsync<OrderVM>(
-            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy from Orders o
+            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock
+                    from Orders o
                     inner join Products p on o.ProductId = p.Id
                     inner join OrderStatusTypes ost on o.StatusId = ost.Id
                     inner join PaymentTypes pt on o.PaymentTypeId = pt.Id
                     inner join Payers py on o.PayerId = py.Id
                     inner join AspNetUsers u on o.LastModifiedById = u.Id
+                    left outer join ProductInventory pi on p.Id = pi.ProductId
                     order by o.OrderDate desc limit 100", transaction: t);
         }
     }

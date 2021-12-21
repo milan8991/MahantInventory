@@ -27,7 +27,7 @@ var orderGridOptions = {
             headerName: 'Quantity', field: 'quantity', filter: 'agNumberColumnFilter', headerTooltip: 'Ordered Quantity'
         },
         {
-            headerName: 'Received Quantity', field: 'eeceivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
+            headerName: 'Received Quantity', field: 'receivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
@@ -58,7 +58,7 @@ var orderGridOptions = {
             headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
         },
         {
-            headerName: 'Received Date', field: 'receivedDate', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
+            headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
         },
         {
             headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark'
@@ -141,9 +141,7 @@ class Order {
         this.ReceivedDate = ReceivedDate;
     }
 }
-class ReceiveOrder {
 
-}
 class Common {
     static ParseValue(val) {
         if (val == null) return null;
@@ -345,10 +343,10 @@ class Common {
     }
     static async CancelOrder(mthis) {
         $('#ActionErrorSection').empty();
-        let Id = $('#ActionOrderId').val();
+        let orderId = $('#ActionOrderId').val();
         var response = await fetch(baseUrl + 'api/order/cancel', {
             method: 'POST',
-            body: JSON.stringify(Id),
+            body: JSON.stringify(orderId),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'

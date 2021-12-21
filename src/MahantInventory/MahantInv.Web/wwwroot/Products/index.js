@@ -137,6 +137,12 @@ class Product {
         this.StorageId = StorageId;
     }
 }
+class ProductUsageModel {
+    constructor(ProductId, Quantity) {
+        this.ProductId = ProductId;
+        this.Quantity = Quantity
+    }
+}
 class Common {
 
     static ParseValue(val) {
@@ -263,16 +269,13 @@ class Common {
     }
 
     static BindSelectData() {
-        console.log('call');
         var result = [];
         productGridOptions.api.forEachNode((rowNode, index) => {
             result.push({ id: rowNode.data.id, text: rowNode.data.name });
         });
-        console.log('result:', result);
         return result;
     }
     static async InitSelect2() {
-        console.log('init select');
         $('#ProductUsageSelect').select2({
             placeholder: 'Search Product',
             minimumInputLength: 1,
@@ -286,7 +289,36 @@ class Common {
     }
 
     static async UseProduct(mthis) {
-        //Usage
+        let productId = $('#ProductUsageSelect').val();
+        let quantity = $('#UsageQuantity').val();
+        var productUsageModel = new ProductUsageModel(productId[0], quantity);
+        var response = await fetch(baseUrl + 'api/product/usage', {
+            method: 'POST',
+            body: JSON.stringify(productUsageModel),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '.';
+                });
+                toastr.error(errorHtml, '', { positionClass: 'toast-top-center' });
+            }
+        }
+        if (response.success) {
+            toastr.success("Saved", '', { positionClass: 'toast-top-center' });
+            productGridOptions.api.applyTransaction({ update: [response.data] });
+            let rowNode = productGridOptions.api.getRowNode(response.data.id);
+            productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+        }
+        if (response.success == false) {
+
+            toastr.error(response.errors, '', { positionClass: 'toast-top-center' });
+        }
     }
 }
 
