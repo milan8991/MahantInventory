@@ -128,7 +128,7 @@ var orderGridOptions = {
 
 
 class Order {
-    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity,ReceivedDate) {
+    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
@@ -159,7 +159,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null,null,null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null));
         }
         else {
             Common.GetOrderById(id);
@@ -238,7 +238,7 @@ class Common {
         let PaidAmount = $('#PaidAmount').val();
         let OrderDate = $('#OrderDate').val();
         let Remark = $('#Remark').val();
-        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark,null,null);
+        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, null, null);
 
         var response = await fetch(baseUrl + 'api/order/save', {
             method: 'POST',
@@ -297,21 +297,88 @@ class Common {
 
     static async ReceiveOrder(mthis) {
         $('#ActionErrorSection').empty();
-        let Id = $('#Id').val();
-        let ProductId = $('#ProductId').val();
-        let Quantity = $('#Quantity').val();
-        let PaymentTypeId = $('#PaymentTypeId').val();
-        let PayerId = $('#PayerId').val();
-        let PaidAmount = $('#PaidAmount').val();
-        let OrderDate = $('#OrderDate').val();
-        let Remark = $('#Remark').val();
-        let Remark = $('#Remark').val();
-        let Remark = $('#Remark').val();
-        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, null, null);
+        let Id = $('#ActionOrderId').val();
+        let ProductId = $('#ActionProductId').val();
+        let Quantity = $('#ActionQuantity').val();
+        let PaymentTypeId = $('#ActionPaymentTypeId').val();
+        let PayerId = $('#ActionPayerId').val();
+        let PaidAmount = $('#ActionPaidAmount').val();
+        let OrderDate = $('#ActionOrderDate').val();
+        let Remark = $('#ActionRemark').val();
+        let ReceivedQuantity = $('#ActionReceivedQuantity').val();
+        let ReceivedDate = $('#ActionReceivedDate').val();
+        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
 
+        var response = await fetch(baseUrl + 'api/order/receive', {
+            method: 'POST',
+            body: JSON.stringify(order),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '<br/>';
+                });
+                $('#ActionErrorSection').html(errorHtml);
+            }
+        }
+        if (response.success) {
+            toastr.success("Order has been received", '', { positionClass: 'toast-top-center' });
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
+
+            orderGridOptions.api.applyTransaction({ update: [response.data] });
+            let rowNode = orderGridOptions.api.getRowNode(response.data.id);
+            orderGridOptions.api.flashCells({ rowNodes: [rowNode] });
+        }
+        if (response.success == false) {
+            var errorHtml = "";
+            $.each(response.errors, function (index, element) {
+                errorHtml += element[0].errorMessage + '<br/>';
+            });
+            $('#ActionErrorSection').html(errorHtml);
+        }
     }
     static async CancelOrder(mthis) {
+        $('#ActionErrorSection').empty();
+        let Id = $('#ActionOrderId').val();
+        var response = await fetch(baseUrl + 'api/order/cancel', {
+            method: 'POST',
+            body: JSON.stringify(Id),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '<br/>';
+                });
+                $('#ActionErrorSection').html(errorHtml);
+            }
+        }
+        if (response.success) {
+            toastr.success("Order has been cancelled", '', { positionClass: 'toast-top-center' });
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
 
+            orderGridOptions.api.applyTransaction({ update: [response.data] });
+            let rowNode = orderGridOptions.api.getRowNode(response.data.id);
+            orderGridOptions.api.flashCells({ rowNodes: [rowNode] });
+        }
+        if (response.success == false) {
+            var errorHtml = "";
+            $.each(response.errors, function (index, element) {
+                errorHtml += element[0].errorMessage + '<br/>';
+            });
+            $('#ActionErrorSection').html(errorHtml);
+        }
     }
 
 }

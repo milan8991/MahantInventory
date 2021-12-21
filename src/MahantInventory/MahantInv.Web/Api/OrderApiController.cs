@@ -116,11 +116,31 @@ namespace MahantInv.Web.Api
         {
             try
             {
-
+                if(!order.ReceivedQuantity.HasValue)
+                {
+                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Quantity field is required");
+                }
                 if (order.ReceivedQuantity <= 0)
                 {
-                    return BadRequest(new { success = false, errors = new[] { "Received Quantity larger than 0" } });
+                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Quantity larger than 0");
                 }
+                if (!order.ReceivedDate.HasValue)
+                {
+                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Date field is required");
+                }
+                if (order.ReceivedDate.Value > DateTime.Today.Date)
+                {
+                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Date can't be future date");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    List<ModelErrorCollection> errors = ModelState.Select(x => x.Value.Errors)
+                          .Where(y => y.Count > 0)
+                          .ToList();
+                    return BadRequest(new { success = false, errors });
+                }
+
                 Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
                 if (!oldOrder.StatusId.Equals(OrderStatusTypes.Ordered))
                 {
