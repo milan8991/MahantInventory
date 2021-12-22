@@ -2,6 +2,7 @@
 using MahantInv.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,15 @@ namespace MahantInv.Core.SimpleAggregates
     [Table("Payers")]
     public class Payer:BaseEntity,IAggregateRoot
     {
+        [Required,Display(Name ="Payer Name")]
         public string Name { get; set; }
+        [Required,Display(Name = "Primary Contact")]
         public string PrimaryContact { get; set; }
+        [Display(Name = "Secondary Contact")]
         public string SecondaryContact { get; set; }
+        [Display(Name="Line 1")]
         public string Line1 { get; set; }
+        [Display(Name = "Line 2")]
         public string Line2 { get; set; }
         public string Taluk { get; set; }
         public string District { get; set; }
