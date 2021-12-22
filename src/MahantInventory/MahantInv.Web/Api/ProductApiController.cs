@@ -20,11 +20,11 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<ProductApiController> _logger;
         private readonly IProductsRepository _productRepository;
-        private readonly IProductInventoryRepository _productInventoryRepository;
+        private readonly IPayersReposiroty _productInventoryRepository;
         private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
         private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public ProductApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductUsage> productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IProductInventoryRepository productInventoryRepository, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
+        public ProductApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductUsage> productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
         {
             _logger = logger;
             _productRepository = productRepository;

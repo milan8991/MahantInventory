@@ -19,7 +19,7 @@ namespace MahantInv.Infrastructure.Data
         public Task<OrderVM> GetOrderById(int orderId)
         {
             return db.QuerySingleAsync<OrderVM>(
-            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock
+            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock,p.ReorderLevel
                     from Orders o
                     inner join Products p on o.ProductId = p.Id
                     inner join OrderStatusTypes ost on o.StatusId = ost.Id
@@ -33,7 +33,7 @@ namespace MahantInv.Infrastructure.Data
         public Task<IEnumerable<OrderVM>> GetOrders()
         {
             return db.QueryAsync<OrderVM>(
-            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock
+            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock,p.ReorderLevel
                     from Orders o
                     inner join Products p on o.ProductId = p.Id
                     inner join OrderStatusTypes ost on o.StatusId = ost.Id

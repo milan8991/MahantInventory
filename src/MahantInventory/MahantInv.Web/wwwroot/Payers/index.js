@@ -10,14 +10,8 @@ ActionCellRenderer.prototype.init = function (params) {
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-function onSelectionChanged(params) {
-    console.log(params);
-    const selectedRows = productGridOptions.api.getSelectedRows();
 
-    //$('#ProductUsageSelect').val(selectedRows[0].id);
-    //$('#ProductUsageSelect').trigger('change');
-}
-var productGridOptions = {
+var payerGridOptions = {
 
     // define grid columns
     columnDefs: [
@@ -25,29 +19,25 @@ var productGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
-            headerName: 'Description', field: 'description', filter: 'agTextColumnFilter', headerTooltip: 'Description'
+            headerName: 'Primary Contact', field: 'primaryContact', filter: 'agTextColumnFilter', headerTooltip: 'Primary Contact'
         },
         {
-            headerName: 'Size', field: 'size', filter: 'agTextColumnFilter', headerTooltip: 'Size'
+            headerName: 'Secondary Contact', field: 'secondaryContact', filter: 'agTextColumnFilter', headerTooltip: 'Secondary Contact'
         },
         {
-            headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
+            headerName: 'Address', field: 'address', filter: 'agTextColumnFilter', headerTooltip: 'Address'
+        },        
+        {
+            headerName: 'Taluk', field: 'taluk', filter: 'agTextColumnFilter', headerTooltip: 'Taluk'
         },
         {
-            headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
+            headerName: 'District', field: 'district', filter: 'agTextColumnFilter', headerTooltip: 'District'
         },
         {
-            headerName: 'Reorder Level',
-            field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
+            headerName: 'State', field: 'state', filter: 'agTextColumnFilter', headerTooltip: 'State'
         },
         {
-            headerName: 'Is Disposable?', field: 'disposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
-        },
-        {
-            headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
-        },
-        {
-            headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
+            headerName: 'Country', field: 'country', filter: 'agTextColumnFilter', headerTooltip: 'Country'
         },
         {
             headerName: '', field: 'id', headerTooltip: 'Action',
@@ -73,14 +63,12 @@ var productGridOptions = {
         autoHeight: true,
         floatingFilter: true,
     },
-    rowSelection: 'single',
     pagination: true,
     paginationAutoPageSize: true,
     animateRows: true,
     defaultColGroupDef: {
         marryChildren: true
     },
-    onSelectionChanged: onSelectionChanged,
     getRowNodeId: function (data) {
         return data.id;
     },
@@ -120,33 +108,29 @@ var productGridOptions = {
 
     },
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your products are loading</span>',
+        '<span class="ag-overlay-loading-center">Please wait while your payers are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Products will be appear here.</b></h5>
+                <h5 class="text-center"><b>Payers will be appear here.</b></h5>
             </div>`
 };
 
 
-class Product {
-    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId) {
+class Payer {
+    constructor(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
-        this.Description = Common.ParseValue(Description);
-        this.Size = Size;
-        this.UnitTypeCode = Common.ParseValue(UnitTypeCode);
-        this.ReorderLevel = ReorderLevel;
-        this.IsDisposable = IsDisposable;
-        this.Company = Common.ParseValue(Company);
-        this.StorageId = StorageId;
+        this.PrimaryContact = Common.ParseValue(PrimaryContact);
+        this.SecondaryContact = Common.ParseValue(SecondaryContact);
+        this.Line1 = Common.ParseValue(Line1);
+        this.Line2 = Common.ParseValue(Line2);
+        this.Taluk = Common.ParseValue(Taluk);
+        this.District = Common.ParseValue(District);
+        this.State = Common.ParseValue(State);
+        this.Country = Common.ParseValue(Country);
     }
 }
-class ProductUsageModel {
-    constructor(ProductId, Quantity) {
-        this.ProductId = ProductId;
-        this.Quantity = Quantity
-    }
-}
+
 class Common {
 
     static ParseValue(val) {
@@ -163,25 +147,25 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
+            Common.BindValuesToProductForm(new Payer(0, null, null, null, null, null, null, null, null, null, null));
         }
         else {
-            Common.GetProductById(id);
+            Common.GetPayerById(id);
         }
     }
 
     static ApplyAGGrid() {
 
-        var gridDiv = document.querySelector('#productsdata');
-        new agGrid.Grid(gridDiv, productGridOptions);
-        fetch(baseUrl + 'api/products')
+        var gridDiv = document.querySelector('#payersdata');
+        new agGrid.Grid(gridDiv, payerGridOptions);
+        fetch(baseUrl + 'api/payers')
             .then((response) => response.json())
             .then(data => {
-                productGridOptions.api.setRowData(data);
-                Common.InitSelect2();
+                payerGridOptions.api.setRowData(data);
+                //Common.InitSelect2();
             })
             .catch(error => {
-                productGridOptions.api.setRowData([])
+                payerGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
                 //});
@@ -190,7 +174,7 @@ class Common {
     }
 
     static BindValuesToProductForm(model) {
-        $('#ProductErrorSection').empty();
+        $('#PayerErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
         $('#Description').val(model.Description);
@@ -203,23 +187,24 @@ class Common {
     }
 
     static init() {
-        $('#productsdata').height(Common.calcDataTableHeight(27));
+        $('#payersdata').height(Common.calcDataTableHeight(27));
     }
 
-    static async SaveProduct(mthis) {
-        $('#ProductErrorSection').empty();
+    static async SavePayer(mthis) {
+        $('#PayerErrorSection').empty();
         let Id = $('#Id').val();
         let Name = $('#Name').val();
-        let Description = $('#Description').val();
-        let Size = $('#Size').val();
-        let UnitTypeCode = $('#UnitTypeCode').val();
-        let ReorderLevel = $('#ReorderLevel').val();
-        let IsDisposable = $('#IsDisposable').is(':checked');
-        let Company = $('#Company').val();
-        let StorageId = $('#StorageId').val();
-        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
+        let PrimaryContact = $('#PrimaryContact').val();
+        let SecondaryContact = $('#SecondaryContact').val();
+        let Line1 = $('#Line1').val();
+        let Line2 = $('#Line2').val();
+        let Taluk = $('#Taluk').val();
+        let District = $('#District').val();
+        let State = $('#State').val();
+        let Country = $('#Country').val();
+        let product = new Product(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
 
-        var response = await fetch(baseUrl + 'api/product/save', {
+        var response = await fetch(baseUrl + 'api/payer/save', {
             method: 'POST',
             body: JSON.stringify(product),
             headers: {
@@ -234,29 +219,29 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#ProductErrorSection').html(errorHtml);
+                $('#PayerErrorSection').html(errorHtml);
             }
         }
         if (response.success) {
-            toastr.success("Product Saved", '', { positionClass: 'toast-top-center' });
+            toastr.success("Payer Saved", '', { positionClass: 'toast-top-center' });
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
             if (Id == 0) {
-                productGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+                payerGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
             }
             else {
-                productGridOptions.api.applyTransaction({ update: [response.data] });
+                payerGridOptions.api.applyTransaction({ update: [response.data] });
             }
-            let rowNode = productGridOptions.api.getRowNode(response.data.id);
-            productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            let rowNode = payerGridOptions.api.getRowNode(response.data.id);
+            payerGridOptions.api.flashCells({ rowNodes: [rowNode] });
             $("#ProductUsageSelect").select2('destroy').empty();
             setTimeout(function () {
                 Common.InitSelect2();
             }, 1000);
         }
     }
-    static async GetProductById(id) {
-        await fetch(baseUrl + 'api/product/byid/' + id, {
+    static async GetPayerById(id) {
+        await fetch(baseUrl + 'api/payer/byid/' + id, {
             method: 'GET',
             headers: {
                 //'Accept': 'application/json',
@@ -264,7 +249,7 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                Common.BindValuesToProductForm(new Product(data.id, data.name, data.description, data.size, data.unitTypeCode, data.reorderLevel, data.isDisposable, data.company, data.storageId));
+                Common.BindValuesToProductForm(new Payer(data.id, data.name, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
             })
             .catch(error => {
                 console.log(error);
@@ -274,7 +259,7 @@ class Common {
 
     static BindSelectData() {
         var result = [];
-        productGridOptions.api.forEachNode((rowNode, index) => {
+        payerGridOptions.api.forEachNode((rowNode, index) => {
             result.push({ id: rowNode.data.id, text: rowNode.data.name });
         });
         return result;
@@ -292,38 +277,7 @@ class Common {
         });
     }
 
-    static async UseProduct(mthis) {
-        let productId = $('#ProductUsageSelect').val();
-        let quantity = $('#UsageQuantity').val();
-        var productUsageModel = new ProductUsageModel(productId[0], quantity);
-        var response = await fetch(baseUrl + 'api/product/usage', {
-            method: 'POST',
-            body: JSON.stringify(productUsageModel),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => { return response.json() });
-        if (response.status > 399 && response.status < 500) {
-            if (response != null) {
-                var errorHtml = "";
-                $.each(response.errors, function (index, element) {
-                    errorHtml += element[0] + '.';
-                });
-                toastr.error(errorHtml, '', { positionClass: 'toast-top-center' });
-            }
-        }
-        if (response.success) {
-            toastr.success("Saved", '', { positionClass: 'toast-top-center' });
-            productGridOptions.api.applyTransaction({ update: [response.data] });
-            let rowNode = productGridOptions.api.getRowNode(response.data.id);
-            productGridOptions.api.flashCells({ rowNodes: [rowNode] });
-        }
-        if (response.success == false) {
-
-            toastr.error(response.errors, '', { positionClass: 'toast-top-center' });
-        }
-    }
+    
 }
 
 jQuery(document).ready(function () {

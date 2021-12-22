@@ -9,7 +9,7 @@ using Dapper;
 
 namespace MahantInv.Infrastructure.Data
 {
-    public class ProductInventoryRepository : DapperRepository<ProductInventory>, IProductInventoryRepository
+    public class ProductInventoryRepository : DapperRepository<ProductInventory>, IPayersReposiroty
     {
         public ProductInventoryRepository(IDapperUnitOfWork uow) : base(uow)
         {

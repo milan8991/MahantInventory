@@ -15,6 +15,7 @@ namespace MahantInv.Core.ViewModels
         public string Payer { get; set; }
         public string LastModifiedBy { get; set; }
         public decimal? CurrentStock { get; set; }
+        public decimal ReorderLevel { get; set; }
         public string OrderDateFormat
         {
             get

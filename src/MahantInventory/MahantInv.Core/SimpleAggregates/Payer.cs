@@ -15,7 +15,12 @@ namespace MahantInv.Core.SimpleAggregates
         public string Name { get; set; }
         public string PrimaryContact { get; set; }
         public string SecondaryContact { get; set; }
-        public int? AddressId { get; set; }
+        public string Line1 { get; set; }
+        public string Line2 { get; set; }
+        public string Taluk { get; set; }
+        public string District { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
         public string LastModifiedById { get; set; }
         public DateTime? ModifiedAt { get; set; }
     }

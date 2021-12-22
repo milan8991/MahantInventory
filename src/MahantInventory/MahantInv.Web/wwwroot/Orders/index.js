@@ -33,6 +33,9 @@ var orderGridOptions = {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
         },
         {
+            headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
+        },
+        {
             headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
             cellRenderer: function (params) {
 
@@ -85,6 +88,11 @@ var orderGridOptions = {
         wrapText: true,
         autoHeight: true,
         floatingFilter: true,
+    },
+    rowClassRules: {
+        'sick-days-warning': function (params) {
+            return params.data.currentStock < params.data.reorderLevel;
+        },
     },
     pagination: true,
     paginationAutoPageSize: true,

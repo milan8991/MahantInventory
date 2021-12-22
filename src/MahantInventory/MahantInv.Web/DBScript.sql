@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Tue Dec 21 08:56:00 2021
+-- File generated with SQLiteStudio v3.3.3 on Wed Dec 22 22:50:39 2021
 --
 -- Text encoding used: System
 --
@@ -16,20 +16,6 @@ CREATE TABLE __EFMigrationsHistory (
     CONSTRAINT PK___EFMigrationsHistory PRIMARY KEY (
         MigrationId
     )
-);
-
-
--- Table: Addresses
-DROP TABLE IF EXISTS Addresses;
-
-CREATE TABLE Addresses (
-    Id       INTEGER    CONSTRAINT PK_Addresses_Id PRIMARY KEY ASC AUTOINCREMENT,
-    Line1    TEXT (255) NOT NULL,
-    Line2    TEXT (255),
-    Taluk    TEXT (128),
-    District TEXT (128),
-    State    TEXT (128),
-    Country  TEXT (128) 
 );
 
 
@@ -305,7 +291,12 @@ CREATE TABLE Payers (
     Name             VARCHAR (256) NOT NULL,
     PrimaryContact   VARCHAR (15)  NOT NULL,
     SecondaryContact VARCHAR (15),
-    AddressId        INTEGER       CONSTRAINT FK_Payers_Addresses_AddressId REFERENCES Addresses (Id),
+    Line1            TEXT (255),
+    Line2            TEXT (255),
+    Taluk            TEXT (255),
+    District         TEXT (128),
+    State            TEXT (128),
+    Country          TEXT (128),
     LastModifiedById VARCHAR (450) NOT NULL,
     ModifiedAt       DATETIME      NOT NULL,
     CONSTRAINT FK_Payers_LastModifiedById FOREIGN KEY (
@@ -393,6 +384,7 @@ CREATE TABLE ProductInventory (
 );
 
 
+
 -- Table: ProductInventoryHistory
 DROP TABLE IF EXISTS ProductInventoryHistory;
 
@@ -417,7 +409,6 @@ CREATE TABLE ProductInventoryHistory (
     REFERENCES AspNetUsers (Id) ON DELETE NO ACTION
                                 ON UPDATE NO ACTION
 );
-
 
 -- Table: Products
 DROP TABLE IF EXISTS Products;
@@ -454,6 +445,7 @@ CREATE TABLE Products (
         Id
     )
 );
+
 
 -- Table: ProductUsages
 DROP TABLE IF EXISTS ProductUsages;
@@ -493,16 +485,6 @@ CREATE TABLE Storages (
     )
 );
 
-INSERT INTO Storages (
-                         Id,
-                         Name,
-                         Enabled
-                     )
-                     VALUES (
-                         1,
-                         'A',
-                         1
-                     );
 
 
 -- Table: UnitTypes
