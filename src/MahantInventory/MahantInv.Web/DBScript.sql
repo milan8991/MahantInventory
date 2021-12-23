@@ -289,6 +289,7 @@ DROP TABLE IF EXISTS Payers;
 CREATE TABLE Payers (
     Id               INTEGER       NOT NULL,
     Name             VARCHAR (256) NOT NULL,
+	PayerType        VARCHAR (50)  NOT NULL,
     PrimaryContact   VARCHAR (15)  NOT NULL,
     SecondaryContact VARCHAR (15),
     Line1            TEXT (255),

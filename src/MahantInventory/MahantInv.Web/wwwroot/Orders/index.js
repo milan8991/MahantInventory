@@ -15,7 +15,9 @@ ActionCellRenderer.prototype.init = function (params) {
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-
+const stockClassRules = {
+    'sick-days-warning': (params) => params.data.currentStock < params.data.reorderLevel
+};
 var orderGridOptions = {
 
     // define grid columns
@@ -31,6 +33,7 @@ var orderGridOptions = {
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
+            , cellClassRules: stockClassRules
         },
         {
             headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
@@ -40,7 +43,7 @@ var orderGridOptions = {
             cellRenderer: function (params) {
 
                 if (params.value == 'Ordered') {
-                    return '<button type="button" class="btn btn-primary btn-sm" onclick="Common.OpenActionModal(this)" data-id="' + params.data.id + '">' + params.value + '</button>'
+                    return '<button type="button" class="btn btn-outline-primary btn-sm" onclick="Common.OpenActionModal(this)" data-id="' + params.data.id + '">' + params.value + '</button>'
                 }
 
                 let cls = params.value == 'Received' ? 'success' : 'danger';
@@ -88,11 +91,6 @@ var orderGridOptions = {
         wrapText: true,
         autoHeight: true,
         floatingFilter: true,
-    },
-    rowClassRules: {
-        'sick-days-warning': function (params) {
-            return params.data.currentStock < params.data.reorderLevel;
-        },
     },
     pagination: true,
     paginationAutoPageSize: true,
@@ -223,7 +221,7 @@ class Common {
         $('.select2').select2({
             dropdownParent: $('#AddEditOrder'),
             placeholder: 'Search option',
-            //closeOnSelect: true,
+            theme: "bootstrap4",
             allowClear: true
         });
         $('.actionselect2').select2({

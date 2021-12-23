@@ -19,6 +19,9 @@ var payerGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
+            headerName: 'Payer Type', field: 'payerType', filter: 'agSetColumnFilter', headerTooltip: 'Payer Type'
+        },
+        {
             headerName: 'Primary Contact', field: 'primaryContact', filter: 'agTextColumnFilter', headerTooltip: 'Primary Contact'
         },
         {
@@ -37,7 +40,7 @@ var payerGridOptions = {
             headerName: 'State', field: 'state', filter: 'agTextColumnFilter', headerTooltip: 'State'
         },
         {
-            headerName: 'Country', field: 'country', filter: 'agTextColumnFilter', headerTooltip: 'Country'
+            headerName: 'Country', field: 'country', filter: 'agSetColumnFilter', headerTooltip: 'Country'
         },
         {
             headerName: '', field: 'id', headerTooltip: 'Action',
@@ -117,9 +120,10 @@ var payerGridOptions = {
 
 
 class Payer {
-    constructor(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
+    constructor(Id, Name, PayerType, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
+        this.PayerType = Common.ParseValue(PayerType);
         this.PrimaryContact = Common.ParseValue(PrimaryContact);
         this.SecondaryContact = Common.ParseValue(SecondaryContact);
         this.Line1 = Common.ParseValue(Line1);
@@ -147,7 +151,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToPayerForm(new Payer(0, null, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToPayerForm(new Payer(0, null,null, null, null, null, null, null, null, null, null, null));
         }
         else {
             Common.GetPayerById(id);
@@ -177,6 +181,7 @@ class Common {
         $('#PayerErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
+        $('#PayerType').val(model.PayerType);
         $('#PrimaryContact').val(model.PrimaryContact);
         $('#SecondaryContact').val(model.SecondaryContact);
         $('#Line1').val(model.Line1);
@@ -195,6 +200,7 @@ class Common {
         $('#PayerErrorSection').empty();
         let Id = $('#Id').val();
         let Name = $('#Name').val();
+        let PayerType = $('#PayerType').val();
         let PrimaryContact = $('#PrimaryContact').val();
         let SecondaryContact = $('#SecondaryContact').val();
         let Line1 = $('#Line1').val();
@@ -203,7 +209,7 @@ class Common {
         let District = $('#District').val();
         let State = $('#State').val();
         let Country = $('#Country').val();
-        let payer = new Payer(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
+        let payer = new Payer(Id, Name, PayerType, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
 
         var response = await fetch(baseUrl + 'api/payer/save', {
             method: 'POST',
@@ -256,7 +262,7 @@ class Common {
         }).then(response => { return response.json() })
             .then(data => {
                 $('#AddEditPayer').modal('show');
-                Common.BindValuesToPayerForm(new Payer(data.id, data.name, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
+                Common.BindValuesToPayerForm(new Payer(data.id, data.name, data.payerType, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
             })
             .catch(error => {
                 console.log(error);
@@ -272,6 +278,7 @@ class Common {
         $('#Country').select2({
             placeholder: 'Search Counry',
             data: Common.BindSelectData(),
+            theme: "bootstrap4",
             dropdownParent: $("#AddEditPayer")
         });
     }

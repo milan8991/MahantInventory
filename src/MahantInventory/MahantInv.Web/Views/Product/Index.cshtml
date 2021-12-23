@@ -15,16 +15,22 @@
             <div class="col-md-3">
                 <select id="ProductUsageSelect" class="form-control form-control-sm" style="width: 100%"></select>
             </div>
-            <div class="col-md-2 row">
-                <input id="UsageQuantity" type="number" class="form-control" placeholder="Usage Quantity" />
+            <div class="col-md-2">
+                <div class="row">
+                    <input id="UsageQuantity" type="number" class="form-control" placeholder="Usage Quantity" />
+                </div>
             </div>
-            <div class="col-md-2 row">
-                <button class="btn btn-primary" type="button" onclick="Common.UseProduct(this)">
-                    <span>Use Product</span>
-                </button>
+            <div class="col-md-2">
+                <div class="row">
+                    <div class="row">
+                        <button class="btn btn-outline-success" type="button" onclick="Common.UseProduct(this)">
+                            <span>Use Product</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="col-md-2 text-right">
-                <button class="btn btn-primary" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditProduct">
+                <button class="btn btn-outline-primary" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditProduct">
                     <span>New</span>
                 </button>
             </div>

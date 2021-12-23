@@ -14,5 +14,13 @@ namespace MahantInv.Core.Utility
             public const string Received = "Received";
             public const string Cancelled = "Cancelled";
         }
+        public class PayerTypes
+        {
+            public const string Merchant = "Merchant";
+            public const string HariBhakt= "HariBhakt";
+            public const string Trust = "Trust";
+            public const string Saint = "Saint";
+            public const string Unknown = "Unknown";
+        }
     }
 }

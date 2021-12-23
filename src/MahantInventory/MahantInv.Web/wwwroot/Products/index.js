@@ -15,6 +15,9 @@ function onCellClickedEvent(params) {
     $('#ProductUsageSelect').trigger('change');
     //$('#UsageQuantity').focus();
 }
+const stockClassRules = {
+    'sick-days-warning': (params) => params.data.currentStock < params.data.reorderLevel
+};
 var productGridOptions = {
 
     // define grid columns
@@ -30,6 +33,7 @@ var productGridOptions = {
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
+            , cellClassRules: stockClassRules
         },
         {
             headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
@@ -53,11 +57,11 @@ var productGridOptions = {
         }
     ],
     sideBar: { toolPanels: ['columns', 'filters'] },
-    rowClassRules: {
-        'sick-days-warning': function (params) {
-            return params.data.currentStock < params.data.reorderLevel;
-        },
-    },
+    //rowClassRules: {
+    //    'sick-days-warning': function (params) {
+    //        return params.data.currentStock < params.data.reorderLevel;
+    //    },
+    //},
     defaultColDef: {
         editable: false,
         enableRowGroup: true,

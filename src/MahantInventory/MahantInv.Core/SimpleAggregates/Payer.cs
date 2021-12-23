@@ -15,6 +15,8 @@ namespace MahantInv.Core.SimpleAggregates
     {
         [Required,Display(Name ="Payer Name")]
         public string Name { get; set; }
+        [Required,Display(Name ="Payer Type")]
+        public string PayerType { get; set; }
         [Required,Display(Name = "Primary Contact")]
         public string PrimaryContact { get; set; }
         [Display(Name = "Secondary Contact")]
