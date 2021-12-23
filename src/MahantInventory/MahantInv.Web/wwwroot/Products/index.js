@@ -10,12 +10,10 @@ ActionCellRenderer.prototype.init = function (params) {
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-function onSelectionChanged(params) {
-    console.log(params);
-    const selectedRows = productGridOptions.api.getSelectedRows();
-
-    //$('#ProductUsageSelect').val(selectedRows[0].id);
-    //$('#ProductUsageSelect').trigger('change');
+function onCellClickedEvent(params) {
+    $('#ProductUsageSelect').val(params.data.id);
+    $('#ProductUsageSelect').trigger('change');
+    //$('#UsageQuantity').focus();
 }
 var productGridOptions = {
 
@@ -73,6 +71,7 @@ var productGridOptions = {
         autoHeight: true,
         floatingFilter: true,
     },
+    animateRows: true,
     rowSelection: 'single',
     pagination: true,
     paginationAutoPageSize: true,
@@ -80,7 +79,8 @@ var productGridOptions = {
     defaultColGroupDef: {
         marryChildren: true
     },
-    onSelectionChanged: onSelectionChanged,
+    onCellClicked: onCellClickedEvent,
+    //onSelectionChanged: onSelectionChanged,
     getRowNodeId: function (data) {
         return data.id;
     },
@@ -286,7 +286,7 @@ class Common {
             //minimumInputLength: 1,
             //maximumSelectionLength: 1,
             //minimumResultsForSearch: 10,
-            //theme: "classic",
+            theme: "bootstrap4",
             data: Common.BindSelectData(),
             closeOnSelect: true,
             //allowClear: true
@@ -322,6 +322,11 @@ class Common {
             productGridOptions.api.applyTransaction({ update: [response.data] });
             let rowNode = productGridOptions.api.getRowNode(response.data.id);
             productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+
+            $('#ProductUsageSelect').val('').trigger('change');
+            $('#UsageQuantity').val('');
+            $('#ProductUsageSelect').select2('open');
+            $('.select2-search__field').focus();
         }
         if (response.success == false) {
 
