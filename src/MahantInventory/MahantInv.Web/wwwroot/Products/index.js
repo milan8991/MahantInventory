@@ -274,6 +274,7 @@ class Common {
 
     static BindSelectData() {
         var result = [];
+        result.push({ id: '', text: '' });
         productGridOptions.api.forEachNode((rowNode, index) => {
             result.push({ id: rowNode.data.id, text: rowNode.data.name });
         });
@@ -282,13 +283,16 @@ class Common {
     static async InitSelect2() {
         $('#ProductUsageSelect').select2({
             placeholder: 'Search Product',
-            minimumInputLength: 1,
-            maximumSelectionLength: 1,
-            minimumResultsForSearch: 10,
-            theme: "classic",
+            //minimumInputLength: 1,
+            //maximumSelectionLength: 1,
+            //minimumResultsForSearch: 10,
+            //theme: "classic",
             data: Common.BindSelectData(),
             closeOnSelect: true,
-            allowClear: true
+            //allowClear: true
+        });
+        $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
         });
     }
 

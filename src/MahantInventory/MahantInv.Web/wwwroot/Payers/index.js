@@ -177,13 +177,14 @@ class Common {
         $('#PayerErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
-        $('#Description').val(model.Description);
-        $('#Size').val(model.Size);
-        $('#UnitTypeCode').val(model.UnitTypeCode);
-        $('#ReorderLevel').val(model.ReorderLevel);
-        $('#IsDisposable').prop("checked", model.IsDisposable);
-        $('#Company').val(model.Company);
-        $('#StorageId').val(model.StorageId);
+        $('#PrimaryContact').val(model.PrimaryContact);
+        $('#SecondaryContact').val(model.SecondaryContact);
+        $('#Line1').val(model.Line1);
+        $('#Line2').val(model.Line2);
+        $('#Taluk').val(model.Taluk);
+        $('#District').val(model.District);
+        $('#State').val(model.State);
+        $('#Country').val(model.Country);
     }
 
     static init() {
@@ -202,11 +203,11 @@ class Common {
         let District = $('#District').val();
         let State = $('#State').val();
         let Country = $('#Country').val();
-        let product = new Product(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
+        let payer = new Payer(Id, Name, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
 
         var response = await fetch(baseUrl + 'api/payer/save', {
             method: 'POST',
-            body: JSON.stringify(product),
+            body: JSON.stringify(payer),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -220,6 +221,7 @@ class Common {
                     errorHtml += element[0] + '<br/>';
                 });
                 $('#PayerErrorSection').html(errorHtml);
+                return;
             }
         }
         if (response.success) {
@@ -234,6 +236,14 @@ class Common {
             }
             let rowNode = payerGridOptions.api.getRowNode(response.data.id);
             payerGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            return;
+        }
+        if (response.success == false) {
+            var errorHtml = "";
+            $.each(response.errors, function (index, element) {
+                errorHtml += element + '<br/>';
+            });
+            $('#PayerErrorSection').html(errorHtml);
         }
     }
     static async GetPayerById(id) {
@@ -245,7 +255,8 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                Common.BindValuesToProductForm(new Payer(data.id, data.name, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
+                $('#AddEditPayer').modal('show');
+                Common.BindValuesToPayerForm(new Payer(data.id, data.name, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
             })
             .catch(error => {
                 console.log(error);

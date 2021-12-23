@@ -575,14 +575,6 @@ CREATE UNIQUE INDEX RoleNameIndex ON AspNetRoles (
 );
 
 
--- Index: UNQ_PrimaryContact
-DROP INDEX IF EXISTS UNQ_PrimaryContact;
-
-CREATE UNIQUE INDEX UNQ_PrimaryContact ON Payers (
-    "PrimaryContact"
-);
-
-
 -- Index: UserNameIndex
 DROP INDEX IF EXISTS UserNameIndex;
 

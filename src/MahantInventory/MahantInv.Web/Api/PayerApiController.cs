@@ -35,7 +35,7 @@ namespace MahantInv.Web.Api
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
 
@@ -69,7 +69,7 @@ namespace MahantInv.Web.Api
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
 
@@ -85,7 +85,7 @@ namespace MahantInv.Web.Api
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest("Unexpected Error " + GUID);
+                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
     }
