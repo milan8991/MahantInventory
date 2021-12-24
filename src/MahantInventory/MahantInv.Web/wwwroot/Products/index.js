@@ -52,7 +52,7 @@ var productGridOptions = {
             headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
         },
         {
-            headerName: '', field: 'id', headerTooltip: 'Action',
+            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
         }
     ],
@@ -121,7 +121,13 @@ var productGridOptions = {
         }
     },
     onGridReady: function (params) {
-
+        productGridOptions.api.sizeColumnsToFit();
+        //const allColumnIds = [];
+        //productGridOptions.columnApi.getAllColumns().forEach((column) => {
+        //    if (column.colId != 'id')
+        //        allColumnIds.push(column.colId);
+        //});
+        //productGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
         '<span class="ag-overlay-loading-center">Please wait while your products are loading</span>',

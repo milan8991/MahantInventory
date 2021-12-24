@@ -43,7 +43,7 @@ var payerGridOptions = {
             headerName: 'Country', field: 'country', filter: 'agSetColumnFilter', headerTooltip: 'Country'
         },
         {
-            headerName: '', field: 'id', headerTooltip: 'Action',
+            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
         }
     ],
@@ -108,7 +108,13 @@ var payerGridOptions = {
         }
     },
     onGridReady: function (params) {
-
+        payerGridOptions.api.sizeColumnsToFit();
+        //const allColumnIds = [];
+        //payerGridOptions.columnApi.getAllColumns().forEach((column) => {
+        //    if (column.colId != 'id')
+        //        allColumnIds.push(column.colId);
+        //});
+        //payerGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
         '<span class="ag-overlay-loading-center">Please wait while your payers are loading</span>',
@@ -151,7 +157,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToPayerForm(new Payer(0, null,null, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToPayerForm(new Payer(0, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
             Common.GetPayerById(id);

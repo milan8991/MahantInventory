@@ -119,9 +119,8 @@ var orderGridOptions = {
         const allColumnIds = [];
         orderGridOptions.columnApi.getAllColumns().forEach((column) => {
             if (column.colId != 'id')
-                allColumnIds.push(column.colId);
+            allColumnIds.push(column.colId);
         });
-
         orderGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
