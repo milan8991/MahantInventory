@@ -5,23 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Mahant Inventory</title>
 
-    <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.6.0/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
-    </environment>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" />
     <link rel="stylesheet" href="~/lib/select2/css/select2-bootstrap4.min.css" />
 </head>
 <body style="background-image: linear-gradient(0deg, rgb(222 187 116), rgb(0 123 255 / 50%))">
-    <nav class="navbar navbar-light navbar-expand-lg navbar-static-top" style="background-color: #064482">
-        <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand text-white font-weight-bold" title="Mahant Inventory">MI</a>
+    <nav class="navbar navbar-light navbar-expand-lg" style="background-color: #064482">
+        <a asp-area="" asp-controller="Product" asp-action="Index" class="navbar-brand text-white font-weight-bold" title="Mahant Inventory">MI</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,22 +28,9 @@
         @RenderBody()
     </div>
 
-    <environment names="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.6.0/bootstrap.bundle.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/moment/moment.min.js" asp-append-version="true"></script>
     <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
@@ -59,7 +38,7 @@
         var baseUrl = '@Url.Content("~/")';
     </script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
-    <script src="https://unpkg.com/@@ag-grid-enterprise/all-modules@26.2.0/dist/ag-grid-enterprise.min.js">
-    </script>
+    <script src="~/lib/aggrid/ag-grid-enterprise.min.js"></script>
+
 </body>
 </html>
