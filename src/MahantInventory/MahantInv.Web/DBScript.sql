@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Wed Dec 22 22:50:39 2021
+-- File generated with SQLiteStudio v3.3.3 on Tue Dec 28 09:25:54 2021
 --
 -- Text encoding used: System
 --
@@ -195,6 +195,17 @@ CREATE TABLE AspNetUserTokens (
 );
 
 
+-- Table: Buyers
+DROP TABLE IF EXISTS Buyers;
+
+CREATE TABLE Buyers (
+    Id      INTEGER       CONSTRAINT PK_Buyers_Id PRIMARY KEY ASC AUTOINCREMENT
+                          NOT NULL,
+    Name    VARCHAR (255) NOT NULL,
+    Contact VARCHAR (15) 
+);
+
+
 -- Table: Orders
 DROP TABLE IF EXISTS Orders;
 
@@ -206,8 +217,7 @@ CREATE TABLE Orders (
     RefNo            VARCHAR (50)    NOT NULL,
     StatusId         VARCHAR (50)    NOT NULL,
     PaymentTypeId    VARCHAR (20)    NOT NULL,
-    PayerId          INTEGER         NOT NULL,
-    PaidAmount       NUMERIC (10, 2),
+    PaidAmount       NUMERIC (10, 2) CONSTRAINT Defult_Orders_PaidAmount DEFAULT (0.0),
     OrderDate        DATE            NOT NULL,
     ReceivedDate     DATE,
     Remark           TEXT (900),
@@ -228,11 +238,6 @@ CREATE TABLE Orders (
     )
     REFERENCES OrderStatusTypes (Id) ON UPDATE NO ACTION
                                      ON DELETE NO ACTION,
-    CONSTRAINT FK_Orders_PayerId FOREIGN KEY (
-        PayerId
-    )
-    REFERENCES Payers (Id) ON UPDATE NO ACTION
-                           ON DELETE NO ACTION,
     CONSTRAINT FK_Orders_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )
@@ -283,14 +288,30 @@ INSERT INTO OrderStatusTypes (
                              );
 
 
+-- Table: OrderTransactions
+DROP TABLE IF EXISTS OrderTransactions;
+
+CREATE TABLE OrderTransactions (
+    Id            INTEGER         CONSTRAINT PK_OrderTransactions_Id PRIMARY KEY ASC AUTOINCREMENT
+                                  NOT NULL,
+    OrderId       INTEGER         CONSTRAINT FK_OrderTransactions_OrderId_Orders_Id REFERENCES Orders (Id) MATCH [FULL]
+                                  NOT NULL,
+    PayerId       INTEGER         CONSTRAINT FK_OrderTransactions_PayerId_Payers_Id REFERENCES Payers (Id) MATCH [FULL]
+                                  NOT NULL,
+    PaymentTypeId VARCHAR (20)    CONSTRAINT FK_OrderTransactions_PaymentTypeId_PaymentTypes_Id REFERENCES PaymentTypes (Id) MATCH [FULL]
+                                  NOT NULL,
+    Amount        NUMERIC (10, 2) NOT NULL
+);
+
+
 -- Table: Payers
 DROP TABLE IF EXISTS Payers;
 
 CREATE TABLE Payers (
     Id               INTEGER       NOT NULL,
     Name             VARCHAR (256) NOT NULL,
-	PayerType        VARCHAR (50)  NOT NULL,
-    PrimaryContact   VARCHAR (15)  NOT NULL,
+    PayerType        VARCHAR (50)  NOT NULL,
+    PrimaryContact   VARCHAR (15),
     SecondaryContact VARCHAR (15),
     Line1            TEXT (255),
     Line2            TEXT (255),
@@ -298,6 +319,7 @@ CREATE TABLE Payers (
     District         TEXT (128),
     State            TEXT (128),
     Country          TEXT (128),
+    Type             VARCHAR (7)   NOT NULL,
     LastModifiedById VARCHAR (450) NOT NULL,
     ModifiedAt       DATETIME      NOT NULL,
     CONSTRAINT FK_Payers_LastModifiedById FOREIGN KEY (
@@ -385,7 +407,6 @@ CREATE TABLE ProductInventory (
 );
 
 
-
 -- Table: ProductInventoryHistory
 DROP TABLE IF EXISTS ProductInventoryHistory;
 
@@ -410,6 +431,7 @@ CREATE TABLE ProductInventoryHistory (
     REFERENCES AspNetUsers (Id) ON DELETE NO ACTION
                                 ON UPDATE NO ACTION
 );
+
 
 -- Table: Products
 DROP TABLE IF EXISTS Products;
@@ -458,6 +480,7 @@ CREATE TABLE ProductUsages (
     RefNo            VARCHAR (50)    NOT NULL,
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,
+    BuyerId          INTEGER         CONSTRAINT FK_ProductUsages_BuyerId_Buyers_Id REFERENCES Buyers (Id),
     CONSTRAINT FK_ProductUsages_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )
@@ -485,7 +508,6 @@ CREATE TABLE Storages (
         Id
     )
 );
-
 
 
 -- Table: UnitTypes
