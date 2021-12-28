@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.SimpleAggregates
 {
-    [Table("Payers")]
-    public class Payer:BaseEntity,IAggregateRoot
+    [Table("Parties")]
+    public class Party:BaseEntity,IAggregateRoot
     {
-        [Required,Display(Name ="Payer Name")]
+        [Required,Display(Name ="Party Name")]
         public string Name { get; set; }
-        [Required,Display(Name ="Payer Type")]
-        public string PayerType { get; set; }
+        [Required,Display(Name ="Party Type")]
+        public string Type { get; set; }
+        [Required,Display(Name ="Category")]
+        public int CategoryId { get; set; }
         [Required,Display(Name = "Primary Contact")]
         public string PrimaryContact { get; set; }
         [Display(Name = "Secondary Contact")]

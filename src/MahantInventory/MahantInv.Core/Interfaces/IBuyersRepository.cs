@@ -1,5 +1,4 @@
 ﻿using MahantInv.Core.SimpleAggregates;
-using MahantInv.Core.ViewModels;
 using MahantInv.SharedKernel.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -9,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.Interfaces
 {
-    public interface IPayersRepository : IAsyncRepository<Payer>
+    public interface IBuyersRepository : IAsyncRepository<Buyer>
     {
-        Task<IEnumerable<PayerVM>> GetPayers();
-        Task<PayerVM> GetPayerById(int payerId);
     }
 }

@@ -84,7 +84,9 @@ namespace MahantInv.Infrastructure
                 .InstancePerLifetimeScope();
             builder.RegisterType<ProductInventoryRepository>().As<IPayersReposiroty>()
                 .InstancePerLifetimeScope();
-            builder.RegisterType<PayersRepository>().As<IPayersRepository>()
+            builder.RegisterType<PartiesRepository>().As<IPartiesRepository>()
+                .InstancePerLifetimeScope();
+            builder.RegisterType<BuyersRepository>().As<IBuyersRepository>()
                 .InstancePerLifetimeScope();
         }
 

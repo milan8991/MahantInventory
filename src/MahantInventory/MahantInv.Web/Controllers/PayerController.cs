@@ -15,7 +15,7 @@ namespace MahantInv.Web.Controllers
 
         public IActionResult Index()
         {
-            System.Type type = typeof(Meta.PayerTypes);
+            System.Type type = typeof(Meta.PartyTypes);
             var props = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
             ViewBag.PayerTypes = new SelectList(props.Select(p => new SelectListItem() { Value = p.Name, Text = p.Name }).OrderBy(o => o.Value), "Value", "Text");
             return View();
