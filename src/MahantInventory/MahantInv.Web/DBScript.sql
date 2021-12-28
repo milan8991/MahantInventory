@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Tue Dec 28 09:25:54 2021
+-- File generated with SQLiteStudio v3.3.3 on Tue Dec 28 10:32:14 2021
 --
 -- Text encoding used: System
 --
@@ -296,7 +296,7 @@ CREATE TABLE OrderTransactions (
                                   NOT NULL,
     OrderId       INTEGER         CONSTRAINT FK_OrderTransactions_OrderId_Orders_Id REFERENCES Orders (Id) MATCH [FULL]
                                   NOT NULL,
-    PayerId       INTEGER         CONSTRAINT FK_OrderTransactions_PayerId_Payers_Id REFERENCES Payers (Id) MATCH [FULL]
+    PartyId       INTEGER         CONSTRAINT FK_OrderTransactions_PartyId_Parties_Id REFERENCES Parties (Id) MATCH SIMPLE
                                   NOT NULL,
     PaymentTypeId VARCHAR (20)    CONSTRAINT FK_OrderTransactions_PaymentTypeId_PaymentTypes_Id REFERENCES PaymentTypes (Id) MATCH [FULL]
                                   NOT NULL,
@@ -304,13 +304,14 @@ CREATE TABLE OrderTransactions (
 );
 
 
--- Table: Payers
-DROP TABLE IF EXISTS Payers;
+-- Table: Parties
+DROP TABLE IF EXISTS Parties;
 
-CREATE TABLE Payers (
+CREATE TABLE Parties (
     Id               INTEGER       NOT NULL,
     Name             VARCHAR (256) NOT NULL,
-    PayerType        VARCHAR (50)  NOT NULL,
+    CategoryId       INTEGER       NOT NULL
+                                   CONSTRAINT FK_Parties_CategoryId_PartyCategories_Id REFERENCES PartyCategories (Id),
     PrimaryContact   VARCHAR (15),
     SecondaryContact VARCHAR (15),
     Line1            TEXT (255),
@@ -322,14 +323,25 @@ CREATE TABLE Payers (
     Type             VARCHAR (7)   NOT NULL,
     LastModifiedById VARCHAR (450) NOT NULL,
     ModifiedAt       DATETIME      NOT NULL,
-    CONSTRAINT FK_Payers_LastModifiedById FOREIGN KEY (
+    CONSTRAINT FK_Parties_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )
-    REFERENCES AspNetUsers (Id) ON UPDATE NO ACTION
-                                ON DELETE NO ACTION,
-    CONSTRAINT PK_Payers_Id PRIMARY KEY (
+    REFERENCES AspNetUsers (Id) ON DELETE NO ACTION
+                                ON UPDATE NO ACTION,
+    CONSTRAINT PK_Partiers_Id PRIMARY KEY (
         Id
     )
+);
+
+
+-- Table: PartyCategories
+DROP TABLE IF EXISTS PartyCategories;
+
+CREATE TABLE PartyCategories (
+    Id   INTEGER      CONSTRAINT PK_PartyCategories_Id PRIMARY KEY ASC AUTOINCREMENT
+                      NOT NULL,
+    Name VARCHAR (50) NOT NULL
+                      CONSTRAINT UNQ_PartyCategories_Name UNIQUE
 );
 
 

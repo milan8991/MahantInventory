@@ -1,16 +1,16 @@
-﻿@model MahantInv.Core.SimpleAggregates.Payer
+﻿@model MahantInv.Core.SimpleAggregates.Party
 
 <div id="AddEditPayer" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add/Edit Payer</h5>
+                <h5 class="modal-title">Add/Edit Party</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div id="PayerErrorSection" class="text-danger"></div>
+                <div id="PartyErrorSection" class="text-danger"></div>
                 <input type="hidden" asp-for="@Model.Id" />
                 <div class="row">
                     <div class="col-md-6">
@@ -21,8 +21,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="@Model.PayerType"></label>
-                            <select id="PayerType" class="form-control form-control-sm" placeholder="Storage">
+                            <label asp-for="@Model.Type"></label>
+                            <select asp-for="@Model.Type" class="form-control form-control-sm" placeholder="Storage">
                                 <option value="">Select Payer Type</option>
                                 @foreach (var item in (ViewBag.PayerTypes as SelectList))
                                 {
@@ -87,7 +87,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="Common.SavePayer(this)" data-target="AddEditPayer">Save</button>
+                    <button type="button" class="btn btn-primary" onclick="Common.SaveParty(this)" data-target="AddEditParty">Save</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>

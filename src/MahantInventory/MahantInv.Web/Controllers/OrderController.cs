@@ -12,10 +12,10 @@ namespace MahantInv.Web.Controllers
     public class OrderController : BaseController
     {
         private readonly ILogger<OrderController> _logger;
-        private readonly IAsyncRepository<Payer> _payerRespository;
+        private readonly IAsyncRepository<Party> _payerRespository;
         private readonly IAsyncRepository<PaymentType> _paymentTypeRespository;
         private readonly IProductsRepository _productsRepository;
-        public OrderController(IMapper mapper, ILogger<OrderController> logger, IProductsRepository productsRepository, IAsyncRepository<PaymentType> paymentTypeRespository, IAsyncRepository<Payer> payerRespository) : base(mapper)
+        public OrderController(IMapper mapper, ILogger<OrderController> logger, IProductsRepository productsRepository, IAsyncRepository<PaymentType> paymentTypeRespository, IAsyncRepository<Party> payerRespository) : base(mapper)
         {
             _logger = logger;
             _payerRespository = payerRespository;

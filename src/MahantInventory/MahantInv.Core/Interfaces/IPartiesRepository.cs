@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.Interfaces
 {
-    public interface IPayersRepository : IAsyncRepository<Payer>
+    public interface IPartiesRepository : IAsyncRepository<Party>
     {
-        Task<IEnumerable<PayerVM>> GetPayers();
-        Task<PayerVM> GetPayerById(int payerId);
+        Task<IEnumerable<PartyVM>> GetParties();
+        Task<PartyVM> GetPartyById(int partyId);
     }
 }

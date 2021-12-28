@@ -44,7 +44,7 @@
                             <label asp-for="@Model.PayerId"></label>
                             <select id="PayerId" class="form-control form-control-sm select2" mu style="width:100%" placeholder="Payer">
                                 <option value="">Select Payer</option>
-                                @foreach (var item in (ViewBag.Payers as ICollection<MahantInv.Core.SimpleAggregates.Payer>))
+                                @foreach (var item in (ViewBag.Payers as ICollection<MahantInv.Core.SimpleAggregates.Party>))
                                 {
                                     <option value="@item.Id">@item.Name</option>
                                 }

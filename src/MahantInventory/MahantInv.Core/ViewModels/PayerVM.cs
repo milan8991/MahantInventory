@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.ViewModels
 {
-    public class PayerVM : Payer
+    public class PartyVM : Party
     {
         public string LastModifiedBy { get; set; }
         public string Address

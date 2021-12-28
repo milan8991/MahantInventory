@@ -17,8 +17,8 @@ namespace MahantInv.Web.Api
     public class PayerApiController : BaseApiController
     {
         private readonly ILogger<PayerApiController> _logger;
-        private readonly IPayersRepository _payersRepository;
-        public PayerApiController(IMapper mapper, IPayersRepository payersRepository, ILogger<PayerApiController> logger) : base(mapper)
+        private readonly IPartiesRepository _payersRepository;
+        public PayerApiController(IMapper mapper, IPartiesRepository payersRepository, ILogger<PayerApiController> logger) : base(mapper)
         {
             _payersRepository = payersRepository;
             _logger = logger;
@@ -28,7 +28,7 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                IEnumerable<PayerVM> data = await _payersRepository.GetPayers();
+                IEnumerable<PartyVM> data = await _payersRepository.GetParties();
                 return Ok(data);
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace MahantInv.Web.Api
         }
 
         [HttpPost("payer/save")]
-        public async Task<object> SavePayer([FromBody] Payer payer)
+        public async Task<object> SavePayer([FromBody] Party payer)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace MahantInv.Web.Api
                 {
                     await _payersRepository.UpdateAsync(payer);
                 }
-                PayerVM payerVM = await _payersRepository.GetPayerById(payer.Id);
+                PartyVM payerVM = await _payersRepository.GetPartyById(payer.Id);
                 return Ok(new { success = true, data = payerVM });
             }
             catch (Exception e)
@@ -78,7 +78,7 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                Payer payer = await _payersRepository.GetByIdAsync(payerId);
+                Party payer = await _payersRepository.GetByIdAsync(payerId);
                 return Ok(payer);
             }
             catch (Exception e)
