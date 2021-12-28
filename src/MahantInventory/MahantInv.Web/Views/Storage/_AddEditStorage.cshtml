@@ -1,0 +1,30 @@
+﻿@model MahantInv.Core.SimpleAggregates.Storage
+
+<div id="AddEditStorage" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add/Edit Storage</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="StorageErrorSection" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.Id" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Name"></label>
+                            <input type="text" asp-for="@Model.Name" class="form-control form-control-sm" placeholder="Name" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="Common.SaveStorage(this)" data-target="AddEditStorage">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

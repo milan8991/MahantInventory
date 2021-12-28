@@ -13,8 +13,9 @@ namespace MahantInv.Core.SimpleAggregates
     [Table("Storages")]
     public class Storage : BaseEntity, IAggregateRoot
     {
-        [Required,Display(Name ="Storage Name")]
+        [Required, Display(Name = "Storage Name")]
         public string Name { get; set; }
         public bool Enabled { get; set; }
+
     }
 }
