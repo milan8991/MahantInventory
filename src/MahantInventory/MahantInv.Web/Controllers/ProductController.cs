@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MahantInv.Core.Interfaces;
 using MahantInv.Core.SimpleAggregates;
 using MahantInv.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -21,12 +22,13 @@ namespace MahantInv.Web.Controllers
             _unitTypeRepository = unitTypeRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromServices] IBuyersRepository _buyersRepository)
         {
             try
             {
                 ViewBag.Storages = await _storageRepository.ListAllAsync();
                 ViewBag.UnitTypes = await _unitTypeRepository.ListAllAsync();
+                ViewBag.Buyers = await _buyersRepository.ListAllAsync();
                 return View();
             }
             catch (Exception e)

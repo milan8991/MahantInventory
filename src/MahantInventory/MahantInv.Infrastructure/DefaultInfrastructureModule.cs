@@ -86,6 +86,8 @@ namespace MahantInv.Infrastructure
                 .InstancePerLifetimeScope();
             builder.RegisterType<PayersRepository>().As<IPayersRepository>()
                 .InstancePerLifetimeScope();
+            builder.RegisterType<BuyersRepository>().As<IBuyersRepository>()
+                .InstancePerLifetimeScope();
         }
 
         private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)

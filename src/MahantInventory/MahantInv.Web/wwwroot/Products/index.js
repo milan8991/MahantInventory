@@ -301,6 +301,12 @@ class Common {
             closeOnSelect: true,
             //allowClear: true
         });
+        $('#BuyersSelect').select2({
+            placeholder: 'Search Product',
+            theme: "bootstrap4",
+            closeOnSelect: true,
+            tags: true
+        });
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
