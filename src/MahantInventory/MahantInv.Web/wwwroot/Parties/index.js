@@ -126,10 +126,11 @@ var partyGridOptions = {
 
 
 class Party {
-    constructor(Id, Name, Type, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
+    constructor(Id, Name, Type, CategoryId, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
         this.Type = Common.ParseValue(Type);
+        this.CategoryId = CategoryId;
         this.PrimaryContact = Common.ParseValue(PrimaryContact);
         this.SecondaryContact = Common.ParseValue(SecondaryContact);
         this.Line1 = Common.ParseValue(Line1);
@@ -157,7 +158,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToPartyForm(new Party(0, null, null, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToPartyForm(new Party(0, null, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
             Common.GetPartyById(id);
@@ -188,6 +189,7 @@ class Common {
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
         $('#Type').val(model.Type);
+        $('#CategoryId').val(model.categoryId);
         $('#PrimaryContact').val(model.PrimaryContact);
         $('#SecondaryContact').val(model.SecondaryContact);
         $('#Line1').val(model.Line1);
@@ -207,6 +209,7 @@ class Common {
         let Id = $('#Id').val();
         let Name = $('#Name').val();
         let Type = $('#Type').val();
+        let CategoryId = $('#CategoryId').val();
         let PrimaryContact = $('#PrimaryContact').val();
         let SecondaryContact = $('#SecondaryContact').val();
         let Line1 = $('#Line1').val();
@@ -215,7 +218,7 @@ class Common {
         let District = $('#District').val();
         let State = $('#State').val();
         let Country = $('#Country').val();
-        let party = new Party(Id, Name, Type, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
+        let party = new Party(Id, Name, Type, CategoryId, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
 
         var response = await fetch(baseUrl + 'api/party/save', {
             method: 'POST',
@@ -268,7 +271,7 @@ class Common {
         }).then(response => { return response.json() })
             .then(data => {
                 $('#AddEditParty').modal('show');
-                Common.BindValuesToPartyForm(new Party(data.id, data.name, data.type, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
+                Common.BindValuesToPartyForm(new Party(data.id, data.name, data.type, data.categoryId, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
             })
             .catch(error => {
                 console.log(error);

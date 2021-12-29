@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Wed Dec 29 09:30:43 2021
+-- File generated with SQLiteStudio v3.3.3 on Wed Dec 29 10:14:41 2021
 --
 -- Text encoding used: System
 --
@@ -343,6 +343,60 @@ CREATE TABLE PartyCategories (
     Name VARCHAR (50) NOT NULL
                       CONSTRAINT UNQ_PartyCategories_Name UNIQUE
 );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                1,
+                                'Mandir'
+                            );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                2,
+                                'Merchant'
+                            );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                3,
+                                'HariBhakt'
+                            );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                4,
+                                'Trust'
+                            );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                5,
+                                'Saint'
+                            );
+
+INSERT INTO PartyCategories (
+                                Id,
+                                Name
+                            )
+                            VALUES (
+                                6,
+                                'Unknown'
+                            );
 
 
 -- Table: PaymentTypes

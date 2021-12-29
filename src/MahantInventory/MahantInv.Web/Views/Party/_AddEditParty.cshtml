@@ -13,18 +13,32 @@
                 <div id="PartyErrorSection" class="text-danger"></div>
                 <input type="hidden" asp-for="@Model.Id" />
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
                             <label asp-for="@Model.Name"></label>
                             <input type="text" asp-for="@Model.Name" class="form-control form-control-sm" placeholder="Name" />
                         </div>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.CategoryId"></label>
+                            <select asp-for="@Model.CategoryId" class="form-control form-control-sm" placeholder="Category">
+                                <option value="">Select Category</option>
+                                @foreach (var item in (ViewBag.Categories as IEnumerable<MahantInv.Core.SimpleAggregates.PartyCategory>))
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.Type"></label>
-                            <select asp-for="@Model.Type" class="form-control form-control-sm" placeholder="Storage">
-                                <option value="">Select Payer Type</option>
-                                @foreach (var item in (ViewBag.PayerTypes as SelectList))
+                            <select asp-for="@Model.Type" class="form-control form-control-sm" placeholder="Type">
+                                <option value="">Select Party Type</option>
+                                @foreach (var item in (ViewBag.PartyTypes as SelectList))
                                 {
                                     <option value="@item.Value">@item.Text</option>
                                 }
