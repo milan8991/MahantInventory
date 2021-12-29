@@ -10,6 +10,7 @@ namespace MahantInv.Core.ViewModels
     public class PartyVM : Party
     {
         public string LastModifiedBy { get; set; }
+        public string Category { get; set; }
         public string Address
         {
             get
