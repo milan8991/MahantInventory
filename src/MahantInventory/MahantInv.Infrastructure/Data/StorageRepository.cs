@@ -16,17 +16,14 @@ namespace MahantInv.Infrastructure.Data
         {
         }
 
-        public Task<StorageVM> GetStorageById(int StorageId)
+        public Task<StorageVM> GetStorageById(int storageId)
         {
-            return db.QuerySingleAsync<StorageVM>(@"select s.*,u.UserName LastModifiedBy from Storages s 
-                    inner join AspNetUsers u on s.LastModifiedById = u.Id 
-                    where s.Id= @payerId", new { StorageId }, transaction: t);
+            return db.QuerySingleAsync<StorageVM>(@"select * from Storages Id = @storageId", new { storageId }, transaction: t);
         }
 
         public Task<IEnumerable<StorageVM>> GetStorages()
         {
-            return db.QueryAsync<StorageVM>(@"select s.*,u.UserName LastModifiedBy from Storages s 
-                    inner join AspNetUsers u on s.LastModifiedById = u.Id", transaction: t);
+            return db.QueryAsync<StorageVM>(@"select * from Storages", transaction: t);
         }
     }
 }

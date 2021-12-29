@@ -12,6 +12,6 @@ namespace MahantInv.Core.Interfaces
     public interface IStorageRepository : IAsyncRepository<Storage>
     {
         Task<IEnumerable<StorageVM>> GetStorages();
-        Task<StorageVM> GetStorageById(int StorageId);
+        Task<StorageVM> GetStorageById(int storageId);
     }
 }

@@ -19,7 +19,10 @@ var storageGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
-            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
+            headerName: 'Status', field: 'enabled', filter: 'agSetColumnFilter', headerTooltip: 'Status'
+        },
+        {
+            headerName: '', field: 'id', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
         }
     ],
@@ -132,8 +135,9 @@ class Common {
         fetch(baseUrl + 'api/storages')
             .then((response) => response.json())
             .then(data => {
+                console.log('data:', data);
                 storageGridOptions.api.setRowData(data);
-                Common.InitSelect2();
+                //Common.InitSelect2();
             })
             .catch(error => {
                 storageGridOptions.api.setRowData([])
@@ -151,7 +155,7 @@ class Common {
     }
 
     static init() {
-        $('#storagesdata').height(Common.calcDataTableHeight(27));
+        $('#storagedata').height(Common.calcDataTableHeight(27));
     }
 
     static async SaveStorage(mthis) {
