@@ -133,7 +133,7 @@ var productGridOptions = {
         '<span class="ag-overlay-loading-center">Please wait while your products are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Products will be appear here.</b></h5>
+                <h5 class="text-center"><b>Product(s) will appear here.</b></h5>
             </div>`
 };
 
@@ -173,9 +173,11 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
+            $('#ModalTitle').html('Add Product');
             Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
         }
         else {
+            $('#ModalTitle').html('Edit Product');
             Common.GetProductById(id);
         }
     }
@@ -302,7 +304,7 @@ class Common {
             //allowClear: true
         });
         $('#BuyersSelect').select2({
-            placeholder: 'Search Product',
+            placeholder: 'Search Buyer',
             theme: "bootstrap4",
             closeOnSelect: true,
             tags: true
