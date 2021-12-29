@@ -14,21 +14,21 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Web.Api
 {
-    public class PayerApiController : BaseApiController
+    public class PartyApiController : BaseApiController
     {
-        private readonly ILogger<PayerApiController> _logger;
-        private readonly IPartiesRepository _payersRepository;
-        public PayerApiController(IMapper mapper, IPartiesRepository payersRepository, ILogger<PayerApiController> logger) : base(mapper)
+        private readonly ILogger<PartyApiController> _logger;
+        private readonly IPartiesRepository _partiesRepository;
+        public PartyApiController(IMapper mapper, IPartiesRepository partiesRepository, ILogger<PartyApiController> logger) : base(mapper)
         {
-            _payersRepository = payersRepository;
+            _partiesRepository = partiesRepository;
             _logger = logger;
         }
-        [HttpGet("payers")]
-        public async Task<object> GetAllPayers()
+        [HttpGet("parties")]
+        public async Task<object> GetAllParties()
         {
             try
             {
-                IEnumerable<PartyVM> data = await _payersRepository.GetParties();
+                IEnumerable<PartyVM> data = await _partiesRepository.GetParties();
                 return Ok(data);
             }
             catch (Exception e)
@@ -39,8 +39,8 @@ namespace MahantInv.Web.Api
             }
         }
 
-        [HttpPost("payer/save")]
-        public async Task<object> SavePayer([FromBody] Party payer)
+        [HttpPost("party/save")]
+        public async Task<object> SavePayer([FromBody] Party party)
         {
             try
             {
@@ -52,17 +52,17 @@ namespace MahantInv.Web.Api
                     return BadRequest(errors);
                 }
 
-                payer.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                payer.ModifiedAt = DateTime.UtcNow;
-                if (payer.Id == 0)
+                party.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                party.ModifiedAt = DateTime.UtcNow;
+                if (party.Id == 0)
                 {
-                    await _payersRepository.AddAsync(payer);
+                    await _partiesRepository.AddAsync(party);
                 }
                 else
                 {
-                    await _payersRepository.UpdateAsync(payer);
+                    await _partiesRepository.UpdateAsync(party);
                 }
-                PartyVM payerVM = await _payersRepository.GetPartyById(payer.Id);
+                PartyVM payerVM = await _partiesRepository.GetPartyById(party.Id);
                 return Ok(new { success = true, data = payerVM });
             }
             catch (Exception e)
@@ -73,12 +73,12 @@ namespace MahantInv.Web.Api
             }
         }
 
-        [HttpGet("payer/byid/{payerId}")]
-        public async Task<object> PayerGetById(int payerId)
+        [HttpGet("party/byid/{partyId}")]
+        public async Task<object> PartyGetById(int partyId)
         {
             try
             {
-                Party payer = await _payersRepository.GetByIdAsync(payerId);
+                Party payer = await _partiesRepository.GetByIdAsync(partyId);
                 return Ok(payer);
             }
             catch (Exception e)

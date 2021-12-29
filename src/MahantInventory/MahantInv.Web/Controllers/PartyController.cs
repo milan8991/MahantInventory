@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace MahantInv.Web.Controllers
 {
-    public class PayerController : BaseController
+    public class PartyController : BaseController
     {
-        public PayerController(IMapper mapper) : base(mapper)
+        public PartyController(IMapper mapper) : base(mapper)
         {
         }
 

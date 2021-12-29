@@ -11,7 +11,7 @@ ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
 
-var payerGridOptions = {
+var partyGridOptions = {
 
     // define grid columns
     columnDefs: [
@@ -19,7 +19,7 @@ var payerGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
-            headerName: 'Payer Type', field: 'payerType', filter: 'agSetColumnFilter', headerTooltip: 'Payer Type'
+            headerName: 'Payer Type', field: 'type', filter: 'agSetColumnFilter', headerTooltip: 'Payer Type'
         },
         {
             headerName: 'Primary Contact', field: 'primaryContact', filter: 'agTextColumnFilter', headerTooltip: 'Primary Contact'
@@ -108,28 +108,28 @@ var payerGridOptions = {
         }
     },
     onGridReady: function (params) {
-        payerGridOptions.api.sizeColumnsToFit();
+        partyGridOptions.api.sizeColumnsToFit();
         //const allColumnIds = [];
-        //payerGridOptions.columnApi.getAllColumns().forEach((column) => {
+        //partyGridOptions.columnApi.getAllColumns().forEach((column) => {
         //    if (column.colId != 'id')
         //        allColumnIds.push(column.colId);
         //});
-        //payerGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
+        //partyGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your payers are loading</span>',
+        '<span class="ag-overlay-loading-center">Please wait while your perties are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Payers will be appear here.</b></h5>
+                <h5 class="text-center"><b>Parties will be appear here.</b></h5>
             </div>`
 };
 
 
-class Payer {
-    constructor(Id, Name, PayerType, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
+class Party {
+    constructor(Id, Name, Type, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
-        this.PayerType = Common.ParseValue(PayerType);
+        this.Type = Common.ParseValue(Type);
         this.PrimaryContact = Common.ParseValue(PrimaryContact);
         this.SecondaryContact = Common.ParseValue(SecondaryContact);
         this.Line1 = Common.ParseValue(Line1);
@@ -157,25 +157,25 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToPayerForm(new Payer(0, null, null, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToPartyForm(new Party(0, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
-            Common.GetPayerById(id);
+            Common.GetPartyById(id);
         }
     }
 
     static ApplyAGGrid() {
 
-        var gridDiv = document.querySelector('#payersdata');
-        new agGrid.Grid(gridDiv, payerGridOptions);
-        fetch(baseUrl + 'api/payers')
+        var gridDiv = document.querySelector('#partiesdata');
+        new agGrid.Grid(gridDiv, partyGridOptions);
+        fetch(baseUrl + 'api/parties')
             .then((response) => response.json())
             .then(data => {
-                payerGridOptions.api.setRowData(data);
+                partyGridOptions.api.setRowData(data);
                 Common.InitSelect2();
             })
             .catch(error => {
-                payerGridOptions.api.setRowData([])
+                partyGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
                 //});
@@ -183,11 +183,11 @@ class Common {
 
     }
 
-    static BindValuesToPayerForm(model) {
-        $('#PayerErrorSection').empty();
+    static BindValuesToPartyForm(model) {
+        $('#PartyErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
-        $('#PayerType').val(model.PayerType);
+        $('#Type').val(model.Type);
         $('#PrimaryContact').val(model.PrimaryContact);
         $('#SecondaryContact').val(model.SecondaryContact);
         $('#Line1').val(model.Line1);
@@ -199,14 +199,14 @@ class Common {
     }
 
     static init() {
-        $('#payersdata').height(Common.calcDataTableHeight(27));
+        $('#partiesdata').height(Common.calcDataTableHeight(27));
     }
 
-    static async SavePayer(mthis) {
-        $('#PayerErrorSection').empty();
+    static async SaveParty(mthis) {
+        $('#PartyErrorSection').empty();
         let Id = $('#Id').val();
         let Name = $('#Name').val();
-        let PayerType = $('#PayerType').val();
+        let Type = $('#Type').val();
         let PrimaryContact = $('#PrimaryContact').val();
         let SecondaryContact = $('#SecondaryContact').val();
         let Line1 = $('#Line1').val();
@@ -215,11 +215,11 @@ class Common {
         let District = $('#District').val();
         let State = $('#State').val();
         let Country = $('#Country').val();
-        let payer = new Payer(Id, Name, PayerType, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
+        let party = new Party(Id, Name, Type, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
 
-        var response = await fetch(baseUrl + 'api/payer/save', {
+        var response = await fetch(baseUrl + 'api/party/save', {
             method: 'POST',
-            body: JSON.stringify(payer),
+            body: JSON.stringify(party),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -232,22 +232,22 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#PayerErrorSection').html(errorHtml);
+                $('#PartyErrorSection').html(errorHtml);
                 return;
             }
         }
         if (response.success) {
-            toastr.success("Payer Saved", '', { positionClass: 'toast-top-center' });
+            toastr.success("Party Saved", '', { positionClass: 'toast-top-center' });
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
             if (Id == 0) {
-                payerGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+                partyGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
             }
             else {
-                payerGridOptions.api.applyTransaction({ update: [response.data] });
+                partyGridOptions.api.applyTransaction({ update: [response.data] });
             }
-            let rowNode = payerGridOptions.api.getRowNode(response.data.id);
-            payerGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            let rowNode = partyGridOptions.api.getRowNode(response.data.id);
+            partyGridOptions.api.flashCells({ rowNodes: [rowNode] });
             return;
         }
         if (response.success == false) {
@@ -255,11 +255,11 @@ class Common {
             $.each(response.errors, function (index, element) {
                 errorHtml += element + '<br/>';
             });
-            $('#PayerErrorSection').html(errorHtml);
+            $('#PartyErrorSection').html(errorHtml);
         }
     }
-    static async GetPayerById(id) {
-        await fetch(baseUrl + 'api/payer/byid/' + id, {
+    static async GetPartyById(id) {
+        await fetch(baseUrl + 'api/party/byid/' + id, {
             method: 'GET',
             headers: {
                 //'Accept': 'application/json',
@@ -267,8 +267,8 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                $('#AddEditPayer').modal('show');
-                Common.BindValuesToPayerForm(new Payer(data.id, data.name, data.payerType, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
+                $('#AddEditParty').modal('show');
+                Common.BindValuesToPartyForm(new Party(data.id, data.name, data.type, data.primaryContact, data.secondaryContact, data.line1, data.line2, data.taluk, data.district, data.state, data.country));
             })
             .catch(error => {
                 console.log(error);
@@ -285,7 +285,7 @@ class Common {
             placeholder: 'Search Counry',
             data: Common.BindSelectData(),
             theme: "bootstrap4",
-            dropdownParent: $("#AddEditPayer")
+            dropdownParent: $("#AddEditParty")
         });
     }
 
