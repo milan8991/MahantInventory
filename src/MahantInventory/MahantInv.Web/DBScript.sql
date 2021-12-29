@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Wed Dec 29 10:14:41 2021
+-- File generated with SQLiteStudio v3.3.3 on Wed Dec 29 21:37:05 2021
 --
 -- Text encoding used: System
 --
@@ -216,18 +216,11 @@ CREATE TABLE Orders (
     ReceivedQuantity NUMERIC (10, 2),
     RefNo            VARCHAR (50)    NOT NULL,
     StatusId         VARCHAR (50)    NOT NULL,
-    PaymentTypeId    VARCHAR (20)    NOT NULL,
-    PaidAmount       NUMERIC (10, 2) CONSTRAINT Defult_Orders_PaidAmount DEFAULT (0.0),
     OrderDate        DATE            NOT NULL,
     ReceivedDate     DATE,
     Remark           TEXT (900),
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,
-    CONSTRAINT FK_Orders_PaymentTypeId FOREIGN KEY (
-        PaymentTypeId
-    )
-    REFERENCES PaymentTypes (Id) ON UPDATE NO ACTION
-                                 ON DELETE NO ACTION,
     CONSTRAINT FK_Orders_ProductId FOREIGN KEY (
         ProductId
     )

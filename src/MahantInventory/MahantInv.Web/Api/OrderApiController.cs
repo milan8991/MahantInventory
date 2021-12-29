@@ -73,9 +73,9 @@ namespace MahantInv.Web.Api
                     Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
                     oldOrder.ProductId = order.ProductId;
                     oldOrder.Quantity = order.Quantity;
-                    oldOrder.PaymentTypeId = order.PaymentTypeId;
-                    oldOrder.PayerId = order.PayerId;
-                    oldOrder.PaidAmount = order.PaidAmount;
+                    //oldOrder.PaymentTypeId = order.PaymentTypeId;
+                    //oldOrder.PayerId = order.PayerId;
+                    //oldOrder.PaidAmount = order.PaidAmount;
                     oldOrder.OrderDate = order.OrderDate;
                     oldOrder.Remark = order.Remark;
                     oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -147,9 +147,9 @@ namespace MahantInv.Web.Api
                     return BadRequest(new { success = false, errors = new[] { "Order not in Ordered state." } });
                 }
                 oldOrder.Quantity = order.Quantity;
-                oldOrder.PaymentTypeId = order.PaymentTypeId;
-                oldOrder.PayerId = order.PayerId;
-                oldOrder.PaidAmount = order.PaidAmount;
+                //oldOrder.PaymentTypeId = order.PaymentTypeId;
+                //oldOrder.PayerId = order.PayerId;
+                //oldOrder.PaidAmount = order.PaidAmount;
                 oldOrder.OrderDate = order.OrderDate;
                 oldOrder.Remark = order.Remark;
                 oldOrder.StatusId = Meta.OrderStatusTypes.Received;

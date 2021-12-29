@@ -1,0 +1,116 @@
+﻿@model MahantInv.Core.SimpleAggregates.Order
+
+<div id="PlaceOrder" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Place Order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="OrderErrorSection" class="text-danger"></div>
+                <input type="hidden" id="Id" />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for="@Model.ProductId"></label>
+                            <select asp-for="@Model.ProductId" class="form-control form-control-sm select2" style="width:100%" placeholder="Payment Type">
+                                <option value="">Select Payment Type</option>
+                                @foreach (var item in (ViewBag.Products as ICollection<MahantInv.Core.ViewModels.ProductVM>))
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.Quantity"></label>
+                            <input type="number" asp-for="@Model.Quantity" class="form-control form-control-sm" placeholder="Quantity" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.OrderDate"></label>
+                            <input type="date" asp-for="@Model.OrderDate" class="form-control form-control-sm" placeholder="Order Date" />
+                        </div>
+                    </div>
+                </div>
+                <div id="OrderTransactionSection">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Payer</th>
+                                    <th scope="col">Payment Type</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <select id="PartyId" class="form-control form-control-sm select2" style="width:100%" placeholder="Party">
+                                            <option value="">Select Payer</option>
+                                            @foreach (var item in (ViewBag.Parties as ICollection<MahantInv.Core.SimpleAggregates.Party>))
+                                            {
+                                                <option value="@item.Id">@item.Name</option>
+                                            }
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <select id="PaymentTypeId" class="form-control form-control-sm select2" style="width:100%" placeholder="Payment Type">
+                                            <option value="">Select Payment Type</option>
+                                            @foreach (var item in (ViewBag.PaymentTypes as ICollection<MahantInv.Core.SimpleAggregates.PaymentType>))
+                                            {
+                                                <option value="@item.Id">@item.Title</option>
+                                            }
+                                        </select>
+                                    </th>
+                                    <th>
+                                        <input type="number" id="PaidAmount" class="form-control" placeholder="Paid Amount" />
+                                    </th>
+                                    <th>
+                                        <button type="button" class="btn btn-outline-success" onclick="Common.AddOrderTransaction(this)">Add</button>
+                                        <button type="button" class="btn btn-outline-danger" onclick="Common.ClearOrderTransaction(this)">Clear</button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="OrderTransactionBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReceivedQuantity"></label>
+                            <input type="number" asp-for="@Model.ReceivedQuantity" class="form-control form-control-sm" placeholder="Received Quantity" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="@Model.ReceivedDate"></label>
+                            <input type="date" asp-for="@Model.ReceivedDate" class="form-control form-control-sm" placeholder="Received Date" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="@Model.Remark"></label>
+                    <textarea asp-for="@Model.Remark" rows="2" class="form-control form-control-sm" placeholder="Remark"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12 text-center">
+                    <button type="button" class="btn btn-outline-danger form-control col-md-3" onclick="Common.CancelOrder(this)" data-target="PlaceOrder">Cancel Order</button>
+                    <button type="button" class="btn btn-outline-success form-control col-md-3" onclick="Common.SaveOrder(this)" data-target="PlaceOrder">Save Order</button>
+                    <button type="button" class="btn btn-outline-warning form-control col-md-3" onclick="Common.ReceiveOrder(this)" data-target="PlaceOrder">Receive Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

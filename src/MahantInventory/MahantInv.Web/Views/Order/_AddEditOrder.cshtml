@@ -4,7 +4,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add/Edit Order</h5>
+                <h5 class="modal-title">Place Order</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -26,7 +26,7 @@
                     <label asp-for="@Model.Quantity"></label>
                     <input type="number" asp-for="@Model.Quantity" class="form-control form-control-sm" placeholder="Quantity" />
                 </div>
-                <div class="row">
+               @* <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.PaymentTypeId"></label>
@@ -51,13 +51,13 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                       @* <div class="form-group">
                             <label asp-for="@Model.PaidAmount"></label>
                             <input type="number" asp-for="@Model.PaidAmount" class="form-control form-control-sm" placeholder="Paid Amount" />
-                        </div>
+                        </div>*@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">

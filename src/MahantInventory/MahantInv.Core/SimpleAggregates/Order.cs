@@ -22,12 +22,6 @@ namespace MahantInv.Core.SimpleAggregates
         public string RefNo { get; set; }
         [Display(Name = "Status")]
         public string StatusId { get; set; }
-        [Required, Display(Name = "Payment Type")]
-        public string PaymentTypeId { get; set; }
-        [Required, Display(Name = "Payer")]
-        public int? PayerId { get; set; }
-        [Required, Display(Name = "Paid Amount")]
-        public decimal? PaidAmount { get; set; }
         [Required, Display(Name = "Order Date")]
         public DateTime? OrderDate { get; set; }
         [Display(Name = "Received Date")]

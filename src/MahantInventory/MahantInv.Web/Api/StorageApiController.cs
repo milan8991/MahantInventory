@@ -56,10 +56,12 @@ namespace MahantInv.Web.Api
 
                 if (storage.Id == 0)
                 {
+                    storage.Enabled = true;
                     await _storageRepository.AddAsync(storage);
                 }
                 else
                 {
+                    storage.Enabled = true;
                     await _storageRepository.UpdateAsync(storage);
                 }
                 StorageVM storageVM = await _storageRepository.GetStorageById(storage.Id);

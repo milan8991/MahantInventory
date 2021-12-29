@@ -1,4 +1,5 @@
-﻿function ActionCellRenderer() { }
+﻿var orderTransaction = [];
+function ActionCellRenderer() { }
 
 ActionCellRenderer.prototype.init = function (params) {
     this.params = params;
@@ -119,7 +120,7 @@ var orderGridOptions = {
         const allColumnIds = [];
         orderGridOptions.columnApi.getAllColumns().forEach((column) => {
             if (column.colId != 'id')
-            allColumnIds.push(column.colId);
+                allColumnIds.push(column.colId);
         });
         orderGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
@@ -133,17 +134,24 @@ var orderGridOptions = {
 
 
 class Order {
-    constructor(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
+    constructor(Id, ProductId, Quantity, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
-        this.PaymentTypeId = Common.ParseValue(PaymentTypeId);
-        this.PayerId = PayerId;
-        this.PaidAmount = PaidAmount;
         this.OrderDate = OrderDate;
         this.Remark = Common.ParseValue(Remark);
         this.ReceivedQuantity = ReceivedQuantity;
         this.ReceivedDate = ReceivedDate;
+        this.OrderTransaction = [];
+    }
+}
+class OrderTransaction {
+    constructor(Id, PartyId, PaymentTypeId, Amount) {
+        this.Id = Id;
+        //this.OrderId = OrderId;
+        this.PartyId = PartyId;
+        this.PaymentTypeId = PaymentTypeId;
+        this.Amount = Amount;
     }
 }
 
@@ -162,7 +170,7 @@ class Common {
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null));
         }
         else {
             Common.GetOrderById(id);
@@ -208,27 +216,32 @@ class Common {
         $('#Id').val(model.Id);
         $('#ProductId').val(model.ProductId).trigger('change');
         $('#Quantity').val(model.Quantity);
-        $('#PaymentTypeId').val(model.PaymentTypeId).trigger('change');
-        $('#PayerId').val(model.PayerId).trigger('change');
-        $('#PaidAmount').val(model.PaidAmount);
         $('#OrderDate').val(moment(model.OrderDate).format("YYYY-MM-DD"));
         $('#Remark').val(model.Remark);
+        $('#ReceivedQuantity').val(model.ReceivedQuantity);
+        $('#ReceivedDate').val(model.ReceivedDate);
+        if (model.OrderTransaction.length == 0) {
+            $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
+        }
+        else {
+
+        }
     }
 
     static init() {
         $('#ordersdata').height(Common.calcDataTableHeight(27));
         $('.select2').select2({
-            dropdownParent: $('#AddEditOrder'),
+            dropdownParent: $('#PlaceOrder'),
             placeholder: 'Search option',
             theme: "bootstrap4",
             allowClear: true
         });
-        $('.actionselect2').select2({
-            dropdownParent: $('#ReceivedOrCancelledOrder'),
-            placeholder: 'Search option',
-            closeOnSelect: true,
-            allowClear: true
-        });
+        //$('.actionselect2').select2({
+        //    dropdownParent: $('#ReceivedOrCancelledOrder'),
+        //    placeholder: 'Search option',
+        //    closeOnSelect: true,
+        //    allowClear: true
+        //});
     }
 
     static async SaveOrder(mthis) {
@@ -382,6 +395,21 @@ class Common {
             });
             $('#ActionErrorSection').html(errorHtml);
         }
+    }
+
+    static async AddOrderTransaction(mthis) {
+        let PartyId = $('#PartyId').val();
+        let PaymentTypeId = $('#PaymentTypeId').val();
+        let PaidAmount = $('#PaidAmount').val();
+        if (orderTransaction.length == 0) {
+            $('#OrderTransactionBody').empty();
+        }
+        orderTransaction.push(new OrderTransaction(0, PartyId, PaymentTypeId, PaidAmount));
+        let PartyIdText = $('#PartyId').val();
+        let PaymentTypeIdText = $('#PaymentTypeId').val();
+        let actionBtn = '<button class="btn btn-sm btn-outline-primary">Edit</button><button class="btn btn-sm btn-outline-danger">Delete</button>';
+        let template = "<tr id='{idx}'><td>{PartyIdText}</td><td>{PaymentTypeIdText}</td><td>{PaidAmount}</td><td>{actionBtn}</td></tr>";
+        $('#OrderTransactionBody').append(template.replace("{PartyIdText}", PartyIdText).replace("{PaymentTypeIdText}", PaymentTypeIdText).replace("{PaidAmount}", PaidAmount).replace("{actionBtn}", actionBtn));
     }
 
 }
