@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Storage";
+}
+
+<div class="card border-dark">
+    <div class="card-header">
+        <span class="font-weight-bold">Storage</span>
+        <span class="float-right">
+            <button class="btn btn-outline-primary btn-sm" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditStorage">
+                <span>New</span>
+            </button>
+        </span>
+    </div>
+    <div class="card-body ag-theme-balham" id="Storagedata">
+    </div>
+</div>
+@await Html.PartialAsync("_AddEditStorage",new MahantInv.Core.SimpleAggregates.Storage())
+@section Scripts{
+<script src="~/Storage/index.js" type="text/javascript" asp-append-version="true"></script>
+}
