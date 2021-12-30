@@ -405,14 +405,37 @@ class Common {
         //Validation
         let PartyId = $('#PartyId').val();
         let PaymentTypeId = $('#PaymentTypeId').val();
-        let PaidAmount = $('#PaidAmount').val();
+        let Amount = $('#Amount').val();
+
+        if (PartyId == null || PartyId == "") {
+            toastr.error('Payer field is required', '', {
+                positionClass: 'toast-top-center'
+            });
+            return false;
+        }
+        if (PaymentTypeId == null || PaymentTypeId == "") {
+            toastr.error('Payment Type field is required', '', {
+                positionClass: 'toast-top-center'
+            });
+            return false;
+        }
+        if (Amount == null || Amount == "") {
+            toastr.error('Amount field is required', '', {
+                positionClass: 'toast-top-center'
+            });
+            return false;
+        }
+        if (Amount <= 0) {
+            toastr.error('Amount must be larger than 0', '', {
+                positionClass: 'toast-top-center'
+            });
+            return false;
+        }
+
         let Party = $('#PartyId option:selected').text();
         let PaymentType = $('#PaymentTypeId option:selected').text();
-        orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, PaidAmount));
+        orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount));
         Common.UpdateOrderTransactionGrid();
-        //let actionBtn = '<button class="btn btn-sm btn-outline-primary">Edit</button><button class="btn btn-sm btn-outline-danger">Delete</button>';
-        //let template = "<tr id='{idx}'><td>{PartyIdText}</td><td>{PaymentTypeIdText}</td><td>{PaidAmount}</td><td>{actionBtn}</td></tr>";
-        //$('#OrderTransactionBody').append(template.replace("{PartyIdText}", PartyIdText).replace("{PaymentTypeIdText}", PaymentTypeIdText).replace("{PaidAmount}", PaidAmount).replace("{actionBtn}", actionBtn));
     }
     static async UpdateOrderTransactionGrid() {
         $('#OrderTransactionBody').empty();
