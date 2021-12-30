@@ -19,7 +19,7 @@ namespace MahantInv.Infrastructure.Data
         public async Task<OrderVM> GetOrderById(int orderId)
         {
             string sql = @"select o.*,ot.* from vOrders o
-                left outer join vOrderTransaction ot on o.Id = ot.OrderId
+                left outer join vOrderTransactions ot on o.Id = ot.OrderId
                     where o.Id = @orderId";
             var orderVMDictionary = new Dictionary<int, OrderVM>();
             var result = await db.QueryAsync<OrderVM, OrderTransactionVM, OrderVM>(sql,
@@ -42,7 +42,7 @@ namespace MahantInv.Infrastructure.Data
         public async Task<IEnumerable<OrderVM>> GetOrders(DateTime startDate, DateTime endDate)
         {
             string sql = @"select o.*,ot.* from vOrders o
-                left outer join vOrderTransaction ot on o.Id = ot.OrderId
+                left outer join vOrderTransactions ot on o.Id = ot.OrderId
                 where date(o.OrderDate) between date(@startDate) and date(@endDate)";
             var orderVMDictionary = new Dictionary<int, OrderVM>();
             var result = await db.QueryAsync<OrderVM, OrderTransactionVM, OrderVM>(sql,

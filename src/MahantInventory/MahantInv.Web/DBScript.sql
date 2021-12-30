@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Thu Dec 30 10:10:20 2021
+-- File generated with SQLiteStudio v3.3.3 on Thu Dec 30 14:11:43 2021
 --
 -- Text encoding used: System
 --
@@ -690,10 +690,10 @@ DROP VIEW IF EXISTS vOrderTransactions;
 CREATE VIEW vOrderTransactions AS
     SELECT ot.*,
            p.Name AS Party,
-           pt.Name AS PaymentType
-      FROM OrderTransaction ot
+           pt.Title AS PaymentType
+      FROM OrderTransactions ot
            INNER JOIN
-           Party p ON ot.PartyId = p.Id
+           Parties p ON ot.PartyId = p.Id
            INNER JOIN
            PaymentTypes pt ON ot.PaymentTypeId = pt.Id;
 
