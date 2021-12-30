@@ -406,8 +406,8 @@ class Common {
         let PartyId = $('#PartyId').val();
         let PaymentTypeId = $('#PaymentTypeId').val();
         let PaidAmount = $('#PaidAmount').val();
-        let Party = $('#PartyId').val();
-        let PaymentType = $('#PaymentTypeId').val();
+        let Party = $('#PartyId option:selected').text();
+        let PaymentType = $('#PaymentTypeId option:selected').text();
         orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, PaidAmount));
         Common.UpdateOrderTransactionGrid();
         //let actionBtn = '<button class="btn btn-sm btn-outline-primary">Edit</button><button class="btn btn-sm btn-outline-danger">Delete</button>';
@@ -422,7 +422,8 @@ class Common {
         else {
             $.each(orderTransaction, function (i, v) {
                 let template = $('#OrderTransactionBodyTemplate').find('tbody').html();
-                $('#OrderTransactionBody').prepend(template.supplant(orderTransaction));
+                v.idx = i;
+                $('#OrderTransactionBody').prepend(template.supplant(v));
             });
         }
     }
