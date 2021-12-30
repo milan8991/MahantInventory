@@ -226,7 +226,7 @@ class Common {
         }
         else {
             orderTransaction = model.OrderTransaction;
-            UpdateOrderTransactionGrid();
+            Common.UpdateOrderTransactionGrid();
         }
     }
 
@@ -402,18 +402,17 @@ class Common {
     }
 
     static async AddOrderTransaction(mthis) {
+        //Validation
         let PartyId = $('#PartyId').val();
         let PaymentTypeId = $('#PaymentTypeId').val();
         let PaidAmount = $('#PaidAmount').val();
-        if (orderTransaction.length == 0) {
-            $('#OrderTransactionBody').empty();
-        }
-        orderTransaction.push(new OrderTransaction(0, PartyId, PaymentTypeId, PaidAmount));
-        let PartyIdText = $('#PartyId').val();
-        let PaymentTypeIdText = $('#PaymentTypeId').val();
-        let actionBtn = '<button class="btn btn-sm btn-outline-primary">Edit</button><button class="btn btn-sm btn-outline-danger">Delete</button>';
-        let template = "<tr id='{idx}'><td>{PartyIdText}</td><td>{PaymentTypeIdText}</td><td>{PaidAmount}</td><td>{actionBtn}</td></tr>";
-        $('#OrderTransactionBody').append(template.replace("{PartyIdText}", PartyIdText).replace("{PaymentTypeIdText}", PaymentTypeIdText).replace("{PaidAmount}", PaidAmount).replace("{actionBtn}", actionBtn));
+        let Party = $('#PartyId').val();
+        let PaymentType = $('#PaymentTypeId').val();
+        orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, PaidAmount));
+        Common.UpdateOrderTransactionGrid();
+        //let actionBtn = '<button class="btn btn-sm btn-outline-primary">Edit</button><button class="btn btn-sm btn-outline-danger">Delete</button>';
+        //let template = "<tr id='{idx}'><td>{PartyIdText}</td><td>{PaymentTypeIdText}</td><td>{PaidAmount}</td><td>{actionBtn}</td></tr>";
+        //$('#OrderTransactionBody').append(template.replace("{PartyIdText}", PartyIdText).replace("{PaymentTypeIdText}", PaymentTypeIdText).replace("{PaidAmount}", PaidAmount).replace("{actionBtn}", actionBtn));
     }
     static async UpdateOrderTransactionGrid() {
         $('#OrderTransactionBody').empty();
@@ -422,7 +421,8 @@ class Common {
         }
         else {
             $.each(orderTransaction, function (i, v) {
-
+                let template = $('#OrderTransactionBodyTemplate').html();
+                $('#OrderTransactionBody').append(template);
             });
         }
     }

@@ -18,6 +18,21 @@
     <div class="card-body ag-theme-balham" id="ordersdata">
     </div>
 </div>
+
+<div id="OrderTransactionBodyTemplate" style="display:none;">
+
+    <tr id='{idx}'>
+        <td>{Party}</td>
+        <td>{PaymentType}</td>
+        <td>{PaidAmount}</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="Common.EditTransaction(this)">Edit</button>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="Common.DeleteTransaction(this)">Delete</button>
+        </td>
+    </tr>
+
+</div>
+
 @*@await Html.PartialAsync("_AddEditOrder",new MahantInv.Core.SimpleAggregates.Order())*@
 @await Html.PartialAsync("_PlaceOrder",new MahantInv.Core.SimpleAggregates.Order())
 
