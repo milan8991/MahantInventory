@@ -146,11 +146,12 @@ class Order {
     }
 }
 class OrderTransaction {
-    constructor(Id, PartyId, PaymentTypeId, Amount) {
+    constructor(Id, PartyId, Party, PaymentTypeId, PaymentType, Amount) {
         this.Id = Id;
-        //this.OrderId = OrderId;
         this.PartyId = PartyId;
+        this.Party = Party;
         this.PaymentTypeId = PaymentTypeId;
+        this.PaymentType = PaymentType;
         this.Amount = Amount;
     }
 }
@@ -224,7 +225,8 @@ class Common {
             $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
         }
         else {
-
+            orderTransaction = model.OrderTransaction;
+            UpdateOrderTransactionGrid();
         }
     }
 
@@ -303,7 +305,9 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                Common.BindValuesToOrderForm(new Order(data.id, data.productId, data.quantity, data.paymentTypeId, data.payerId, data.paidAmount, data.orderDate, data.remark));
+                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark);
+                order.OrderTransaction = data.OrderTransactionVMs;
+                Common.BindValuesToOrderForm(order);
             })
             .catch(error => {
                 console.log(error);
@@ -411,7 +415,17 @@ class Common {
         let template = "<tr id='{idx}'><td>{PartyIdText}</td><td>{PaymentTypeIdText}</td><td>{PaidAmount}</td><td>{actionBtn}</td></tr>";
         $('#OrderTransactionBody').append(template.replace("{PartyIdText}", PartyIdText).replace("{PaymentTypeIdText}", PaymentTypeIdText).replace("{PaidAmount}", PaidAmount).replace("{actionBtn}", actionBtn));
     }
+    static async UpdateOrderTransactionGrid() {
+        $('#OrderTransactionBody').empty();
+        if (orderTransaction.length == 0) {
+            $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
+        }
+        else {
+            $.each(orderTransaction, function (i, v) {
 
+            });
+        }
+    }
 }
 
 jQuery(document).ready(function () {

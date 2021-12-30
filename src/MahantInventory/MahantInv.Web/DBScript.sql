@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Wed Dec 29 21:37:05 2021
+-- File generated with SQLiteStudio v3.3.3 on Thu Dec 30 10:10:20 2021
 --
 -- Text encoding used: System
 --
@@ -663,6 +663,39 @@ DROP INDEX IF EXISTS UserNameIndex;
 CREATE UNIQUE INDEX UserNameIndex ON AspNetUsers (
     "NormalizedUserName"
 );
+
+
+-- View: vOrders
+DROP VIEW IF EXISTS vOrders;
+CREATE VIEW vOrders AS
+    SELECT o.*,
+           p.Name AS ProductName,
+           ost.Title AS Status,
+           u.UserName AS LastModifiedBy,
+           pi.Quantity AS CurrentStock,
+           p.ReorderLevel
+      FROM Orders o
+           INNER JOIN
+           Products p ON o.ProductId = p.Id
+           INNER JOIN
+           OrderStatusTypes ost ON o.StatusId = ost.Id
+           INNER JOIN
+           AspNetUsers u ON o.LastModifiedById = u.Id
+           LEFT OUTER JOIN
+           ProductInventory pi ON p.Id = pi.ProductId;
+
+
+-- View: vOrderTransactions
+DROP VIEW IF EXISTS vOrderTransactions;
+CREATE VIEW vOrderTransactions AS
+    SELECT ot.*,
+           p.Name AS Party,
+           pt.Name AS PaymentType
+      FROM OrderTransaction ot
+           INNER JOIN
+           Party p ON ot.PartyId = p.Id
+           INNER JOIN
+           PaymentTypes pt ON ot.PaymentTypeId = pt.Id;
 
 
 COMMIT TRANSACTION;

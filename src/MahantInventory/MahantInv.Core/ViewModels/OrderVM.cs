@@ -30,5 +30,15 @@ namespace MahantInv.Core.ViewModels
                 return ReceivedDate.HasValue ? $"{ReceivedDate:dd/MM/yyyy}" : null;
             }
         }
+        public List<OrderTransactionVM> OrderTransactionVMs { get; set; }
+        public OrderVM()
+        {
+            OrderTransactionVMs = new();
+        }
+    }
+    public class OrderTransactionVM : OrderTransaction
+    {
+        public string Party { get; set; }
+        public string PaymentType { get; set; }
     }
 }

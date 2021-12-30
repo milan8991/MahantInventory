@@ -11,7 +11,7 @@ namespace MahantInv.Core.Interfaces
 {
     public interface IOrdersRepository: IAsyncRepository<Order>
     {
-        Task<IEnumerable<OrderVM>> GetOrders();
+        Task<IEnumerable<OrderVM>> GetOrders(DateTime startDate, DateTime endDate);
         Task<OrderVM> GetOrderById(int orderId);
     }
 }

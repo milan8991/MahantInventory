@@ -37,7 +37,9 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                IEnumerable<OrderVM> data = await _orderRepository.GetOrders();
+                DateTime endDate = DateTime.Now.Date;
+                DateTime startDate = endDate.AddMonths(-3);
+                IEnumerable<OrderVM> data = await _orderRepository.GetOrders(startDate, endDate);
                 return Ok(data);
             }
             catch (Exception e)
@@ -97,11 +99,11 @@ namespace MahantInv.Web.Api
             }
         }
         [HttpGet("order/byid/{orderId}")]
-        public async Task<object> ProductGetById(int orderId)
+        public async Task<object> OrderGetById(int orderId)
         {
             try
             {
-                Order order = await _orderRepository.GetByIdAsync(orderId);
+                Order order = await _orderRepository.GetOrderById(orderId);
                 return Ok(order);
             }
             catch (Exception e)
@@ -116,7 +118,7 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                if(!order.ReceivedQuantity.HasValue)
+                if (!order.ReceivedQuantity.HasValue)
                 {
                     ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Quantity field is required");
                 }
@@ -225,6 +227,6 @@ namespace MahantInv.Web.Api
                 _logger.LogError(e, GUID, null);
                 return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
-        }        
+        }
     }
 }

@@ -16,32 +16,50 @@ namespace MahantInv.Infrastructure.Data
         {
         }
 
-        public Task<OrderVM> GetOrderById(int orderId)
+        public async Task<OrderVM> GetOrderById(int orderId)
         {
-            return db.QuerySingleAsync<OrderVM>(
-            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock,p.ReorderLevel
-                    from Orders o
-                    inner join Products p on o.ProductId = p.Id
-                    inner join OrderStatusTypes ost on o.StatusId = ost.Id
-                    inner join PaymentTypes pt on o.PaymentTypeId = pt.Id
-                    inner join Payers py on o.PayerId = py.Id
-                    inner join AspNetUsers u on o.LastModifiedById = u.Id
-                    left outer join ProductInventory pi on p.Id = pi.ProductId
-                    where o.Id = @orderId", new { orderId }, transaction: t);
+            string sql = @"select o.*,ot.* from vOrders o
+                left outer join vOrderTransaction ot on o.Id = ot.OrderId
+                    where o.Id = @orderId";
+            var orderVMDictionary = new Dictionary<int, OrderVM>();
+            var result = await db.QueryAsync<OrderVM, OrderTransactionVM, OrderVM>(sql,
+                (order, orderTransaction) =>
+                {
+                    if (!orderVMDictionary.TryGetValue(order.Id, out OrderVM orderVMEntry))
+                    {
+                        orderVMEntry = order;
+                        orderVMDictionary.Add(orderVMEntry.Id, orderVMEntry);
+                    }
+                    orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    return orderVMEntry;
+                },
+                new { orderId },
+                splitOn: "OrderId",
+                 transaction: t);
+            return result.Distinct().Single();
         }
 
-        public Task<IEnumerable<OrderVM>> GetOrders()
+        public async Task<IEnumerable<OrderVM>> GetOrders(DateTime startDate, DateTime endDate)
         {
-            return db.QueryAsync<OrderVM>(
-            @"select o.*,p.Name as ProductName,ost.Title as Status,pt.Title as PaymentType,py.Name as Payer,u.UserName as LastModifiedBy, pi.Quantity as CurrentStock,p.ReorderLevel
-                    from Orders o
-                    inner join Products p on o.ProductId = p.Id
-                    inner join OrderStatusTypes ost on o.StatusId = ost.Id
-                    inner join PaymentTypes pt on o.PaymentTypeId = pt.Id
-                    inner join Payers py on o.PayerId = py.Id
-                    inner join AspNetUsers u on o.LastModifiedById = u.Id
-                    left outer join ProductInventory pi on p.Id = pi.ProductId
-                    order by o.OrderDate desc limit 100", transaction: t);
+            string sql = @"select o.*,ot.* from vOrders o
+                left outer join vOrderTransaction ot on o.Id = ot.OrderId
+                where date(o.OrderDate) between date(@startDate) and date(@endDate)";
+            var orderVMDictionary = new Dictionary<int, OrderVM>();
+            var result = await db.QueryAsync<OrderVM, OrderTransactionVM, OrderVM>(sql,
+                (order, orderTransaction) =>
+                {
+                    if (!orderVMDictionary.TryGetValue(order.Id, out OrderVM orderVMEntry))
+                    {
+                        orderVMEntry = order;
+                        orderVMDictionary.Add(orderVMEntry.Id, orderVMEntry);
+                    }
+                    orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    return orderVMEntry;
+                },
+                new { startDate, endDate },
+                splitOn: "OrderId",
+                 transaction: t);
+            return result.Distinct().ToList();
         }
     }
 }
