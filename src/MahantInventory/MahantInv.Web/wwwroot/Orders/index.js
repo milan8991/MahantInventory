@@ -421,8 +421,8 @@ class Common {
         }
         else {
             $.each(orderTransaction, function (i, v) {
-                let template = $('#OrderTransactionBodyTemplate').html();
-                $('#OrderTransactionBody').append(template);
+                let template = $('#OrderTransactionBodyTemplate').find('tbody').html();
+                $('#OrderTransactionBody').prepend(template);
             });
         }
     }

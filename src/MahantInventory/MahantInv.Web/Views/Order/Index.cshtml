@@ -19,19 +19,19 @@
     </div>
 </div>
 
-<div id="OrderTransactionBodyTemplate" style="display:none;">
-
-    <tr id='{idx}'>
-        <td>{Party}</td>
-        <td>{PaymentType}</td>
-        <td>{PaidAmount}</td>
-        <td>
-            <button type="button" class="btn btn-sm btn-outline-primary" onclick="Common.EditTransaction(this)">Edit</button>
-            <button type="button" class="btn btn-sm btn-outline-danger" onclick="Common.DeleteTransaction(this)">Delete</button>
-        </td>
-    </tr>
-
-</div>
+<table id="OrderTransactionBodyTemplate" style="display:none;">
+    <tbody>
+        <tr id='{idx}'>
+            <td>{Party}</td>
+            <td>{PaymentType}</td>
+            <td>{PaidAmount}</td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="Common.EditTransaction(this)">Edit</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="Common.DeleteTransaction(this)">Delete</button>
+            </td>
+        </tr>
+        </tbody>
+</table>
 
 @*@await Html.PartialAsync("_AddEditOrder",new MahantInv.Core.SimpleAggregates.Order())*@
 @await Html.PartialAsync("_PlaceOrder",new MahantInv.Core.SimpleAggregates.Order())
