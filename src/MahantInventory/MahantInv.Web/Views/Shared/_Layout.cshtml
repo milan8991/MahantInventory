@@ -36,6 +36,31 @@
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
     <script type="text/javascript">
         var baseUrl = '@Url.Content("~/")';
+        Array.prototype.uniquePush = function (item) {
+    if (this.indexOf(item) == -1)
+        this.push(item);
+};
+
+if (!String.prototype.supplant) {
+    String.prototype.supplant = function (o) {
+        return this.replace(/{([^{}]*)}/g,
+            function (a, b) {
+                var lst = b.split('.');
+                $obj = o;
+                for (var i = 0; i < (lst.length); i++) {
+                    var r = $obj[lst[i]];
+                    if (r === null || typeof r === "undefined") return "";
+                    if (typeof r === 'object') {
+                        $obj = r;
+                    }
+                    else {
+                        return typeof r === 'string' || typeof r === 'number' ? r : a;
+                    }
+                }
+            }
+        );
+    };
+}
     </script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
     <script src="~/lib/aggrid/ag-grid-enterprise.min.js"></script>
