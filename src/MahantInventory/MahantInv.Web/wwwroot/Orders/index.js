@@ -1,4 +1,5 @@
 ﻿var orderTransaction = [];
+let editModeIdx = -1;
 function ActionCellRenderer() { }
 
 ActionCellRenderer.prototype.init = function (params) {
@@ -170,6 +171,8 @@ class Common {
         let id = $(mthis).data('id');
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
+        editModeIdx = -1;
+        orderTransaction = [];
         if (id == 0) {
             Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null));
         }
@@ -238,26 +241,20 @@ class Common {
             theme: "bootstrap4",
             allowClear: true
         });
-        //$('.actionselect2').select2({
-        //    dropdownParent: $('#ReceivedOrCancelledOrder'),
-        //    placeholder: 'Search option',
-        //    closeOnSelect: true,
-        //    allowClear: true
-        //});
+        $('#ProductId').select2({
+            dropdownParent: $('#PlaceOrder'),
+            placeholder: 'Search Product',
+            closeOnSelect: true,
+            allowClear: true,
+            templateResult: function (state) {
+                console.log(state);
+            }
+        });
     }
 
     static async SaveOrder(mthis) {
         $('#OrderErrorSection').empty();
-        let Id = $('#Id').val();
-        let ProductId = $('#ProductId').val();
-        let Quantity = $('#Quantity').val();
-        let PaymentTypeId = $('#PaymentTypeId').val();
-        let PayerId = $('#PayerId').val();
-        let PaidAmount = $('#PaidAmount').val();
-        let OrderDate = $('#OrderDate').val();
-        let Remark = $('#Remark').val();
-        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, null, null);
-
+        let order = Common.BuildOrderValues();
         var response = await fetch(baseUrl + 'api/order/save', {
             method: 'POST',
             body: JSON.stringify(order),
@@ -280,7 +277,7 @@ class Common {
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
             if (Id == 0) {
-                orderGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+                orderGridOptions.api.applyTransaction({ add: [response.data] });
             }
             else {
                 orderGridOptions.api.applyTransaction({ update: [response.data] });
@@ -314,21 +311,22 @@ class Common {
                 toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
             });
     }
+    static BuildOrderValues() {
+        let Id = $('#Id').val();
+        let ProductId = $('#ProductId').val();
+        let Quantity = $('#Quantity').val();
+        let OrderDate = $('#OrderDate').val();
+        let Remark = $('#Remark').val();
+        let ReceivedQuantity = $('#ReceivedQuantity').val();
+        let ReceivedDate = $('#ReceivedDate').val();
+        let order = new Order(Id, ProductId, Quantity, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
+        order.OrderTransaction = orderTransaction;
+        return order;
+    }
 
     static async ReceiveOrder(mthis) {
-        $('#ActionErrorSection').empty();
-        let Id = $('#ActionOrderId').val();
-        let ProductId = $('#ActionProductId').val();
-        let Quantity = $('#ActionQuantity').val();
-        let PaymentTypeId = $('#ActionPaymentTypeId').val();
-        let PayerId = $('#ActionPayerId').val();
-        let PaidAmount = $('#ActionPaidAmount').val();
-        let OrderDate = $('#ActionOrderDate').val();
-        let Remark = $('#ActionRemark').val();
-        let ReceivedQuantity = $('#ActionReceivedQuantity').val();
-        let ReceivedDate = $('#ActionReceivedDate').val();
-        let order = new Order(Id, ProductId, Quantity, PaymentTypeId, PayerId, PaidAmount, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
-
+        $('#OrderErrorSection').empty();
+        let order = Common.BuildOrderValues();
         var response = await fetch(baseUrl + 'api/order/receive', {
             method: 'POST',
             body: JSON.stringify(order),
@@ -343,7 +341,7 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#ActionErrorSection').html(errorHtml);
+                $('#OrderErrorSection').html(errorHtml);
             }
         }
         if (response.success) {
@@ -360,12 +358,23 @@ class Common {
             $.each(response.errors, function (index, element) {
                 errorHtml += element[0].errorMessage + '<br/>';
             });
-            $('#ActionErrorSection').html(errorHtml);
+            $('#OrderErrorSection').html(errorHtml);
         }
     }
     static async CancelOrder(mthis) {
-        $('#ActionErrorSection').empty();
-        let orderId = $('#ActionOrderId').val();
+        $('#OrderErrorSection').empty();
+        let orderId = $('#Id').val();
+        if (!(orderId > 0)) {
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
+            return true;
+        }
+        let isConfirm = confirm("Are you sure to cancel this Order?");
+        if (!isConfirm) {
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
+            return true;
+        }
         var response = await fetch(baseUrl + 'api/order/cancel', {
             method: 'POST',
             body: JSON.stringify(orderId),
@@ -380,7 +389,7 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#ActionErrorSection').html(errorHtml);
+                $('#OrderErrorSection').html(errorHtml);
             }
         }
         if (response.success) {
@@ -397,7 +406,7 @@ class Common {
             $.each(response.errors, function (index, element) {
                 errorHtml += element[0].errorMessage + '<br/>';
             });
-            $('#ActionErrorSection').html(errorHtml);
+            $('#OrderErrorSection').html(errorHtml);
         }
     }
 
@@ -434,8 +443,27 @@ class Common {
 
         let Party = $('#PartyId option:selected').text();
         let PaymentType = $('#PaymentTypeId option:selected').text();
-        orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount));
+        if (editModeIdx === -1) {
+            orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount));
+        } else {
+            orderTransaction[editModeIdx].PartyId = PartyId;
+            orderTransaction[editModeIdx].Party = Party;
+            orderTransaction[editModeIdx].PaymentTypeId = PaymentTypeId;
+            orderTransaction[editModeIdx].PaymentType = PaymentType;
+            orderTransaction[editModeIdx].Amount = Amount;
+            editModeIdx = -1;
+        }
         Common.UpdateOrderTransactionGrid();
+        Common.ClearSelectionOrderTransaction();
+    }
+    static CancelOrderTransaction(mthis) {
+        editModeIdx = -1;
+        Common.ClearSelectionOrderTransaction();
+    }
+    static async ClearSelectionOrderTransaction() {
+        $('#PartyId').val(null).trigger('change');
+        $('#PaymentTypeId').val(null).trigger('change');
+        $('#Amount').val(null);
     }
     static async UpdateOrderTransactionGrid() {
         $('#OrderTransactionBody').empty();
@@ -449,6 +477,18 @@ class Common {
                 $('#OrderTransactionBody').prepend(template.supplant(v));
             });
         }
+    }
+    static async EditOrderTransaction(mthis) {
+        let idx = $(mthis).parent().parent().attr('id');
+        $('#PartyId').val(orderTransaction[idx].PartyId).trigger('change');
+        $('#PaymentTypeId').val(orderTransaction[idx].PaymentTypeId).trigger('change');
+        $('#Amount').val(orderTransaction[idx].Amount);
+        editModeIdx = idx;
+    }
+    static async DeleteOrderTransaction(mthis) {
+        let idx = $(mthis).parent().parent().attr('id');
+        orderTransaction.splice(idx, 1);
+        Common.UpdateOrderTransactionGrid();
     }
 }
 

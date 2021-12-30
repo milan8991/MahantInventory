@@ -11,12 +11,12 @@
             </div>
             <div class="modal-body">
                 <div id="OrderErrorSection" class="text-danger"></div>
-                <input type="hidden" id="Id" />
+                <input type="hidden" asp-for="@Model.Id" />
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label asp-for="@Model.ProductId"></label>
-                            <select asp-for="@Model.ProductId" class="form-control form-control-sm select2" style="width:100%" placeholder="Payment Type">
+                            <select asp-for="@Model.ProductId" class="form-control form-control-sm" style="width:100%" placeholder="Payment Type">
                                 <option value="">Select Payment Type</option>
                                 @foreach (var item in (ViewBag.Products as ICollection<MahantInv.Core.ViewModels.ProductVM>))
                                 {
