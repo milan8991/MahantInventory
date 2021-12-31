@@ -45,7 +45,7 @@ var orderGridOptions = {
             cellRenderer: function (params) {
 
                 if (params.value == 'Ordered') {
-                    return '<button type="button" class="btn btn-outline-primary btn-sm" onclick="Common.OpenActionModal(this)" data-id="' + params.data.id + '">' + params.value + '</button>'
+                    return '<button type="button" class="btn btn-outline-primary btn-sm" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">' + params.value + '</button>'
                 }
 
                 let cls = params.value == 'Received' ? 'success' : 'danger';
