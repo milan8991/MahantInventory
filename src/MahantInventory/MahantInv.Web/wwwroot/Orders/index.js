@@ -184,17 +184,17 @@ class Common {
         let id = $(mthis).data('id');
         $('#ReceivedOrCancelledOrder').modal('show');
         let rowData = orderGridOptions.api.getRowNode(id).data;
-        $('#ActionOrderId').val(rowData.id);
-        $('#ActionProductId').val(rowData.productId);
-        $('#ActionProductName').html(rowData.productName);
-        $('#ActionQuantity').val(rowData.quantity);
-        $('#ActionPaymentTypeId').val(rowData.paymentTypeId).trigger('change');
-        $('#ActionPayerId').val(rowData.payerId).trigger('change');
-        $('#ActionPaidAmount').val(rowData.paidAmount);
-        $('#ActionOrderDate').val(moment(rowData.orderDate).format("YYYY-MM-DD"));
-        $('#ActionReceivedQuantity').val(rowData.quantity);
-        $('#ActionReceivedDate').val(moment().format("YYYY-MM-DD"));
-        $('#ActionRemark').val(rowData.remark);
+        $('#OrderId').val(rowData.id);
+        $('#ProductId').val(rowData.productId);
+        $('#ProductName').html(rowData.productName);
+        $('#Quantity').val(rowData.quantity);
+        $('#PaymentTypeId').val(rowData.paymentTypeId).trigger('change');
+        $('#PayerId').val(rowData.payerId).trigger('change');
+        $('#PaidAmount').val(rowData.paidAmount);
+        $('#OrderDate').val(moment(rowData.orderDate).format("YYYY-MM-DD"));
+        $('#ReceivedQuantity').val(rowData.quantity);
+        $('#ReceivedDate').val(moment().format("YYYY-MM-DD"));
+        $('#Remark').val(rowData.remark);
     }
 
     static ApplyAGGrid() {
@@ -241,13 +241,54 @@ class Common {
             theme: "bootstrap4",
             allowClear: true
         });
+        Common.GetAllProducts();
+    }
+    static async GetAllProducts() {
+        let response = await fetch(baseUrl + 'api/products', {
+            method: 'GET',
+            //body: JSON.stringify(order),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+        
         $('#ProductId').select2({
             dropdownParent: $('#PlaceOrder'),
             placeholder: 'Search Product',
             closeOnSelect: true,
             allowClear: true,
-            templateResult: function (state) {
-                console.log(state);
+            data: response,
+            templateResult: function (repo) {
+                console.log('repo:', repo);
+                if (repo.loading) {
+                    return repo.name;
+                }
+
+                var $container = $(
+                    "<div class='select2-result-repository clearfix'>" +
+                    "<div class='select2-result-repository__meta'>" +
+                    "<div class='select2-result-repository__title'></div>" +
+                    "<div class='select2-result-repository__description'></div>" +
+                    "<div class='select2-result-repository__statistics'>" +
+                    "<div class='select2-result-repository__forks'><i class='fa fa-flash'></i> </div>" +
+                    "<div class='select2-result-repository__stargazers'><i class='fa fa-star'></i> </div>" +
+                    "<div class='select2-result-repository__watchers'><i class='fa fa-eye'></i> </div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+                );
+
+                $container.find(".select2-result-repository__title").text(repo.name);
+                $container.find(".select2-result-repository__description").text(repo.description);
+                $container.find(".select2-result-repository__forks").append(repo.size + " Size");
+                $container.find(".select2-result-repository__stargazers").append(repo.company);
+                $container.find(".select2-result-repository__watchers").append(repo.unitTypeCode + "");
+
+                return $container;
+            },
+            templateSelection: function (repo) {
+                return repo.name
             }
         });
     }
@@ -411,7 +452,6 @@ class Common {
     }
 
     static async AddOrderTransaction(mthis) {
-        //Validation
         let PartyId = $('#PartyId').val();
         let PaymentTypeId = $('#PaymentTypeId').val();
         let Amount = $('#Amount').val();

@@ -17,11 +17,11 @@
                         <div class="form-group">
                             <label asp-for="@Model.ProductId"></label>
                             <select asp-for="@Model.ProductId" class="form-control form-control-sm" style="width:100%" placeholder="Payment Type">
-                                <option value="">Select Payment Type</option>
+                               @* <option value="">Select Payment Type</option>
                                 @foreach (var item in (ViewBag.Products as ICollection<MahantInv.Core.ViewModels.ProductVM>))
                                 {
                                     <option value="@item.Id">@item.Name</option>
-                                }
+                                }*@
                             </select>
                         </div>
                     </div>

@@ -31,5 +31,11 @@ namespace MahantInv.Core.SimpleAggregates
         public string LastModifiedById { get; set; }
         [Display(Name = "Modified At")]
         public DateTime? ModifiedAt { get; set; }
+        [Dapper.Contrib.Extensions.Write(false)]
+        public List<OrderTransaction> OrderTransactions { get; set; }
+        public Order()
+        {
+            OrderTransactions = new();
+        }
     }
 }
