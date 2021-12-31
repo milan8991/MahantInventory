@@ -271,9 +271,9 @@ class Common {
                     "<div class='select2-result-repository__title'></div>" +
                     "<div class='select2-result-repository__description'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
-                    "<div class='select2-result-repository__forks'><i class='fa fa-flash'></i> </div>" +
-                    "<div class='select2-result-repository__stargazers'><i class='fa fa-star'></i> </div>" +
-                    "<div class='select2-result-repository__watchers'><i class='fa fa-eye'></i> </div>" +
+                    "<div class='select2-result-repository__forks'></div>" +
+                    "<div class='select2-result-repository__stargazers'></div>" +
+                    "<div class='select2-result-repository__watchers'></div>" +
                     "</div>" +
                     "</div>" +
                     "</div>"
@@ -281,9 +281,9 @@ class Common {
 
                 $container.find(".select2-result-repository__title").text(repo.name);
                 $container.find(".select2-result-repository__description").text(repo.description);
-                $container.find(".select2-result-repository__forks").append(repo.size + " Size");
-                $container.find(".select2-result-repository__stargazers").append(repo.company);
-                $container.find(".select2-result-repository__watchers").append(repo.unitTypeCode + "");
+                $container.find(".select2-result-repository__forks").append(" Size:" + repo.size);
+                $container.find(".select2-result-repository__stargazers").append(" Company:"+repo.company);
+                $container.find(".select2-result-repository__watchers").append(" Unit:"+repo.unitTypeCode);
 
                 return $container;
             },
