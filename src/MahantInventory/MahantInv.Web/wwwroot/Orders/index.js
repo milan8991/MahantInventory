@@ -264,26 +264,32 @@ class Common {
                 if (repo.loading) {
                     return repo.name;
                 }
-
                 var $container = $(
                     "<div class='select2-result-repository clearfix'>" +
-                    "<div class='select2-result-repository__meta'>" +
                     "<div class='select2-result-repository__title'></div>" +
                     "<div class='select2-result-repository__description'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
-                    "<div class='select2-result-repository__forks'></div>" +
-                    "<div class='select2-result-repository__stargazers'></div>" +
-                    "<div class='select2-result-repository__watchers'></div>" +
-                    "</div>" +
-                    "</div>" +
                     "</div>"
                 );
+                //var $container = $(
+                //    "<div class='select2-result-repository clearfix'>" +
+                //    "<div class='select2-result-repository__meta'>" +
+                //    "<div class='select2-result-repository__title'></div>" +
+                //    "<div class='select2-result-repository__description'></div>" +
+                //    "<div class='select2-result-repository__statistics'>" +
+                //    "<div class='select2-result-repository__forks'></div>" +
+                //    "<div class='select2-result-repository__stargazers'></div>" +
+                //    "<div class='select2-result-repository__watchers'></div>" +
+                //    "</div>" +
+                //    "</div>"
+                //);
 
                 $container.find(".select2-result-repository__title").text(repo.name);
-                $container.find(".select2-result-repository__description").text(repo.description);
-                $container.find(".select2-result-repository__forks").append(" Size:" + repo.size);
-                $container.find(".select2-result-repository__stargazers").append(" Company:"+repo.company);
-                $container.find(".select2-result-repository__watchers").append(" Unit:"+repo.unitTypeCode);
+                let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
+                $container.find(".select2-result-repository__description").text(repo.description +''+ detail);
+                //$container.find(".select2-result-repository__forks").append();
+                //$container.find(".select2-result-repository__stargazers").append(" Company:"+repo.company);
+                //$container.find(".select2-result-repository__watchers").append(" Unit:"+repo.unitTypeCode);
 
                 return $container;
             },
