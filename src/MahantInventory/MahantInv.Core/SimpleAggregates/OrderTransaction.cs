@@ -14,7 +14,7 @@ namespace MahantInv.Core.SimpleAggregates
     {
         public int OrderId { get; set; }
         public int PartyId { get; set; }
-        public int PaymentTypeId { get; set; }
+        public string PaymentTypeId { get; set; }
         public decimal Amount { get; set; }
     }
 }

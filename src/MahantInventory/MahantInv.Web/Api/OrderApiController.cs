@@ -24,13 +24,15 @@ namespace MahantInv.Web.Api
         private readonly IPayersReposiroty _productInventoryRepository;
         private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public OrderApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
+        private readonly IAsyncRepository<OrderTransaction> _orderTransactionRepository;
+        public OrderApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<OrderTransaction> orderTransactionRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
         {
             _logger = logger;
             _orderRepository = orderRepository;
             _productInventoryRepository = productInventoryRepository;
             _unitOfWork = unitOfWork;
             _productInventoryHistoryRepository = productInventoryHistoryRepository;
+            _orderTransactionRepository = orderTransactionRepository;
         }
         [HttpGet("orders")]
         public async Task<object> GetallOrders()
@@ -61,29 +63,7 @@ namespace MahantInv.Web.Api
                           .ToList();
                     return BadRequest(new { success = false, errors });
                 }
-                order.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                order.ModifiedAt = DateTime.UtcNow;
-
-                if (order.Id == 0)
-                {
-                    order.StatusId = OrderStatusTypes.Ordered;
-                    order.RefNo = Guid.NewGuid().ToString();
-                    order.Id = await _orderRepository.AddAsync(order);
-                }
-                else
-                {
-                    Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
-                    oldOrder.ProductId = order.ProductId;
-                    oldOrder.Quantity = order.Quantity;
-                    //oldOrder.PaymentTypeId = order.PaymentTypeId;
-                    //oldOrder.PayerId = order.PayerId;
-                    //oldOrder.PaidAmount = order.PaidAmount;
-                    oldOrder.OrderDate = order.OrderDate;
-                    oldOrder.Remark = order.Remark;
-                    oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    oldOrder.ModifiedAt = DateTime.UtcNow;
-                    await _orderRepository.UpdateAsync(oldOrder);
-                }
+                await LogOrder(order, isReceived: false);
                 OrderVM orderVM = await _orderRepository.GetOrderById(order.Id);
                 return Ok(new { success = true, data = orderVM });
             }
@@ -97,6 +77,42 @@ namespace MahantInv.Web.Api
                           .ToList();
                 return BadRequest(new { success = false, errors });
             }
+        }
+        private async Task<Order> LogOrder(Order order, bool isReceived)
+        {
+            Order returnOrder;
+            order.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            order.ModifiedAt = DateTime.UtcNow;
+            order.StatusId = isReceived ? OrderStatusTypes.Received : OrderStatusTypes.Ordered;
+
+            if (order.Id == 0)
+            {
+                order.RefNo = Guid.NewGuid().ToString();
+                order.Id = await _orderRepository.AddAsync(order);
+                returnOrder = order;
+            }
+            else
+            {
+                Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
+                oldOrder.ProductId = order.ProductId;
+                oldOrder.Quantity = order.Quantity;
+                oldOrder.OrderDate = order.OrderDate;
+                oldOrder.Remark = order.Remark;
+                oldOrder.ReceivedDate = order.ReceivedDate;
+                oldOrder.ReceivedQuantity = order.ReceivedQuantity;
+                oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                oldOrder.ModifiedAt = DateTime.UtcNow;
+                await _orderRepository.UpdateAsync(oldOrder);
+                await _orderRepository.DeleteOrderTransactionByOrderId(oldOrder.Id);
+                returnOrder = oldOrder;
+            }
+            foreach (OrderTransaction orderTransaction in order.OrderTransactions)
+            {
+                orderTransaction.OrderId = order.Id;
+                await _orderTransactionRepository.AddAsync(orderTransaction);
+                returnOrder.OrderTransactions.Add(orderTransaction);
+            }
+            return returnOrder;
         }
         [HttpGet("order/byid/{orderId}")]
         public async Task<object> OrderGetById(int orderId)
@@ -134,7 +150,10 @@ namespace MahantInv.Web.Api
                 {
                     ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Date can't be future date");
                 }
-
+                if (!order.OrderTransactions.Any())
+                {
+                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Please add atleast one payer");
+                }
                 if (!ModelState.IsValid)
                 {
                     List<ModelErrorCollection> errors = ModelState.Select(x => x.Value.Errors)
@@ -143,26 +162,11 @@ namespace MahantInv.Web.Api
                     return BadRequest(new { success = false, errors });
                 }
 
-                Order oldOrder = await _orderRepository.GetByIdAsync(order.Id);
-                if (!oldOrder.StatusId.Equals(OrderStatusTypes.Ordered))
-                {
-                    return BadRequest(new { success = false, errors = new[] { "Order not in Ordered state." } });
-                }
-                oldOrder.Quantity = order.Quantity;
-                //oldOrder.PaymentTypeId = order.PaymentTypeId;
-                //oldOrder.PayerId = order.PayerId;
-                //oldOrder.PaidAmount = order.PaidAmount;
-                oldOrder.OrderDate = order.OrderDate;
-                oldOrder.Remark = order.Remark;
-                oldOrder.StatusId = Meta.OrderStatusTypes.Received;
-                oldOrder.ReceivedDate = order.ReceivedDate;
-                oldOrder.ReceivedQuantity = order.ReceivedQuantity;
-                oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                oldOrder.ModifiedAt = DateTime.UtcNow;
-
-                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(oldOrder.ProductId.Value);
+                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(order.ProductId.Value);
 
                 await _unitOfWork.BeginAsync();
+                var oldOrder = await LogOrder(order, isReceived: true);
+
                 if (productInventory == null)
                 {
                     await _productInventoryRepository.AddAsync(new ProductInventory
@@ -191,8 +195,6 @@ namespace MahantInv.Web.Api
                     productInventory.ModifiedAt = DateTime.UtcNow;
                     await _productInventoryRepository.UpdateAsync(productInventory);
                 }
-                await _orderRepository.UpdateAsync(oldOrder);
-
                 await _unitOfWork.CommitAsync();
                 OrderVM orderVM = await _orderRepository.GetOrderById(order.Id);
                 return Ok(new { success = true, data = orderVM });

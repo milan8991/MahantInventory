@@ -10,7 +10,7 @@ ActionCellRenderer.prototype.init = function (params) {
         this.eGui.innerHTML = '';
     }
     else {
-        this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditOrder">Edit</button>';
+        this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">Edit</button>';
     }
 }
 
@@ -252,7 +252,7 @@ class Common {
                 'Content-Type': 'application/json'
             },
         }).then(response => { return response.json() });
-        
+
         $('#ProductId').select2({
             dropdownParent: $('#PlaceOrder'),
             placeholder: 'Search Product',
@@ -286,7 +286,7 @@ class Common {
 
                 $container.find(".select2-result-repository__title").text(repo.name);
                 let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
-                $container.find(".select2-result-repository__description").text(repo.description +''+ detail);
+                $container.find(".select2-result-repository__description").text(repo.description + '' + detail);
                 //$container.find(".select2-result-repository__forks").append();
                 //$container.find(".select2-result-repository__stargazers").append(" Company:"+repo.company);
                 //$container.find(".select2-result-repository__watchers").append(" Unit:"+repo.unitTypeCode);
@@ -349,13 +349,18 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark);
-                order.OrderTransaction = data.OrderTransactionVMs;
+                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark, data.ReceivedQuantity, data.ReceivedDate);
+                order.OrderTransaction = [];                
+                if (data.orderTransactionVMs.length > 0) {
+                    $.each(data.orderTransactionVMs, function (i, v) {
+                        order.OrderTransaction.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
+                    });
+                }
                 Common.BindValuesToOrderForm(order);
             })
             .catch(error => {
                 console.log(error);
-                toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
+                toastr.error("Unexpected error", '', { positionClass: 'toast-top-center' });
             });
     }
     static BuildOrderValues() {

@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.Interfaces
 {
-    public interface IOrdersRepository: IAsyncRepository<Order>
+    public interface IOrdersRepository : IAsyncRepository<Order>
     {
         Task<IEnumerable<OrderVM>> GetOrders(DateTime startDate, DateTime endDate);
         Task<OrderVM> GetOrderById(int orderId);
+        Task DeleteOrderTransactionByOrderId(int orderId);
     }
 }

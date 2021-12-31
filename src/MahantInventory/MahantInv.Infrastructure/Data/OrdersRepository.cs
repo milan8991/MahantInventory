@@ -16,6 +16,11 @@ namespace MahantInv.Infrastructure.Data
         {
         }
 
+        public Task DeleteOrderTransactionByOrderId(int orderId)
+        {
+            return db.ExecuteAsync("delete from OrderTransactions where OrderId = @orderId", new { orderId }, transaction: t);
+        }
+
         public async Task<OrderVM> GetOrderById(int orderId)
         {
             string sql = @"select o.*,ot.* from vOrders o
