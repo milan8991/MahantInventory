@@ -19,7 +19,7 @@ var storageGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
-            headerName: 'Status', field: 'enabled', filter: 'agSetColumnFilter', headerTooltip: 'Status'
+            headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status'
         },
         {
             headerName: '', field: 'id', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,

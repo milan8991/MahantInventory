@@ -9,7 +9,9 @@ namespace MahantInv.Core.ViewModels
 {
     public class StorageVM : Storage
     {
-        public string LastModifiedBy { get; set; }
+        public string Status { get {
+                return Enabled ? "Enabled" : "Disabled";
+            } }
 
     }
 }

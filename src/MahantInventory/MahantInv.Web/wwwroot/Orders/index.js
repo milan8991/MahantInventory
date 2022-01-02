@@ -69,7 +69,7 @@ var orderGridOptions = {
             headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
         },
         {
-            headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark'
+            headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark', minWidth: 100
         },
         {
             headerName: 'Last Modified By', field: 'lastModifiedBy', filter: 'agSetColumnFilter', headerTooltip: 'LastModifiedBy'
@@ -90,7 +90,7 @@ var orderGridOptions = {
         resizable: true,
         flex: 1,
         minWidth: 50,
-        wrapText: true,
+        wrapText: false,
         autoHeight: true,
         floatingFilter: true,
     },
@@ -226,7 +226,7 @@ class Common {
         $('#ReceivedQuantity').val(model.ReceivedQuantity);
         $('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
         if (model.OrderTransactions.length == 0) {
-            $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
+            $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
         else {
             orderTransaction = model.OrderTransactions;
