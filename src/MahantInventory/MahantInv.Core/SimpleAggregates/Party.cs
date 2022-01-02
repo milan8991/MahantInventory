@@ -19,7 +19,7 @@ namespace MahantInv.Core.SimpleAggregates
         public string Type { get; set; }
         [Required,Display(Name ="Category")]
         public int? CategoryId { get; set; }
-        [Required,Display(Name = "Primary Contact")]
+        [Display(Name = "Primary Contact")]
         public string PrimaryContact { get; set; }
         [Display(Name = "Secondary Contact")]
         public string SecondaryContact { get; set; }
