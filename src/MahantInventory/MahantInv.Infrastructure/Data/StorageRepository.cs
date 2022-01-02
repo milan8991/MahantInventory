@@ -18,7 +18,7 @@ namespace MahantInv.Infrastructure.Data
 
         public Task<StorageVM> GetStorageById(int storageId)
         {
-            return db.QuerySingleAsync<StorageVM>(@"select * from Storages Id = @storageId", new { storageId }, transaction: t);
+            return db.QuerySingleAsync<StorageVM>(@"select * from Storages where Id = @storageId", new { storageId }, transaction: t);
         }
 
         public Task<IEnumerable<StorageVM>> GetStorages()

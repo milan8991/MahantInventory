@@ -143,7 +143,7 @@ class Order {
         this.Remark = Common.ParseValue(Remark);
         this.ReceivedQuantity = ReceivedQuantity;
         this.ReceivedDate = ReceivedDate;
-        this.OrderTransaction = [];
+        this.OrderTransactions = [];
     }
 }
 class OrderTransaction {
@@ -216,6 +216,7 @@ class Common {
     }
 
     static BindValuesToOrderForm(model) {
+        //console.log('model:', model);
         $('#OrderErrorSection').empty();
         $('#Id').val(model.Id);
         $('#ProductId').val(model.ProductId).trigger('change');
@@ -223,12 +224,12 @@ class Common {
         $('#OrderDate').val(moment(model.OrderDate).format("YYYY-MM-DD"));
         $('#Remark').val(model.Remark);
         $('#ReceivedQuantity').val(model.ReceivedQuantity);
-        $('#ReceivedDate').val(model.ReceivedDate);
-        if (model.OrderTransaction.length == 0) {
+        $('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
+        if (model.OrderTransactions.length == 0) {
             $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
         }
         else {
-            orderTransaction = model.OrderTransaction;
+            orderTransaction = model.OrderTransactions;
             Common.UpdateOrderTransactionGrid();
         }
     }
@@ -349,11 +350,11 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark, data.ReceivedQuantity, data.ReceivedDate);
-                order.OrderTransaction = [];                
+                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate);
+                order.OrderTransactions = [];                
                 if (data.orderTransactionVMs.length > 0) {
                     $.each(data.orderTransactionVMs, function (i, v) {
-                        order.OrderTransaction.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
+                        order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
                     });
                 }
                 Common.BindValuesToOrderForm(order);
@@ -372,7 +373,8 @@ class Common {
         let ReceivedQuantity = $('#ReceivedQuantity').val();
         let ReceivedDate = $('#ReceivedDate').val();
         let order = new Order(Id, ProductId, Quantity, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
-        order.OrderTransaction = orderTransaction;
+        order.OrderTransactions = orderTransaction;
+        console.log('Order:',order);
         return order;
     }
 

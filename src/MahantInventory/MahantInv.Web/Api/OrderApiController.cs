@@ -102,6 +102,7 @@ namespace MahantInv.Web.Api
                 oldOrder.ReceivedQuantity = order.ReceivedQuantity;
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 oldOrder.ModifiedAt = DateTime.UtcNow;
+                oldOrder.StatusId = order.StatusId;
                 await _orderRepository.UpdateAsync(oldOrder);
                 await _orderRepository.DeleteOrderTransactionByOrderId(oldOrder.Id);
                 returnOrder = oldOrder;

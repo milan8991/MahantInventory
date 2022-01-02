@@ -134,8 +134,7 @@ class Common {
         new agGrid.Grid(gridDiv, storageGridOptions);
         fetch(baseUrl + 'api/storages')
             .then((response) => response.json())
-            .then(data => {
-                console.log('data:', data);
+            .then(data => {                
                 storageGridOptions.api.setRowData(data);
                 //Common.InitSelect2();
             })

@@ -23,7 +23,7 @@ namespace MahantInv.Infrastructure.Data
 
         public async Task<OrderVM> GetOrderById(int orderId)
         {
-            string sql = @"select o.*,ot.* from vOrders o
+            string sql = @"select * from vOrders o
                 left outer join vOrderTransactions ot on o.Id = ot.OrderId
                     where o.Id = @orderId";
             var orderVMDictionary = new Dictionary<int, OrderVM>();
@@ -39,14 +39,14 @@ namespace MahantInv.Infrastructure.Data
                     return orderVMEntry;
                 },
                 new { orderId },
-                splitOn: "OrderId",
+                splitOn: "Id",
                  transaction: t);
             return result.Distinct().Single();
         }
 
         public async Task<IEnumerable<OrderVM>> GetOrders(DateTime startDate, DateTime endDate)
         {
-            string sql = @"select o.*,ot.* from vOrders o
+            string sql = @"select * from vOrders o
                 left outer join vOrderTransactions ot on o.Id = ot.OrderId
                 where date(o.OrderDate) between date(@startDate) and date(@endDate)";
             var orderVMDictionary = new Dictionary<int, OrderVM>();
@@ -62,7 +62,7 @@ namespace MahantInv.Infrastructure.Data
                     return orderVMEntry;
                 },
                 new { startDate, endDate },
-                splitOn: "OrderId",
+                splitOn: "Id",
                  transaction: t);
             return result.Distinct().ToList();
         }

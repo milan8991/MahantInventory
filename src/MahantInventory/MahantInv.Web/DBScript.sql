@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sat Jan 1 00:52:05 2022
+-- File generated with SQLiteStudio v3.3.3 on Sun Jan 2 12:24:50 2022
 --
 -- Text encoding used: System
 --
@@ -287,11 +287,11 @@ DROP TABLE IF EXISTS OrderTransactions;
 CREATE TABLE OrderTransactions (
     Id            INTEGER         CONSTRAINT PK_OrderTransactions_Id PRIMARY KEY ASC AUTOINCREMENT
                                   NOT NULL,
-    OrderId       INTEGER         CONSTRAINT FK_OrderTransactions_OrderId_Orders_Id REFERENCES Orders (Id) MATCH [FULL]
+    OrderId       INTEGER         CONSTRAINT FK_OrderTransactions_OrderId_Orders_Id REFERENCES Orders (Id) 
                                   NOT NULL,
-    PartyId       INTEGER         CONSTRAINT FK_OrderTransactions_PartyId_Parties_Id REFERENCES Parties (Id) MATCH SIMPLE
+    PartyId       INTEGER         CONSTRAINT FK_OrderTransactions_PartyId_Parties_Id REFERENCES Parties (Id) 
                                   NOT NULL,
-    PaymentTypeId VARCHAR (20)    CONSTRAINT FK_OrderTransactions_PaymentTypeId_PaymentTypes_Id REFERENCES PaymentTypes (Id) MATCH [FULL]
+    PaymentTypeId VARCHAR (20)    CONSTRAINT FK_OrderTransactions_PaymentTypeId_PaymentTypes_Id REFERENCES PaymentTypes (Id) 
                                   NOT NULL,
     Amount        NUMERIC (10, 2) NOT NULL
 );
