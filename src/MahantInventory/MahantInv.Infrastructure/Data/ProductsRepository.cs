@@ -24,7 +24,7 @@ namespace MahantInv.Infrastructure.Data
                         left outer join Storages s on p.StorageId = s.Id
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
                         left outer join ProductInventory pi on p.Id = pi.ProductId
-                        where p.Id = @productId",new { productId }, transaction: t);
+                        where p.Id = @productId", new { productId }, transaction: t);
         }
 
         public Task<IEnumerable<ProductVM>> GetProducts()
@@ -33,7 +33,19 @@ namespace MahantInv.Infrastructure.Data
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
                         left outer join Storages s on p.StorageId = s.Id
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
-                        left outer join ProductInventory pi on p.Id = pi.ProductId", transaction:t);
+                        left outer join ProductInventory pi on p.Id = pi.ProductId", transaction: t);
+        }
+
+        public Task<bool> IsProductExist(string unitTypeCode)
+        {
+            return db.QuerySingleAsync<bool>(@"if EXISTS(select top 1 from Products where UnitTypeCode = @unitTypeCode
+                                        BEGIN
+                                        	select 1
+                                        END
+                                        ELSE
+                                        BEGIN
+                                        	select 0
+                                        END", new { unitTypeCode }, transaction: t);
         }
     }
 }

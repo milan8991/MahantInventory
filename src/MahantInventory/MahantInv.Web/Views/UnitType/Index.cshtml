@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Unit Type";
+}
+
+<div class="card border-dark">
+    <div class="card-header">
+        <span class="font-weight-bold">Unit Types</span>
+        <span class="float-right">
+            <button class="btn btn-outline-primary btn-sm" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="AddEditUnitType">
+                <span>New</span>
+            </button>
+        </span>
+    </div>
+    <div class="card-body ag-theme-balham" id="unittypedata">
+    </div>
+</div>
+@await Html.PartialAsync("_AddUnitType",new MahantInv.Core.SimpleAggregates.Storage())
+@section Scripts{
+<script src="~/UnitType/index.js" type="text/javascript" asp-append-version="true"></script>
+}

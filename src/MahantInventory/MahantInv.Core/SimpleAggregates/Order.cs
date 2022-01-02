@@ -22,6 +22,8 @@ namespace MahantInv.Core.SimpleAggregates
         public string RefNo { get; set; }
         [Display(Name = "Status")]
         public string StatusId { get; set; }
+        [Display(Name = "Seller")]
+        public int? SellerId { get; set; }
         [Required, Display(Name = "Order Date")]
         public DateTime? OrderDate { get; set; }
         [Display(Name = "Received Date")]

@@ -41,6 +41,9 @@ var orderGridOptions = {
             headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
         },
         {
+            headerName: 'Seller', field: 'seller', filter: 'agTextColumnFilter', headerTooltip: 'Seller'
+        },
+        {
             headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
             cellRenderer: function (params) {
 
@@ -135,10 +138,11 @@ var orderGridOptions = {
 
 
 class Order {
-    constructor(Id, ProductId, Quantity, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
+    constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
+        this.SellerId = SellerId;
         this.OrderDate = OrderDate;
         this.Remark = Common.ParseValue(Remark);
         this.ReceivedQuantity = ReceivedQuantity;
@@ -174,7 +178,7 @@ class Common {
         editModeIdx = -1;
         orderTransaction = [];
         if (id == 0) {
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null));
         }
         else {
             Common.GetOrderById(id);
@@ -221,6 +225,7 @@ class Common {
         $('#Id').val(model.Id);
         $('#ProductId').val(model.ProductId).trigger('change');
         $('#Quantity').val(model.Quantity);
+        $('#SellerId').val(model.ProductId).trigger('change');
         $('#OrderDate').val(moment(model.OrderDate).format("YYYY-MM-DD"));
         $('#Remark').val(model.Remark);
         $('#ReceivedQuantity').val(model.ReceivedQuantity);
@@ -261,7 +266,6 @@ class Common {
             allowClear: true,
             data: response,
             templateResult: function (repo) {
-                console.log('repo:', repo);
                 if (repo.loading) {
                     return repo.name;
                 }
@@ -350,8 +354,8 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                var order = new Order(data.id, data.productId, data.quantity, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate);
-                order.OrderTransactions = [];                
+                var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate);
+                order.OrderTransactions = [];
                 if (data.orderTransactionVMs.length > 0) {
                     $.each(data.orderTransactionVMs, function (i, v) {
                         order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
@@ -368,13 +372,13 @@ class Common {
         let Id = $('#Id').val();
         let ProductId = $('#ProductId').val();
         let Quantity = $('#Quantity').val();
+        let SellerId = $('#SellerId').val();
         let OrderDate = $('#OrderDate').val();
         let Remark = $('#Remark').val();
         let ReceivedQuantity = $('#ReceivedQuantity').val();
         let ReceivedDate = $('#ReceivedDate').val();
-        let order = new Order(Id, ProductId, Quantity, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
+        let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
         order.OrderTransactions = orderTransaction;
-        console.log('Order:',order);
         return order;
     }
 

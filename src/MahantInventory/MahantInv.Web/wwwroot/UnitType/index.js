@@ -4,25 +4,25 @@ ActionCellRenderer.prototype.init = function (params) {
     this.params = params;
 
     this.eGui = document.createElement('span');
-    this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="AddEditStorage">Edit</button>';
+    this.eGui.innerHTML = '<button class="btn btn-sm btn-link text-red" type="button" onclick="Common.DeleteUnitType(this)" data-code="' + params.data.code + '">Delete</button>';
 }
 
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
 
-var storageGridOptions = {
+var unitTypeGridOptions = {
 
     // define grid columns
     columnDefs: [
         {
+            headerName: 'Code', field: 'code', filter: 'agTextColumnFilter', headerTooltip: 'code'
+        },
+        {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
-        },
+        },        
         {
-            headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status'
-        },
-        {
-            headerName: '', field: 'id', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
+            headerName: '', field: '', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
         }
     ],
@@ -58,49 +58,21 @@ var storageGridOptions = {
     components: {
         actionCellRenderer: ActionCellRenderer
     },
-    columnTypes: {
-        numberColumn: {
-            editable: false,
-            enableRowGroup: true,
-            enablePivot: true,
-            enableValue: true,
-            sortable: true,
-            resizable: true,
-            flex: 1,
-            minWidth: 50,
-            wrapText: true,
-            autoHeight: true,
-            floatingFilter: true,
-        },
-        dateColumn: {
-            editable: false,
-            enableRowGroup: true,
-            enablePivot: true,
-            enableValue: true,
-            sortable: true,
-            resizable: true,
-            flex: 1,
-            minWidth: 130,
-            wrapText: true,
-            autoHeight: true,
-            floatingFilter: true,
-        }
-    },
     onGridReady: function (params) {
-        storageGridOptions.api.sizeColumnsToFit();
+        unitTypeGridOptions.api.sizeColumnsToFit();
     },
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while storage(s) are loading</span>',
+        '<span class="ag-overlay-loading-center">Please wait while Unit Type(s) are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Storage(s) will appear here.</b></h5>
+                <h5 class="text-center"><b>Unit Type(s) will appear here.</b></h5>
             </div>`
 };
 
 
-class Storage {
-    constructor(Id, Name) {
-        this.Id = parseInt(Id);
+class UnitType {
+    constructor(Code, Name) {
+        this.Code = Common.ParseValue(Code);
         this.Name = Common.ParseValue(Name);
     }
 }
@@ -117,29 +89,29 @@ class Common {
     };
 
     static OpenModal(mthis) {
-        let id = $(mthis).data('id');
+        let id = $(mthis).data('code');
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
         if (id == 0) {
             Common.BindValuesToStorageForm(new Storage(0, null));
         }
         else {
-            Common.GetStorageById(id);
+            Common.GetUnitTypeById(id);
         }
     }
 
     static ApplyAGGrid() {
 
-        var gridDiv = document.querySelector('#storagedata');
-        new agGrid.Grid(gridDiv, storageGridOptions);
-        fetch(baseUrl + 'api/storages')
+        var gridDiv = document.querySelector('#unittypedata');
+        new agGrid.Grid(gridDiv, unitTypeGridOptions);
+        fetch(baseUrl + 'api/unittypes')
             .then((response) => response.json())
             .then(data => {                
-                storageGridOptions.api.setRowData(data);
+                unitTypeGridOptions.api.setRowData(data);
                 //Common.InitSelect2();
             })
             .catch(error => {
-                storageGridOptions.api.setRowData([])
+                unitTypeGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
                 //});
@@ -148,24 +120,24 @@ class Common {
     }
 
     static BindValuesToStorageForm(model) {
-        $('#StorageErrorSection').empty();
-        $('#Id').val(model.Id);
+        $('#UnitTypeErrorSection').empty();
+        $('#Code').val(model.Code);
         $('#Name').val(model.Name);
     }
 
     static init() {
-        $('#storagedata').height(Common.calcDataTableHeight(27));
+        $('#unittypedata').height(Common.calcDataTableHeight(27));
     }
 
-    static async SaveStorage(mthis) {
-        $('#StorageErrorSection').empty();
-        let Id = $('#Id').val();
+    static async SaveUnitType(mthis) {
+        $('#UnitTypeErrorSection').empty();
+        let Code = $('#Code').val();
         let Name = $('#Name').val();
-        let storage = new Storage(Id, Name);
+        let unitType = new UnitType(Code, Name);
 
-        var response = await fetch(baseUrl + 'api/storage/save', {
+        var response = await fetch(baseUrl + 'api/unittype/save', {
             method: 'POST',
-            body: JSON.stringify(storage),
+            body: JSON.stringify(unitType),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -178,22 +150,22 @@ class Common {
                 $.each(response.errors, function (index, element) {
                     errorHtml += element[0] + '<br/>';
                 });
-                $('#StorageErrorSection').html(errorHtml);
+                $('#UnitTypeErrorSection').html(errorHtml);
                 return;
             }
         }
         if (response.success) {
-            toastr.success("Storage Saved", '', { positionClass: 'toast-top-center' });
+            toastr.success("Unit Type Saved", '', { positionClass: 'toast-top-center' });
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
             if (Id == 0) {
-                storageGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+                unitTypeGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
             }
             else {
-                storageGridOptions.api.applyTransaction({ update: [response.data] });
+                unitTypeGridOptions.api.applyTransaction({ update: [response.data] });
             }
-            let rowNode = storageGridOptions.api.getRowNode(response.data.id);
-            storageGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            let rowNode = unitTypeGridOptions.api.getRowNode(response.data.id);
+            unitTypeGridOptions.api.flashCells({ rowNodes: [rowNode] });
             return;
         }
         if (response.success == false) {
@@ -201,29 +173,10 @@ class Common {
             $.each(response.errors, function (index, element) {
                 errorHtml += element + '<br/>';
             });
-            $('#StorageErrorSection').html(errorHtml);
+            $('#UnitTypeErrorSection').html(errorHtml);
         }
     }
-
-    static async GetStorageById(id) {
-        await fetch(baseUrl + 'api/storage/byid/' + id, {
-            method: 'GET',
-            headers: {
-                //'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-        }).then(response => { return response.json() })
-            .then(data => {
-                $('#AddEditStorage').modal('show');
-                Common.BindValuesToStorageForm(new Storage(data.id, data.name));
-            })
-            .catch(error => {
-                console.log(error);
-                toastr.success("Unexpected error", '', { positionClass: 'toast-top-center' });
-            });
     }
-
-}
 
 jQuery(document).ready(function () {
     Common.init();

@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sun Jan 2 12:24:50 2022
+-- File generated with SQLiteStudio v3.3.3 on Sun Jan 2 19:53:25 2022
 --
 -- Text encoding used: System
 --
@@ -216,6 +216,7 @@ CREATE TABLE Orders (
     ReceivedQuantity NUMERIC (10, 2),
     RefNo            VARCHAR (50)    NOT NULL,
     StatusId         VARCHAR (50)    NOT NULL,
+    SellerId         INTEGER         CONSTRAINT FK_Orders_SellerId_Parties_Id REFERENCES Parties (Id),
     OrderDate        DATE            NOT NULL,
     ReceivedDate     DATE,
     Remark           TEXT (900),

@@ -9,7 +9,7 @@ namespace MahantInv.Core.SimpleAggregates
     [Table("UnitTypes")]
     public class UnitType : IAggregateRoot
     {
-        [Dapper.Contrib.Extensions.ExplicitKey]
+        [Dapper.Contrib.Extensions.ExplicitKey,Required]
         public string Code { get; set; }
         [Required, Display(Name = "Unit Type Name")]
         public string Name { get; set; }
