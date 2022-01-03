@@ -152,9 +152,10 @@ class Product {
     }
 }
 class ProductUsageModel {
-    constructor(ProductId, Quantity) {
+    constructor(ProductId, Quantity, Buyer) {
         this.ProductId = ProductId;
         this.Quantity = Quantity
+        this.Buyer = Buyer;
     }
 }
 class Common {
@@ -317,7 +318,8 @@ class Common {
     static async UseProduct(mthis) {
         let productId = $('#ProductUsageSelect').val();
         let quantity = $('#UsageQuantity').val();
-        var productUsageModel = new ProductUsageModel(productId[0], quantity);
+        let Buyer = $('#BuyersSelect').val();
+        var productUsageModel = new ProductUsageModel(productId[0], quantity, Buyer);
         var response = await fetch(baseUrl + 'api/product/usage', {
             method: 'POST',
             body: JSON.stringify(productUsageModel),
@@ -343,6 +345,7 @@ class Common {
 
             $('#ProductUsageSelect').val('').trigger('change');
             $('#UsageQuantity').val('');
+            $('#BuyersSelect').val('').trigger('change');
             $('#ProductUsageSelect').select2('open');
             $('.select2-search__field').focus();
         }

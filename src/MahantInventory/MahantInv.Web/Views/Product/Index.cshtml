@@ -18,9 +18,9 @@
             <div class="col-md-2 col-sm-2 col-lg-2">
                 <select id="BuyersSelect" class="form-control form-control-sm" style="width: 100%">
                     <option value="">Select Buyer</option>
-                    @foreach (var item in (ViewBag.Buyers as ICollection<MahantInv.Core.SimpleAggregates.Buyer>))
+                    @foreach (var item in (ViewBag.Buyers as SelectList))
                     {
-                        <option value="@item.Id">@string.Join(" - ", new[] { item.Name, item.Contact })</option>
+                        <option value="@item.Value">@item.Text</option>
                     }
                 </select>
             </div>

@@ -109,6 +109,7 @@ namespace MahantInv.Web.Api
                 {
                     ProductId = productUsageModel.ProductId,
                     Quantity = productUsageModel.Quantity,
+                    Buyer = productUsageModel.Buyer,
                     RefNo = Guid.NewGuid().ToString(),
                     LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
                     ModifiedAt = DateTime.UtcNow

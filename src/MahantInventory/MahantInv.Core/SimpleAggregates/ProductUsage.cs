@@ -12,5 +12,6 @@ namespace MahantInv.Core.SimpleAggregates
     [Table("ProductUsages")]
     public class ProductUsage : ProductInventory, IAggregateRoot
     {
+        public string Buyer { get; set; }
     }
 }
