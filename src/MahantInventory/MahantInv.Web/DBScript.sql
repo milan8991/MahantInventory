@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sun Jan 2 19:53:25 2022
+-- File generated with SQLiteStudio v3.3.3 on Mon Jan 3 08:52:20 2022
 --
 -- Text encoding used: System
 --
@@ -540,7 +540,7 @@ CREATE TABLE ProductUsages (
     RefNo            VARCHAR (50)    NOT NULL,
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,
-    BuyerId          INTEGER         CONSTRAINT FK_ProductUsages_BuyerId_Buyers_Id REFERENCES Buyers (Id),
+    Buyer            VARCHAR (255),
     CONSTRAINT FK_ProductUsages_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )
