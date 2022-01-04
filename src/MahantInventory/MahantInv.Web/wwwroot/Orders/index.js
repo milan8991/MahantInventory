@@ -3,11 +3,15 @@ let editModeIdx = -1;
 function ActionCellRenderer() { }
 
 ActionCellRenderer.prototype.init = function (params) {
+    var cellBlank = !params.value;
+    if (cellBlank) {
+        return null;
+    }
     this.params = params;
 
-    this.eGui = document.createElement('span');
-    if (params.data.status === 'Cancelled') {
-        this.eGui.innerHTML = '';
+    this.eGui = document.createElement('div');
+    if (params.data.status != 'Ordered') {
+        this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">View</button>';
     }
     else {
         this.eGui.innerHTML = '<button class="btn btn-sm btn-link" type="button" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">Edit</button>';
@@ -20,66 +24,109 @@ ActionCellRenderer.prototype.getGui = function () {
 const stockClassRules = {
     'sick-days-warning': (params) => params.data.currentStock < params.data.reorderLevel
 };
+
+const spanCellClassRules = {
+    'cell-span': (params) => params.data.orderTransactionsCount > 1
+};
+
 var orderGridOptions = {
 
     // define grid columns
     columnDefs: [
         {
             headerName: 'Product', field: 'productName', filter: 'agTextColumnFilter', headerTooltip: 'Name'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            }
+            , cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Quantity', field: 'quantity', filter: 'agNumberColumnFilter', headerTooltip: 'Ordered Quantity'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Received Quantity', field: 'receivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
             , cellClassRules: stockClassRules
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
-            headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
+            headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level',
+            rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
-            headerName: 'Seller', field: 'seller', filter: 'agTextColumnFilter', headerTooltip: 'Seller'
+            headerName: 'Seller', field: 'seller', filter: 'agTextColumnFilter', headerTooltip: 'Seller',
+            rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
             cellRenderer: function (params) {
-
                 if (params.value == 'Ordered') {
-                    return '<button type="button" class="btn btn-outline-primary btn-sm" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">' + params.value + '</button>'
+                    return '<button type="button" class="btn btn-link btn-sm" onclick="Common.OpenModal(this)" data-id="' + params.data.id + '" data-target="PlaceOrder">' + params.value + '</button>'
                 }
 
                 let cls = params.value == 'Received' ? 'success' : 'danger';
                 return '<span class="badge badge-' + cls + '">' + params.value + '</span>';
-            }
-        },
-        {
-            headerName: 'Payment Type',
-            field: 'paymentType', filter: 'agTextColumnFilter', headerTooltip: 'Payment Type'
+            },
+            rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Payer', field: 'payer', filter: 'agTextColumnFilter', headerTooltip: 'Payer'
         },
         {
-            headerName: 'Paid Amount', field: 'paidAmount', filter: 'agNumberColumnFilter', headerTooltip: 'Paid Amount'
+            headerName: 'Paid Amount', field: 'amount', filter: 'agNumberColumnFilter', headerTooltip: 'Paid Amount'
+        },
+        {
+            headerName: 'Payment Type',
+            field: 'paymentType', filter: 'agSetColumnFilter', headerTooltip: 'Payment Type'
         },
         {
             headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            }
+            , cellClassRules: spanCellClassRules
         },
         {
-            headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date'
+            headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date',
+            rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         },
+        //{
+        //    headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark', minWidth: 100
+        //},
         {
-            headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark', minWidth: 100
-        },
-        {
-            headerName: 'Last Modified By', field: 'lastModifiedBy', filter: 'agSetColumnFilter', headerTooltip: 'LastModifiedBy'
-        },
-        {
-            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
+            headerName: '', field: 'id', headerTooltip: 'Action'
+            , pinned: 'right',
+            width: 80, suppressSizeToFit: true,
             cellRenderer: 'actionCellRenderer',
+            rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
         }
     ],
     sideBar: { toolPanels: ['columns', 'filters'] },
@@ -94,9 +141,10 @@ var orderGridOptions = {
         flex: 1,
         minWidth: 50,
         wrapText: false,
-        autoHeight: true,
+        //autoHeight: true,
         floatingFilter: true,
     },
+    suppressRowTransform: true,
     pagination: true,
     paginationAutoPageSize: true,
     animateRows: true,
@@ -208,9 +256,33 @@ class Common {
         fetch(baseUrl + 'api/orders')
             .then((response) => response.json())
             .then(data => {
-                orderGridOptions.api.setRowData(data);
+                var gridData = [];
+                $.each(data, function (i, v) {
+                    let idx = 0;
+                    $.each(v.orderTransactionVMs, function (oti, otv) {
+                        var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, orderTransactionsCount: 1 };
+                        if (idx == 0) {
+                            gData.orderTransactionsCount = v.orderTransactionsCount;
+                            gData.productName = v.productName;
+                            gData.orderDateFormat = v.orderDateFormat;
+                            gData.id = v.id;
+                            gData.receivedDateFormat = v.receivedDateFormat;
+                            gData.orderDateFormat = v.orderDateFormat;
+                            gData.status = v.status;
+                            gData.seller = v.seller;
+                            gData.reorderLevel = v.reorderLevel;
+                            gData.currentStock = v.currentStock;
+                            gData.receivedQuantity = v.receivedQuantity;
+                            gData.quantity = v.quantity;
+                        }
+                        gridData.push(gData);
+                        idx++;
+                    });
+                });
+                orderGridOptions.api.setRowData(gridData);
             })
             .catch(error => {
+
                 orderGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
@@ -362,6 +434,12 @@ class Common {
                     });
                 }
                 Common.BindValuesToOrderForm(order);
+                if (data.status != 'Ordered') {
+                    $('#actionsection').hide();
+                }
+                else {
+                    $('#actionsection').show();
+                }
             })
             .catch(error => {
                 console.log(error);

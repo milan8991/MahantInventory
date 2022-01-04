@@ -11,8 +11,6 @@ namespace MahantInv.Core.ViewModels
     {
         public string ProductName { get; set; }
         public string Status { get; set; }
-        public string PaymentType { get; set; }
-        public string Payer { get; set; }
         public string Seller { get; set; }
         public string LastModifiedBy { get; set; }
         public decimal? CurrentStock { get; set; }
@@ -32,6 +30,13 @@ namespace MahantInv.Core.ViewModels
             }
         }
         public List<OrderTransactionVM> OrderTransactionVMs { get; set; }
+        public int OrderTransactionsCount
+        {
+            get
+            {
+                return OrderTransactionVMs == null ? 1 : OrderTransactionVMs.Count;
+            }
+        }
         public OrderVM()
         {
             OrderTransactionVMs = new();
@@ -41,5 +46,20 @@ namespace MahantInv.Core.ViewModels
     {
         public string Party { get; set; }
         public string PaymentType { get; set; }
+    }
+    public class OrdersGrid: Order
+    {
+        public string ProductName { get; set; }
+        public string Status { get; set; }
+        public string Seller { get; set; }
+        public string LastModifiedBy { get; set; }
+        public decimal? CurrentStock { get; set; }
+        public decimal ReorderLevel { get; set; }
+        public string OrderDateFormat { get; set; }
+        public string ReceivedDateFormat { get; set; }
+        public string Payer { get; set; }//Party
+        public string PaymentType { get; set; }
+        public decimal? Amount { get; set; }
+        public int OrderTransactionsCount { get; set; }
     }
 }

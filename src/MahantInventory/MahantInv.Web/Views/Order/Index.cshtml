@@ -5,6 +5,16 @@
     .sick-days-warning {
         background-color: #ffcccb !important;
     }
+
+    .cell-span {
+        background: white;
+        border-left: 1px solid lightgrey !important;
+        border-right: 1px solid lightgrey !important;
+        border-bottom: 1px solid lightgrey !important;
+        display: flex;
+        justify-content: left; /* align horizontal*/ 
+        align-items: center;
+    }
 </style>
 <div class="card border-dark">
     <div class="card-header">
@@ -30,7 +40,7 @@
                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="Common.DeleteOrderTransaction(this)">Delete</button>
             </td>
         </tr>
-        </tbody>
+    </tbody>
 </table>
 
 @*@await Html.PartialAsync("_AddEditOrder",new MahantInv.Core.SimpleAggregates.Order())*@

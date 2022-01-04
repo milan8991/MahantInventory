@@ -42,6 +42,28 @@ namespace MahantInv.Web.Api
                 DateTime endDate = DateTime.Now.Date;
                 DateTime startDate = endDate.AddMonths(-3);
                 IEnumerable<OrderVM> data = await _orderRepository.GetOrders(startDate, endDate);
+
+                //List<OrdersGrid> gridDataList = new();
+                //foreach (var order in data)
+                //{
+                //    if (order.OrderTransactionsCount == 0)
+                //    {
+                //        var gridData = _mapper.Map<OrdersGrid>(order);
+                //        gridDataList.Add(gridData);
+                //    }
+                //    else
+                //    {
+                //        foreach (var tran in order.OrderTransactionVMs)
+                //        {
+                //            OrdersGrid gridOrder = _mapper.Map<OrdersGrid>(order);
+                //            gridOrder.Payer = tran.Party;
+                //            gridOrder.PaymentType = tran.PaymentType;
+                //            gridOrder.Amount = tran.Amount;
+                //            gridDataList.Add(gridOrder);
+                //        }
+                //    }
+                //}
+
                 return Ok(data);
             }
             catch (Exception e)
@@ -109,9 +131,15 @@ namespace MahantInv.Web.Api
             }
             foreach (OrderTransaction orderTransaction in order.OrderTransactions)
             {
-                orderTransaction.OrderId = order.Id;
-                await _orderTransactionRepository.AddAsync(orderTransaction);
-                returnOrder.OrderTransactions.Add(orderTransaction);
+                OrderTransaction ot = new()
+                {
+                    OrderId = order.Id,
+                    PartyId = orderTransaction.PartyId,
+                    PaymentTypeId = orderTransaction.PaymentTypeId,
+                    Amount = orderTransaction.Amount
+                };
+                await _orderTransactionRepository.AddAsync(ot);
+                returnOrder.OrderTransactions.Add(ot);
             }
             return returnOrder;
         }

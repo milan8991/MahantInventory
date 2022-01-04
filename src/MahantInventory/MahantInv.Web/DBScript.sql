@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Mon Jan 3 08:52:20 2022
+-- File generated with SQLiteStudio v3.3.3 on Tue Jan 4 14:24:27 2022
 --
 -- Text encoding used: System
 --
@@ -674,7 +674,8 @@ CREATE VIEW vOrders AS
            ost.Title AS Status,
            u.UserName AS LastModifiedBy,
            pi.Quantity AS CurrentStock,
-           p.ReorderLevel
+           p.ReorderLevel,
+           s.Name AS Seller
       FROM Orders o
            INNER JOIN
            Products p ON o.ProductId = p.Id
@@ -683,7 +684,9 @@ CREATE VIEW vOrders AS
            INNER JOIN
            AspNetUsers u ON o.LastModifiedById = u.Id
            LEFT OUTER JOIN
-           ProductInventory pi ON p.Id = pi.ProductId;
+           ProductInventory pi ON p.Id = pi.ProductId
+           LEFT OUTER JOIN
+           Parties s ON o.SellerId = s.Id;
 
 
 -- View: vOrderTransactions
