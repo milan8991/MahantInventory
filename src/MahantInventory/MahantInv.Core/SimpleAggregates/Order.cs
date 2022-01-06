@@ -28,6 +28,15 @@ namespace MahantInv.Core.SimpleAggregates
         public DateTime? OrderDate { get; set; }
         [Display(Name = "Received Date")]
         public DateTime? ReceivedDate { get; set; }
+        [Display(Name ="Price Per Item")]
+        public decimal? PricePerItem { get; set; }
+        [Display(Name ="Discount(%)")]
+        public decimal? Discount { get; set; }
+        public decimal? Tax { get; set; }
+        [Display(Name ="Discount Amount")]
+        public decimal? DiscountAmount { get; set; }
+        [Display(Name ="Net Amount")]
+        public decimal? NetAmount { get; set; }
         public string Remark { get; set; }
         [Display(Name = "Last Modified By")]
         public string LastModifiedById { get; set; }

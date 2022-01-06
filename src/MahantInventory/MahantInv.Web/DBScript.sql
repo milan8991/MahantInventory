@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Tue Jan 4 14:24:27 2022
+-- File generated with SQLiteStudio v3.3.3 on Thu Jan 6 08:02:05 2022
 --
 -- Text encoding used: System
 --
@@ -219,6 +219,11 @@ CREATE TABLE Orders (
     SellerId         INTEGER         CONSTRAINT FK_Orders_SellerId_Parties_Id REFERENCES Parties (Id),
     OrderDate        DATE            NOT NULL,
     ReceivedDate     DATE,
+    PricePerItem     NUMERIC (10, 2),
+    Discount         NUMERIC (7, 2),
+    Tax              NUMERIC (7, 2),
+    DiscountAmount   NUMERIC (10, 2),
+    NetAmount        NUMERIC (10, 2),
     Remark           TEXT (900),
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,

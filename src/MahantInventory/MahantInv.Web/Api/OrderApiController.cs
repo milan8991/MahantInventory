@@ -123,6 +123,11 @@ namespace MahantInv.Web.Api
                 oldOrder.ReceivedDate = order.ReceivedDate;
                 oldOrder.ReceivedQuantity = order.ReceivedQuantity;
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                oldOrder.PricePerItem = order.PricePerItem;
+                oldOrder.Discount = order.Discount;
+                oldOrder.Tax = order.Tax;
+                oldOrder.DiscountAmount = order.DiscountAmount;
+                oldOrder.NetAmount = order.NetAmount;
                 oldOrder.ModifiedAt = DateTime.UtcNow;
                 oldOrder.StatusId = order.StatusId;
                 await _orderRepository.UpdateAsync(oldOrder);

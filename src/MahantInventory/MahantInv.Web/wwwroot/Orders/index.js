@@ -186,7 +186,7 @@ var orderGridOptions = {
 
 
 class Order {
-    constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate) {
+    constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate, PricePerItem, Discount, Tax, DiscountAmount, NetAmount) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
@@ -196,6 +196,11 @@ class Order {
         this.ReceivedQuantity = ReceivedQuantity;
         this.ReceivedDate = ReceivedDate;
         this.OrderTransactions = [];
+        this.PricePerItem = PricePerItem;
+        this.Discount = Discount;
+        this.Tax = Tax;
+        this.DiscountAmount = DiscountAmount;
+        this.NetAmount = NetAmount;
     }
 }
 class OrderTransaction {
@@ -208,7 +213,12 @@ class OrderTransaction {
         this.Amount = Amount;
     }
 }
-
+class DiscountAndNetPay {
+    constructor(DiscountAmount, NetAmount) {
+        this.DiscountAmount = DiscountAmount;
+        this.NetAmount = NetAmount;
+    }
+}
 class Common {
     static ParseValue(val) {
         if (val == null) return null;
@@ -226,7 +236,7 @@ class Common {
         editModeIdx = -1;
         orderTransaction = [];
         if (id == 0) {
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
             Common.GetOrderById(id);
@@ -302,6 +312,11 @@ class Common {
         $('#Remark').val(model.Remark);
         $('#ReceivedQuantity').val(model.ReceivedQuantity);
         $('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
+        $('#PricePerItem').val(model.PricePerItem);
+        $('#Discount').val(model.Discount);
+        $('#Tax').val(model.Tax);
+        $('#DiscountAmount').val(model.DiscountAmount);
+        $('#NetAmount').val(model.NetAmount);
         if (model.OrderTransactions.length == 0) {
             $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
@@ -320,6 +335,9 @@ class Common {
             allowClear: true
         });
         Common.GetAllProducts();
+        Common.InitCountable();
+
+        $('#PlaceOrder').find('.modal-dialog').css('max-width', '{v}px'.replace('{v}',($(window).width() - 100)));
     }
     static async GetAllProducts() {
         let response = await fetch(baseUrl + 'api/products', {
@@ -426,7 +444,7 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate);
+                var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate, data.pricePerItem, data.discount, data.tax, data.discountAmount, data.netAmount);
                 order.OrderTransactions = [];
                 if (data.orderTransactionVMs.length > 0) {
                     $.each(data.orderTransactionVMs, function (i, v) {
@@ -455,7 +473,12 @@ class Common {
         let Remark = $('#Remark').val();
         let ReceivedQuantity = $('#ReceivedQuantity').val();
         let ReceivedDate = $('#ReceivedDate').val();
-        let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate);
+        let PricePerItem = $('#PricePerItem').val();
+        let Discount = $('#Discount').val();
+        let Tax = $('#Tax').val();
+        let DiscountAmount = $('#DiscountAmount').val();
+        let NetAmount = $('#NetAmount').val();
+        let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate, PricePerItem, Discount, Tax, DiscountAmount, NetAmount);
         order.OrderTransactions = orderTransaction;
         return order;
     }
@@ -624,6 +647,24 @@ class Common {
         let idx = $(mthis).parent().parent().attr('id');
         orderTransaction.splice(idx, 1);
         Common.UpdateOrderTransactionGrid();
+    }
+    static CalculateDiscountAndNetPay() {
+        let Quantity = $('#Quantity').val() || 0;
+        let PricePerItem = $('#PricePerItem').val() || 0;
+        let Discount = $('#Discount').val() || 0;
+        let Tax = $('#Tax').val() || 0;
+        let TotalAmount = (Quantity * PricePerItem);
+        let DiscountAmount = (TotalAmount * Discount) / 100;
+        let NetTax = ((TotalAmount - DiscountAmount) * Tax) / 100;
+        let NetAmount = (TotalAmount - DiscountAmount) + NetTax;
+        return new DiscountAndNetPay(DiscountAmount, NetAmount);
+    }
+    static async InitCountable() {
+        $(".countable").on("change", function () {
+            var result = Common.CalculateDiscountAndNetPay();
+            $('#DiscountAmount').val(result.DiscountAmount);
+            $('#NetAmount').val(result.NetAmount);
+        });
     }
 }
 

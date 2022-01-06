@@ -26,6 +26,7 @@ namespace MahantInv.Core.Utility
         {
             public const string Payer = "Payer";
             public const string Seller = "Seller";
+            public const string Both = "Both";
         }
     }
 }
