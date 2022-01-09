@@ -4,6 +4,7 @@ using MahantInv.Core.SimpleAggregates;
 using MahantInv.Core.Utility;
 using MahantInv.Core.ViewModels;
 using MahantInv.SharedKernel.Interfaces;
+using MahantInv.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -34,36 +35,12 @@ namespace MahantInv.Web.Api
             _productInventoryHistoryRepository = productInventoryHistoryRepository;
             _orderTransactionRepository = orderTransactionRepository;
         }
-        [HttpGet("orders")]
-        public async Task<object> GetallOrders()
+        [HttpPost("orders")]
+        public async Task<object> GetallOrders([FromBody] FilterModel filterModel)
         {
             try
             {
-
-                DateTime endDate = DateTime.Now.Date;
-                DateTime startDate = endDate.AddMonths(-3);
-                IEnumerable<OrderVM> data = await _orderRepository.GetOrders(startDate, endDate);
-
-                //List<OrdersGrid> gridDataList = new();
-                //foreach (var order in data)
-                //{
-                //    if (order.OrderTransactionsCount == 0)
-                //    {
-                //        var gridData = _mapper.Map<OrdersGrid>(order);
-                //        gridDataList.Add(gridData);
-                //    }
-                //    else
-                //    {
-                //        foreach (var tran in order.OrderTransactionVMs)
-                //        {
-                //            OrdersGrid gridOrder = _mapper.Map<OrdersGrid>(order);
-                //            gridOrder.Payer = tran.Party;
-                //            gridOrder.PaymentType = tran.PaymentType;
-                //            gridOrder.Amount = tran.Amount;
-                //            gridDataList.Add(gridOrder);
-                //        }
-                //    }
-                //}
+                IEnumerable<OrderVM> data = await _orderRepository.GetOrders(filterModel.StartDate.Date, filterModel.EndDate.Date);
 
                 return Ok(data);
             }
