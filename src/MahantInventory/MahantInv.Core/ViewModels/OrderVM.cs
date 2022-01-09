@@ -37,10 +37,7 @@ namespace MahantInv.Core.ViewModels
                 return OrderTransactionVMs == null ? 1 : OrderTransactionVMs.Count;
             }
         }
-        public OrderVM()
-        {
-            OrderTransactionVMs = new();
-        }
+        
     }
     public class OrderTransactionVM : OrderTransaction
     {

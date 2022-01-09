@@ -35,7 +35,11 @@ namespace MahantInv.Infrastructure.Data
                         orderVMEntry = order;
                         orderVMDictionary.Add(orderVMEntry.Id, orderVMEntry);
                     }
-                    orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    if (orderTransaction != null)
+                    {
+                        orderVMEntry.OrderTransactionVMs = new();
+                        orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    }
                     return orderVMEntry;
                 },
                 new { orderId },
@@ -58,7 +62,11 @@ namespace MahantInv.Infrastructure.Data
                         orderVMEntry = order;
                         orderVMDictionary.Add(orderVMEntry.Id, orderVMEntry);
                     }
-                    orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    if (orderTransaction != null)
+                    {
+                        orderVMEntry.OrderTransactionVMs = new();
+                        orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
+                    }
                     return orderVMEntry;
                 },
                 new { startDate, endDate },

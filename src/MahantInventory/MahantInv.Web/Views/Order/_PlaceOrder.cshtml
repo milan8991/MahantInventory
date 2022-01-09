@@ -34,6 +34,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.SellerId"></label>
+                            <a href="#" class="pl-2" onclick="Common.OpenPartyModal(this)" data-type="s">(New)</a>
                             <select id="SellerId" class="form-control form-control-sm select2" style="width:100%" placeholder="Seller">
                                 <option value="">Select Seller</option>
                                 @foreach (var item in (ViewBag.Parties as ICollection<MahantInv.Core.SimpleAggregates.Party>).Where(p => p.Type == PartyTypes.Seller || p.Type == PartyTypes.Both))
@@ -107,7 +108,7 @@
                                 <table class="table table-sm table-bordered">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Payer</th>
+                                            <th scope="col">Payer <a href="#" class="pl-2" onclick="Common.OpenPartyModal(this)" data-type="p">(New)</a></th>
                                             <th scope="col">Payment Type</th>
                                             <th scope="col">Amount</th>
                                             <th scope="col">Action</th>
@@ -159,3 +160,5 @@
         </div>
     </div>
 </div>
+
+@await Html.PartialAsync("_AddParty",new MahantInv.Core.SimpleAggregates.Party())

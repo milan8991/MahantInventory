@@ -213,6 +213,22 @@ class OrderTransaction {
         this.Amount = Amount;
     }
 }
+class Party {
+    constructor(Id, Name, Type, CategoryId, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country) {
+        this.Id = parseInt(Id);
+        this.Name = Common.ParseValue(Name);
+        this.Type = Common.ParseValue(Type);
+        this.CategoryId = CategoryId;
+        this.PrimaryContact = Common.ParseValue(PrimaryContact);
+        this.SecondaryContact = Common.ParseValue(SecondaryContact);
+        this.Line1 = Common.ParseValue(Line1);
+        this.Line2 = Common.ParseValue(Line2);
+        this.Taluk = Common.ParseValue(Taluk);
+        this.District = Common.ParseValue(District);
+        this.State = Common.ParseValue(State);
+        this.Country = Common.ParseValue(Country);
+    }
+}
 class DiscountAndNetPay {
     constructor(DiscountAmount, NetAmount) {
         this.DiscountAmount = DiscountAmount;
@@ -242,6 +258,9 @@ class Common {
             Common.GetOrderById(id);
         }
     }
+    static OpenPartyModal(mthis) {
+        $('#AddParty').modal('show');
+    }
     static OpenActionModal(mthis) {
         let id = $(mthis).data('id');
         $('#ReceivedOrCancelledOrder').modal('show');
@@ -268,31 +287,49 @@ class Common {
             .then(data => {
                 var gridData = [];
                 $.each(data, function (i, v) {
-                    let idx = 0;
-                    $.each(v.orderTransactionVMs, function (oti, otv) {
-                        var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, orderTransactionsCount: 1 };
-                        if (idx == 0) {
-                            gData.orderTransactionsCount = v.orderTransactionsCount;
-                            gData.productName = v.productName;
-                            gData.orderDateFormat = v.orderDateFormat;
-                            gData.id = v.id;
-                            gData.receivedDateFormat = v.receivedDateFormat;
-                            gData.orderDateFormat = v.orderDateFormat;
-                            gData.status = v.status;
-                            gData.seller = v.seller;
-                            gData.reorderLevel = v.reorderLevel;
-                            gData.currentStock = v.currentStock;
-                            gData.receivedQuantity = v.receivedQuantity;
-                            gData.quantity = v.quantity;
-                        }
+                    if (v.orderTransactionVMs == null || v.orderTransactionVMs.length == 0) {
+                        var gData = {};
+                        gData.orderTransactionsCount = v.orderTransactionsCount;
+                        gData.productName = v.productName;
+                        gData.orderDateFormat = v.orderDateFormat;
+                        gData.id = v.id;
+                        gData.receivedDateFormat = v.receivedDateFormat;
+                        gData.orderDateFormat = v.orderDateFormat;
+                        gData.status = v.status;
+                        gData.seller = v.seller;
+                        gData.reorderLevel = v.reorderLevel;
+                        gData.currentStock = v.currentStock;
+                        gData.receivedQuantity = v.receivedQuantity;
+                        gData.quantity = v.quantity;
                         gridData.push(gData);
-                        idx++;
-                    });
+                    }
+                    else {
+                        let idx = 0;
+                        $.each(v.orderTransactionVMs, function (oti, otv) {
+                            var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, orderTransactionsCount: 1 };
+                            if (idx == 0) {
+                                gData.orderTransactionsCount = v.orderTransactionsCount;
+                                gData.productName = v.productName;
+                                gData.orderDateFormat = v.orderDateFormat;
+                                gData.id = v.id;
+                                gData.receivedDateFormat = v.receivedDateFormat;
+                                gData.orderDateFormat = v.orderDateFormat;
+                                gData.status = v.status;
+                                gData.seller = v.seller;
+                                gData.reorderLevel = v.reorderLevel;
+                                gData.currentStock = v.currentStock;
+                                gData.receivedQuantity = v.receivedQuantity;
+                                gData.quantity = v.quantity;
+                            }
+                            gridData.push(gData);
+                            idx++;
+                        });
+                    }
                 });
                 orderGridOptions.api.setRowData(gridData);
             })
             .catch(error => {
-
+                console.log('error:', error);
                 orderGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
@@ -325,6 +362,10 @@ class Common {
             Common.UpdateOrderTransactionGrid();
         }
     }
+    static BindSelectData() {
+        var result = ',India,Afghanistan,Aland Islands,Albania,Algeria,American Samoa,Andorra,Angola,Anguilla,Antarctica,Antigua and Barbuda,Argentina,Armenia,Aruba,Australia,Austria,Azerbaijan,Bahamas,Bahrain,Bangladesh,Barbados,Belarus,Belgium,Belize,Benin,Bermuda,Bhutan,Bolivia,Bosnia and Herzegovina,Botswana,Bouvet Island,Brazil,British Indian Ocean Territory,British Virgin Islands,Brunei,Bulgaria,Burkina Faso,Burundi,Cambodia,Cameroon,Canada,Cape Verde,Caribbean Netherlands,Cayman Islands,Central African Republic,Chad,Chile,China,Christmas Island,Cocos (Keeling) Islands,Colombia,Comoros,Cook Islands,Costa Rica,Croatia,Cuba,Curaçao,Cyprus,Czechia,Denmark,Djibouti,Dominica,Dominican Republic,DR Congo,Ecuador,Egypt,El Salvador,Equatorial Guinea,Eritrea,Estonia,Eswatini,Ethiopia,Falkland Islands,Faroe Islands,Fiji,Finland,France,French Guiana,French Polynesia,French Southern and Antarctic Lands,Gabon,Gambia,Georgia,Germany,Ghana,Gibraltar,Greece,Greenland,Grenada,Guadeloupe,Guam,Guatemala,Guernsey,Guinea,Guinea-Bissau,Guyana,Haiti,Heard Island and McDonald Islands,Honduras,Hong Kong,Hungary,Iceland,Indonesia,Iran,Iraq,Ireland,Isle of Man,Israel,Italy,Ivory Coast,Jamaica,Japan,Jersey,Jordan,Kazakhstan,Kenya,Kiribati,Kosovo,Kuwait,Kyrgyzstan,Laos,Latvia,Lebanon,Lesotho,Liberia,Libya,Liechtenstein,Lithuania,Luxembourg,Macau,Madagascar,Malawi,Malaysia,Maldives,Mali,Malta,Marshall Islands,Martinique,Mauritania,Mauritius,Mayotte,Mexico,Micronesia,Moldova,Monaco,Mongolia,Montenegro,Montserrat,Morocco,Mozambique,Myanmar,Namibia,Nauru,Nepal,Netherlands,New Caledonia,New Zealand,Nicaragua,Niger,Nigeria,Niue,Norfolk Island,North Korea,North Macedonia,Northern Mariana Islands,Norway,Oman,Pakistan,Palau,Palestine,Panama,Papua New Guinea,Paraguay,Peru,Philippines,Pitcairn Islands,Poland,Portugal,Puerto Rico,Qatar,Republic of the Congo,Réunion,Romania,Russia,Rwanda,Saint Barthélemy,Saint Helena, Ascension and Tristan da Cunha,Saint Kitts and Nevis,Saint Lucia,Saint Martin,Saint Pierre and Miquelon,Saint Vincent and the Grenadines,Samoa,San Marino,São Tomé and Príncipe,Saudi Arabia,Senegal,Serbia,Seychelles,Sierra Leone,Singapore,Sint Maarten,Slovakia,Slovenia,Solomon Islands,Somalia,South Africa,South Georgia,South Korea,South Sudan,Spain,Sri Lanka,Sudan,Suriname,Svalbard and Jan Mayen,Sweden,Switzerland,Syria,Taiwan,Tajikistan,Tanzania,Thailand,Timor-Leste,Togo,Tokelau,Tonga,Trinidad and Tobago,Tunisia,Turkey,Turkmenistan,Turks and Caicos Islands,Tuvalu,Uganda,Ukraine,United Arab Emirates,United Kingdom,United States,United States Minor Outlying Islands,United States Virgin Islands,Uruguay,Uzbekistan,Vanuatu,Vatican City,Venezuela,Vietnam,Wallis and Futuna,Western Sahara,Yemen,Zambia,Zimbabwe';
+        return result.split(',');
+    }
 
     static init() {
         $('#ordersdata').height(Common.calcDataTableHeight(27));
@@ -334,10 +375,16 @@ class Common {
             theme: "bootstrap4",
             allowClear: true
         });
+        $('#Country').select2({
+            placeholder: 'Search Counry',
+            data: Common.BindSelectData(),
+            theme: "bootstrap4",
+            dropdownParent: $("#AddParty")
+        });
         Common.GetAllProducts();
         Common.InitCountable();
 
-        $('#PlaceOrder').find('.modal-dialog').css('max-width', '{v}px'.replace('{v}',($(window).width() - 100)));
+        $('#PlaceOrder').find('.modal-dialog').css('max-width', '{v}px'.replace('{v}', ($(window).width() - 100)));
     }
     static async GetAllProducts() {
         let response = await fetch(baseUrl + 'api/products', {
@@ -446,10 +493,12 @@ class Common {
             .then(data => {
                 var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate, data.pricePerItem, data.discount, data.tax, data.discountAmount, data.netAmount);
                 order.OrderTransactions = [];
-                if (data.orderTransactionVMs.length > 0) {
-                    $.each(data.orderTransactionVMs, function (i, v) {
-                        order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
-                    });
+                if (data.orderTransactionVMs != null) {
+                    if (data.orderTransactionVMs.length > 0) {
+                        $.each(data.orderTransactionVMs, function (i, v) {
+                            order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
+                        });
+                    }
                 }
                 Common.BindValuesToOrderForm(order);
                 if (data.status != 'Ordered') {
@@ -665,6 +714,59 @@ class Common {
             $('#DiscountAmount').val(result.DiscountAmount);
             $('#NetAmount').val(result.NetAmount);
         });
+    }
+    static async SaveParty(mthis) {
+        $('#PartyErrorSection').empty();
+        let Name = $('#Name').val();
+        let Type = $('#Type').val();
+        let CategoryId = $('#CategoryId').val();
+        let PrimaryContact = $('#PrimaryContact').val();
+        let SecondaryContact = $('#SecondaryContact').val();
+        let Line1 = $('#Line1').val();
+        let Line2 = $('#Line2').val();
+        let Taluk = $('#Taluk').val();
+        let District = $('#District').val();
+        let State = $('#State').val();
+        let Country = $('#Country').val();
+        let party = new Party(0, Name, Type, CategoryId, PrimaryContact, SecondaryContact, Line1, Line2, Taluk, District, State, Country);
+
+        var response = await fetch(baseUrl + 'api/party/save', {
+            method: 'POST',
+            body: JSON.stringify(party),
+            headers: {
+                //'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '<br/>';
+                });
+                $('#PartyErrorSection').html(errorHtml);
+                return;
+            }
+        }
+        if (response.success) {
+            toastr.success("Party Saved", '', { positionClass: 'toast-top-center' });
+            if (Type === 'Payer' || Type === 'Both') {
+                $('#PartyId').prepend('<option value=' + response.data.id + '>' + response.data.name + '</option>');
+            }
+            if (Type === 'Seller' || Type === 'Both') {
+                $('#SellerId').prepend('<option value=' + response.data.id + '>' + response.data.name + '</option>');
+            }
+            $('#AddParty').modal('hide');
+            return;
+        }
+        if (response.success == false) {
+            var errorHtml = "";
+            $.each(response.errors, function (index, element) {
+                errorHtml += element + '<br/>';
+            });
+            $('#PartyErrorSection').html(errorHtml);
+        }
     }
 }
 
