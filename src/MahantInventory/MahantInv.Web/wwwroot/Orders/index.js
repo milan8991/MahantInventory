@@ -252,9 +252,11 @@ class Common {
         editModeIdx = -1;
         orderTransaction = [];
         if (id == 0) {
+            $('#actionsection').find('.btn-outline-danger').hide();
             Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
+            $('#actionsection').find('.btn-outline-danger').show();
             Common.GetOrderById(id);
         }
     }
@@ -284,7 +286,6 @@ class Common {
     }
 
     static LoadDataInGrid(startDate, endDate) {
-        console.log('startDate, endDate:', startDate, endDate);
         fetch(baseUrl + 'api/orders', {
             method: 'POST',
             body: JSON.stringify({ startDate: startDate, endDate: endDate }),
@@ -797,7 +798,11 @@ class Common {
         });
         $('#PartyErrorSection').html(errorHtml);
     }
-}
+    }
+
+    static async ExportToExcel() {
+        orderGridOptions.api.exportDataAsExcel({ fileName: 'Orders_' + $('#ordersdaterange').val()+'.xlsx'});
+    }
 }
 
 jQuery(document).ready(function () {

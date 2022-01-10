@@ -354,6 +354,10 @@ class Common {
             toastr.error(response.errors, '', { positionClass: 'toast-top-center' });
         }
     }
+
+    static async ExportToExcel() {
+        productGridOptions.api.exportDataAsExcel({ fileName: 'Products.xlsx' });
+    }
 }
 
 jQuery(document).ready(function () {

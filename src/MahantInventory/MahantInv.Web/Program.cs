@@ -48,13 +48,8 @@ namespace MahantInv.Web
         .ConfigureWebHostDefaults(webBuilder =>
         {
             webBuilder
-                .UseStartup<Startup>()
-                .ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.AddConsole();
-                // logging.AddAzureWebAppDiagnostics(); add this if deploying to Azure
-            });
+                .UseStartup<Startup>();
+            Log.Logger.Error("Prod");
         });
 
     }

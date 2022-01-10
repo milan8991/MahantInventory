@@ -22,10 +22,14 @@
             <div class="col-md-4 col-sm-4 col-lg-4">
                 <span class="font-weight-bold">Orders</span>
             </div>
-            <div class="col-md-4 col-sm-12 col-lg-4">
-                <input type="text" class="form-control form-control-sm" id="ordersdaterange" style="width:100%"/>
+            <div class="form-group col-md-4 col-sm-12 col-lg-4">
+                 <label for="staticEmail" class="col-sm-4 col-form-label">Order Date</label>
+                <input type="text" class="form-control form-control-sm" id="ordersdaterange" style="width:50%"/>
             </div>
             <div class="col-md-4 col-sm-4 col-lg-4 text-right" style="padding-right:0px !important;">
+                <button class="btn btn-outline-success btn-sm" type="button" onclick="Common.ExportToExcel()">
+                    <span>Export to Excel</span>
+                </button>
                 <button class="btn btn-outline-primary btn-sm" type="button" onclick="Common.OpenModal(this)" data-id="0" data-target="PlaceOrder">
                     <span>New</span>
                 </button>
