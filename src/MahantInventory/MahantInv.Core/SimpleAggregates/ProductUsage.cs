@@ -13,5 +13,6 @@ namespace MahantInv.Core.SimpleAggregates
     public class ProductUsage : ProductInventory, IAggregateRoot
     {
         public string Buyer { get; set; }
+        public DateTime? UsageDate { get; set; }
     }
 }

@@ -20,18 +20,12 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<ProductApiController> _logger;
         private readonly IProductsRepository _productRepository;
-        private readonly IPayersReposiroty _productInventoryRepository;
-        private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
-        private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        public ProductApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<ProductUsage> productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
+        
+        
+        public ProductApiController(IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
         {
             _logger = logger;
-            _productRepository = productRepository;
-            _productInventoryHistoryRepository = productInventoryHistoryRepository;
-            _productInventoryRepository = productInventoryRepository;
-            _productUsageRepository = productUsageRepository;
-            _unitOfWork = unitOfWork;
+            _productRepository = productRepository;            
         }
         [HttpGet("products")]
         public async Task<object> GetAllProducats()
@@ -96,62 +90,7 @@ namespace MahantInv.Web.Api
                 return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
-        [HttpPost("product/usage")]
-        public async Task<object> ProductUsage([FromBody] ProductUsageModel productUsageModel)
-        {
-            try
-            {
-                if (productUsageModel.Quantity <= 0)
-                {
-                    return BadRequest(new { success = false, errors = new[] { "Quantity must be larger than 0" } });
-                }
-                ProductUsage productUsage = new()
-                {
-                    ProductId = productUsageModel.ProductId,
-                    Quantity = productUsageModel.Quantity,
-                    Buyer = productUsageModel.Buyer,
-                    RefNo = Guid.NewGuid().ToString(),
-                    LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
-                    ModifiedAt = DateTime.UtcNow
-                };
-                ProductInventory productInventory = await _productInventoryRepository.GetByProductId(productUsageModel.ProductId);
-
-                if (productInventory == null)
-                {
-                    return BadRequest(new { success = false, errors = new[] { "Product/Stock not available" } });
-                }
-
-                ProductInventoryHistory productInventoryHistory = new()
-                {
-                    ProductId = productInventory.ProductId.Value,
-                    LastModifiedById = productInventory.LastModifiedById,
-                    ModifiedAt = productInventory.ModifiedAt,
-                    Quantity = productInventory.Quantity,
-                    RefNo = productInventory.RefNo
-                };
-
-                productInventory.Quantity -= productUsageModel.Quantity;
-                productInventory.RefNo = productUsage.RefNo;
-                productInventory.LastModifiedById = productUsage.LastModifiedById;
-                productInventory.ModifiedAt = productUsage.ModifiedAt;
-
-                await _unitOfWork.BeginAsync();
-                await _productInventoryHistoryRepository.AddAsync(productInventoryHistory);
-                await _productInventoryRepository.UpdateAsync(productInventory);
-                await _productUsageRepository.AddAsync(productUsage);
-                await _unitOfWork.CommitAsync();
-
-                ProductVM productVM = await _productRepository.GetProductById(productUsageModel.ProductId);
-                return Ok(new { success = true, data = productVM });
-            }
-            catch (Exception e)
-            {
-                await _unitOfWork.RollbackAsync();
-                string GUID = Guid.NewGuid().ToString();
-                _logger.LogError(e, GUID, null);
-                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
-            }
-        }
+        
 
     }
 

@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Thu Jan 6 08:02:05 2022
+-- File generated with SQLiteStudio v3.3.3 on Mon Jan 24 21:24:33 2022
 --
 -- Text encoding used: System
 --
@@ -546,6 +546,7 @@ CREATE TABLE ProductUsages (
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,
     Buyer            VARCHAR (255),
+    UsageDate        DATE,
     CONSTRAINT FK_ProductUsages_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )

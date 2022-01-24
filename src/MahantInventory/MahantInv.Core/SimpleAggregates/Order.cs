@@ -32,6 +32,7 @@ namespace MahantInv.Core.SimpleAggregates
         public decimal? PricePerItem { get; set; }
         [Display(Name ="Discount(%)")]
         public decimal? Discount { get; set; }
+        [Display(Name ="Tax(%)")]
         public decimal? Tax { get; set; }
         [Display(Name ="Discount Amount")]
         public decimal? DiscountAmount { get; set; }

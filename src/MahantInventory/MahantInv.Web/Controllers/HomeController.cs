@@ -1,6 +1,12 @@
 ﻿using AutoMapper;
+using MahantInv.Core.SimpleAggregates;
+using MahantInv.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace MahantInv.Web.Controllers
 {
@@ -12,14 +18,28 @@ namespace MahantInv.Web.Controllers
     /// </summary>
     public class HomeController : BaseController
     {
-        public HomeController(IMapper mapper) : base(mapper)
+        private readonly ILogger<HomeController> _logger;
+        private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
+        public HomeController(ILogger<HomeController> logger, IAsyncRepository<ProductUsage> productUsageRepository, IMapper mapper) : base(mapper)
         {
+            _logger = logger;
+            _productUsageRepository=productUsageRepository;
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            try
+            {
+                ViewBag.Buyers = new SelectList((await _productUsageRepository.ListAllAsync()), "Buyer", "Buyer");
+                return View();
+            }
+            catch (Exception e)
+            {
+                string GUID = Guid.NewGuid().ToString();
+                _logger.LogError(e, GUID, null);
+                return BadRequest("Unexpected Error " + GUID);
+            }
         }
 
         public IActionResult Error()
