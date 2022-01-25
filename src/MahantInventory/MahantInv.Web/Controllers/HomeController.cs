@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MahantInv.Core.Interfaces;
 using MahantInv.Core.SimpleAggregates;
 using MahantInv.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MahantInv.Web.Controllers
@@ -19,11 +22,11 @@ namespace MahantInv.Web.Controllers
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
-        public HomeController(ILogger<HomeController> logger, IAsyncRepository<ProductUsage> productUsageRepository, IMapper mapper) : base(mapper)
+        private readonly IProductUsageRepository _productUsageRepository;
+        public HomeController(ILogger<HomeController> logger, IProductUsageRepository productUsageRepository, IMapper mapper) : base(mapper)
         {
             _logger = logger;
-            _productUsageRepository=productUsageRepository;
+            _productUsageRepository = productUsageRepository;
         }
 
         [Authorize]
@@ -31,7 +34,8 @@ namespace MahantInv.Web.Controllers
         {
             try
             {
-                ViewBag.Buyers = new SelectList((await _productUsageRepository.ListAllAsync()), "Buyer", "Buyer");
+                var buyers = await _productUsageRepository.ListAllAsync();
+                ViewBag.Buyers = new SelectList(buyers.Where(b => !string.IsNullOrWhiteSpace(b.Buyer)).Select(b =>new { Buyer = b.Buyer }).Distinct(), "Buyer", "Buyer");
                 return View();
             }
             catch (Exception e)

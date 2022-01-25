@@ -18,14 +18,12 @@ namespace MahantInv.Web.Api
         private readonly ILogger<HomeApiController> _logger;
         private readonly IPayersReposiroty _productInventoryRepository;
         private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
-        private readonly IAsyncRepository<ProductUsage> _productUsageRepository;
+        private readonly IProductUsageRepository _productUsageRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductsRepository _productRepository;
-        public HomeApiController(IProductsRepository productRepository, IUnitOfWork unitOfWork, IAsyncRepository<ProductUsage> productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<HomeApiController> logger, IMapper mapper) : base(mapper)
+        public HomeApiController(IUnitOfWork unitOfWork, IProductUsageRepository productUsageRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<HomeApiController> logger, IMapper mapper) : base(mapper)
         {
             _logger = logger;
             _productInventoryRepository = productInventoryRepository;
-            _productRepository = productRepository;
             _unitOfWork = unitOfWork;
             _productUsageRepository = productUsageRepository;
             _productInventoryHistoryRepository = productInventoryHistoryRepository;
@@ -35,7 +33,8 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                return Ok();
+                var data = await _productUsageRepository.GetProductUsages();
+                return Ok(data);
             }
             catch (Exception e)
             {
@@ -59,6 +58,7 @@ namespace MahantInv.Web.Api
                     Quantity = productUsageModel.Quantity,
                     Buyer = productUsageModel.Buyer,
                     RefNo = Guid.NewGuid().ToString(),
+                    UsageDate = productUsageModel.UsageDate,
                     LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
                     ModifiedAt = DateTime.UtcNow
                 };
@@ -89,8 +89,8 @@ namespace MahantInv.Web.Api
                 await _productUsageRepository.AddAsync(productUsage);
                 await _unitOfWork.CommitAsync();
 
-                ProductVM productVM = await _productRepository.GetProductById(productUsageModel.ProductId);
-                return Ok(new { success = true, data = productVM });
+                ProductUsageVM productUsageVM = await _productUsageRepository.GetProductUsageById(productUsage.Id);
+                return Ok(new { success = true, data = productUsageVM });
             }
             catch (Exception e)
             {

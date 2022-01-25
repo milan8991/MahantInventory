@@ -10,11 +10,11 @@ ActionCellRenderer.prototype.init = function (params) {
 ActionCellRenderer.prototype.getGui = function () {
     return this.eGui;
 }
-function onCellClickedEvent(params) {
-    $('#ProductUsageSelect').val(params.data.id);
-    $('#ProductUsageSelect').trigger('change');
-    //$('#UsageQuantity').focus();
-}
+//function onCellClickedEvent(params) {
+//    $('#ProductUsageSelect').val(params.data.id);
+//    $('#ProductUsageSelect').trigger('change');
+//    //$('#UsageQuantity').focus();
+//}
 const stockClassRules = {
     'sick-days-warning': (params) => params.data.currentStock < params.data.reorderLevel
 };
@@ -23,38 +23,22 @@ var productUsageGridOptions = {
     // define grid columns
     columnDefs: [
         {
-            headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
+            headerName: 'Product', field: 'productName', filter: 'agTextColumnFilter', headerTooltip: 'Product'
         },
         {
-            headerName: 'Description', field: 'description', filter: 'agTextColumnFilter', headerTooltip: 'Description'
+            headerName: 'Quantity', field: 'quantity', filter: 'agNumberColumnFilter', headerTooltip: 'Quantity'
         },
         {
-            headerName: 'Size', field: 'size', filter: 'agTextColumnFilter', headerTooltip: 'Size'
+            headerName: 'Buyer', field: 'buyer', filter: 'agTextColumnFilter', headerTooltip: 'Buyer'
         },
         {
-            headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
-            , cellClassRules: stockClassRules
+            headerName: 'UsageDateFormat', field: 'usageDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'UsageDateFormat'
         },
-        {
-            headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
-        },
-        {
-            headerName: 'Reorder Level',
-            field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level'
-        },
-        {
-            headerName: 'Is Disposable?', field: 'disposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
-        },
-        {
-            headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
-        },
-        {
-            headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
-        },
-        {
-            headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
-            cellRenderer: 'actionCellRenderer',
-        }
+
+        //{
+        //    headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
+        //    cellRenderer: 'actionCellRenderer',
+        //}
     ],
     sideBar: { toolPanels: ['columns', 'filters'] },
     //rowClassRules: {
@@ -76,22 +60,22 @@ var productUsageGridOptions = {
         floatingFilter: true,
     },
     animateRows: true,
-    rowSelection: 'single',
+    //rowSelection: 'single',
     pagination: true,
     paginationAutoPageSize: true,
     animateRows: true,
     defaultColGroupDef: {
         marryChildren: true
     },
-    onCellClicked: onCellClickedEvent,
+    //onCellClicked: onCellClickedEvent,
     //onSelectionChanged: onSelectionChanged,
     getRowNodeId: function (data) {
         return data.id;
     },
     suppressContextMenu: true,
-    components: {
-        actionCellRenderer: ActionCellRenderer
-    },
+    //components: {
+    //    actionCellRenderer: ActionCellRenderer
+    //},
     columnTypes: {
         numberColumn: {
             editable: false,
@@ -130,15 +114,15 @@ var productUsageGridOptions = {
         //productUsageGridOptions.columnApi.autoSizeColumns(allColumnIds, false);
     },
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your usages are loading</span>',
+        '<span class="ag-overlay-loading-center">Please wait while your data are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Product(s) will appear here.</b></h5>
+                <h5 class="text-center"><b>Data will appear here.</b></h5>
             </div>`
 };
 
 class ProductUsageModel {
-    constructor(ProductId, Quantity, Buyer,UsageDate) {
+    constructor(ProductId, Quantity, Buyer, UsageDate) {
         this.ProductId = ProductId;
         this.Quantity = Quantity
         this.Buyer = Buyer;
@@ -177,10 +161,12 @@ class Common {
         fetch(baseUrl + 'api/usages')
             .then((response) => response.json())
             .then(data => {
+                console.log('data:', data);
                 productUsageGridOptions.api.setRowData(data);
                 Common.InitSelect2();
             })
             .catch(error => {
+                console.log('err:',error);
                 productUsageGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
@@ -189,42 +175,76 @@ class Common {
 
     }
 
-    static BindValuesToProductForm(model) {
-        $('#ProductErrorSection').empty();
-        $('#Id').val(model.Id);
-        $('#Name').val(model.Name);
-        $('#Description').val(model.Description);
-        $('#Size').val(model.Size);
-        $('#UnitTypeCode').val(model.UnitTypeCode);
-        $('#ReorderLevel').val(model.ReorderLevel);
-        $('#IsDisposable').prop("checked", model.IsDisposable);
-        $('#Company').val(model.Company);
-        $('#StorageId').val(model.StorageId);
-    }
+    //static BindValuesToProductForm(model) {
+    //    $('#ProductErrorSection').empty();
+    //    $('#Id').val(model.Id);
+    //    $('#Name').val(model.Name);
+    //    $('#Description').val(model.Description);
+    //    $('#Size').val(model.Size);
+    //    $('#UnitTypeCode').val(model.UnitTypeCode);
+    //    $('#ReorderLevel').val(model.ReorderLevel);
+    //    $('#IsDisposable').prop("checked", model.IsDisposable);
+    //    $('#Company').val(model.Company);
+    //    $('#StorageId').val(model.StorageId);
+    //}
 
     static init() {
         $('#usagedata').height(Common.calcDataTableHeight(27));
+        Common.GetAllProducts();
     }
 
-    static BindSelectData() {
-        var result = [];
-        result.push({ id: '', text: '' });
-        productUsageGridOptions.api.forEachNode((rowNode, index) => {
-            result.push({ id: rowNode.data.id, text: rowNode.data.name });
-        });
-        return result;
-    }
-    static async InitSelect2() {
+    //static BindSelectData() {
+    //    var result = [];
+    //    result.push({ id: '', text: '' });
+    //    productUsageGridOptions.api.forEachNode((rowNode, index) => {
+    //        result.push({ id: rowNode.data.id, text: rowNode.data.name });
+    //    });
+    //    return result;
+    //}
+    static async GetAllProducts() {
+        let response = await fetch(baseUrl + 'api/products', {
+            method: 'GET',
+            //body: JSON.stringify(order),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
         $('#ProductUsageSelect').select2({
             placeholder: 'Search Product',
-            //minimumInputLength: 1,
-            //maximumSelectionLength: 1,
-            //minimumResultsForSearch: 10,
-            theme: "bootstrap4",
-            data: Common.BindSelectData(),
             closeOnSelect: true,
-            //allowClear: true
+            allowClear: true,
+            data: response,
+            templateResult: function (repo) {
+                if (repo.loading) {
+                    return repo.name;
+                }
+                var $container = $(
+                    "<div class='select2-result-repository clearfix'>" +
+                    "<div class='select2-result-repository__title'></div>" +
+                    "<div class='select2-result-repository__description'></div>" +
+                    "<div class='select2-result-repository__statistics'>" +
+                    "</div>"
+                );
+
+                $container.find(".select2-result-repository__title").text(repo.name);
+                let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
+                $container.find(".select2-result-repository__description").text(repo.description + '' + detail);
+
+                return $container;
+            },
+            templateSelection: function (repo) {
+                return repo.name
+            }
         });
+    }
+    static async InitSelect2() {
+        //$('#ProductUsageSelect').select2({
+        //    placeholder: 'Search Product',
+        //    theme: "bootstrap4",
+        //    data: Common.BindSelectData(),
+        //    closeOnSelect: true,
+        //});
         $('#BuyersSelect').select2({
             placeholder: 'Search Buyer',
             theme: "bootstrap4",
@@ -261,24 +281,24 @@ class Common {
         }
         if (response.success) {
             toastr.success("Saved", '', { positionClass: 'toast-top-center' });
-            productUsageGridOptions.api.applyTransaction({ update: [response.data] });
+            productUsageGridOptions.api.applyTransaction({ add: [response.data], addIndex: 0 });
             let rowNode = productUsageGridOptions.api.getRowNode(response.data.id);
             productUsageGridOptions.api.flashCells({ rowNodes: [rowNode] });
 
             $('#ProductUsageSelect').val('').trigger('change');
             $('#UsageQuantity').val('');
             $('#BuyersSelect').val('').trigger('change');
-            $('#ProductUsageSelect').select2('open');
+            $('#UsageDate').val('');
+            //$('#ProductUsageSelect').select2('open');
             $('.select2-search__field').focus();
         }
         if (response.success == false) {
-
             toastr.error(response.errors, '', { positionClass: 'toast-top-center' });
         }
     }
 
     static async ExportToExcel() {
-        productUsageGridOptions.api.exportDataAsExcel({ fileName: 'Usage.xlsx' });
+        productUsageGridOptions.api.exportDataAsExcel({ fileName: 'Usages.xlsx' });
     }
 }
 
