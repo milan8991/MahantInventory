@@ -15,6 +15,17 @@ namespace MahantInv.Core.ViewModels
         public string LastModifiedBy { get; set; }
         public decimal? CurrentStock { get; set; }
         public decimal ReorderLevel { get; set; }
+        public decimal? PaidAmount { get; set; }
+        public string PaymentStatus
+        {
+            get
+            {
+                if (!NetAmount.HasValue || NetAmount.Value == 0) return "No Need";
+                if (!PaidAmount.HasValue || PaidAmount.Value==0) return "Pending";
+                if (NetAmount > PaidAmount) return "Partially Paid";
+                return "Paid";
+            }
+        }
         public string OrderDateFormat
         {
             get
@@ -37,14 +48,14 @@ namespace MahantInv.Core.ViewModels
                 return OrderTransactionVMs == null ? 1 : OrderTransactionVMs.Count;
             }
         }
-        
+
     }
     public class OrderTransactionVM : OrderTransaction
     {
         public string Party { get; set; }
         public string PaymentType { get; set; }
     }
-    public class OrdersGrid: Order
+    public class OrdersGrid : Order
     {
         public string ProductName { get; set; }
         public string Status { get; set; }

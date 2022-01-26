@@ -63,7 +63,15 @@ var orderGridOptions = {
             cellClassRules: spanCellClassRules
         },
         {
-            headerName: 'Reorder Level', field: 'reorderLevel', filter: 'agNumberColumnFilter', headerTooltip: 'Reorder Level',
+            headerName: 'Net Amount', field: 'netAmount', filter: 'agNumberColumnFilter', headerTooltip: 'Net Amount'
+            , cellClassRules: stockClassRules
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            },
+            cellClassRules: spanCellClassRules
+        },
+        {
+            headerName: 'Payment Status', field: 'paymentStatus', filter: 'agSetColumnFilter', headerTooltip: 'Payment Status',
             rowSpan: function (params) {
                 return params.data.orderTransactionsCount;
             },
@@ -252,11 +260,11 @@ class Common {
         editModeIdx = -1;
         orderTransaction = [];
         if (id == 0) {
-            $('#actionsection').find('.btn-outline-danger').hide();
+            $('#actionsection').find('.cancelbtn').hide();
             Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null, null, null, null));
         }
         else {
-            $('#actionsection').find('.btn-outline-danger').show();
+            $('#actionsection').find('.cancelbtn').show();
             Common.GetOrderById(id);
         }
     }
@@ -312,6 +320,8 @@ class Common {
                 gData.currentStock = v.currentStock;
                 gData.receivedQuantity = v.receivedQuantity;
                 gData.quantity = v.quantity;
+                gData.netAmount = v.netAmount;
+                gData.paymentStatus = v.paymentStatus;
                 gridData.push(gData);
             }
             else {
@@ -331,6 +341,8 @@ class Common {
                         gData.currentStock = v.currentStock;
                         gData.receivedQuantity = v.receivedQuantity;
                         gData.quantity = v.quantity;
+                        gData.netAmount = v.netAmount;
+                        gData.paymentStatus = v.paymentStatus;
                     }
                     gridData.push(gData);
                     idx++;
@@ -533,10 +545,14 @@ class Common {
             }
             Common.BindValuesToOrderForm(order);
             if (data.status != 'Ordered') {
-                $('#actionsection').hide();
+                $('.cancelbtn').hide();
+                //$('.saveorderbtn').hide();
+                $('.receiveorderbtn').hide();
             }
             else {
-                $('#actionsection').show();
+                $('.cancelbtn').show();
+                $('.saveorderbtn').show();
+                $('.receiveorderbtn').show();
             }
         })
         .catch(error => {
