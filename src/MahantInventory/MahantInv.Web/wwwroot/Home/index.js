@@ -32,7 +32,7 @@ var productUsageGridOptions = {
             headerName: 'Buyer', field: 'buyer', filter: 'agTextColumnFilter', headerTooltip: 'Buyer'
         },
         {
-            headerName: 'UsageDateFormat', field: 'usageDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'UsageDateFormat'
+            headerName: 'Usage Date', field: 'usageDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Usage Date'
         },
 
         //{

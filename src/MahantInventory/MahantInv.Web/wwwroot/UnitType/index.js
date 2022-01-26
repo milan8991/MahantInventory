@@ -21,10 +21,10 @@ var unitTypeGridOptions = {
         {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },        
-        {
-            headerName: '', field: '', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
-            cellRenderer: 'actionCellRenderer',
-        }
+        //{
+        //    headerName: '', field: '', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
+        //    cellRenderer: 'actionCellRenderer',
+        //}
     ],
     sideBar: { toolPanels: ['columns', 'filters'] },
     rowClassRules: {
