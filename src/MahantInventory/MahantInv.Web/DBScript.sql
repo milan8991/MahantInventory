@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Mon Jan 24 21:24:33 2022
+-- File generated with SQLiteStudio v3.3.3 on Wed Jan 26 13:12:13 2022
 --
 -- Text encoding used: System
 --
@@ -675,24 +675,37 @@ CREATE UNIQUE INDEX UserNameIndex ON AspNetUsers (
 -- View: vOrders
 DROP VIEW IF EXISTS vOrders;
 CREATE VIEW vOrders AS
+WITH ords AS (
+        SELECT o.*,
+               p.Name AS ProductName,
+               ost.Title AS Status,
+               u.UserName AS LastModifiedBy,
+               pi.Quantity AS CurrentStock,
+               p.ReorderLevel,
+               s.Name AS Seller
+          FROM Orders o
+               INNER JOIN
+               Products p ON o.ProductId = p.Id
+               INNER JOIN
+               OrderStatusTypes ost ON o.StatusId = ost.Id
+               INNER JOIN
+               AspNetUsers u ON o.LastModifiedById = u.Id
+               LEFT OUTER JOIN
+               ProductInventory pi ON p.Id = pi.ProductId
+               LEFT OUTER JOIN
+               Parties s ON o.SellerId = s.Id
+    ),
+    trans AS (
+        SELECT OrderId,
+               sum(Amount) PaidAmount
+          FROM OrderTransactions
+         GROUP BY OrderId
+    )
     SELECT o.*,
-           p.Name AS ProductName,
-           ost.Title AS Status,
-           u.UserName AS LastModifiedBy,
-           pi.Quantity AS CurrentStock,
-           p.ReorderLevel,
-           s.Name AS Seller
-      FROM Orders o
-           INNER JOIN
-           Products p ON o.ProductId = p.Id
-           INNER JOIN
-           OrderStatusTypes ost ON o.StatusId = ost.Id
-           INNER JOIN
-           AspNetUsers u ON o.LastModifiedById = u.Id
+           t.PaidAmount
+      FROM ords o
            LEFT OUTER JOIN
-           ProductInventory pi ON p.Id = pi.ProductId
-           LEFT OUTER JOIN
-           Parties s ON o.SellerId = s.Id;
+           trans t ON o.Id = t.OrderId;
 
 
 -- View: vOrderTransactions
