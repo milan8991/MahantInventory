@@ -10,9 +10,15 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div id="StorageErrorSection" class="text-danger"></div>
-                <input type="hidden" asp-for="@Model.Code" />
+                <div id="UnitTypeErrorSection" class="text-danger"></div>
+                
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label asp-for="@Model.Code"></label>
+                            <input type="text" asp-for="@Model.Code" class="form-control form-control-sm" placeholder="Code" />
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="form-group">
                             <label asp-for="@Model.Name"></label>

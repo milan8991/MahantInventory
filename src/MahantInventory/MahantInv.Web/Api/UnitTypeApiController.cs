@@ -68,7 +68,7 @@ namespace MahantInv.Web.Api
                     return BadRequest(new { success = false, errors });
                 }
                 UnitType newUnitType = await _unitTypeRepository.GetByIdAsync(unitType.Code);
-                if (unitType == null)
+                if (newUnitType == null)
                 {
                     await _unitTypeRepository.AddAsync(new UnitType { Code = unitType.Code, Name = unitType.Name });
                 }
@@ -76,7 +76,7 @@ namespace MahantInv.Web.Api
                 {
                     return BadRequest(new { success = false, errors = new[] { "Unit Type already exist" } });
                 }
-                return Ok(unitType);
+                return Ok(new { success = true, data = unitType });
             }
             catch (Exception e)
             {

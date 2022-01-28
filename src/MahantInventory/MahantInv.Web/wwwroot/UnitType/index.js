@@ -20,7 +20,7 @@ var unitTypeGridOptions = {
         },
         {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
-        },        
+        },
         //{
         //    headerName: '', field: '', headerTooltip: 'Action', width: 80, suppressSizeToFit: true,
         //    cellRenderer: 'actionCellRenderer',
@@ -52,7 +52,7 @@ var unitTypeGridOptions = {
         marryChildren: true
     },
     getRowNodeId: function (data) {
-        return data.id;
+        return data.code;
     },
     suppressContextMenu: true,
     components: {
@@ -89,15 +89,10 @@ class Common {
     };
 
     static OpenModal(mthis) {
-        let id = $(mthis).data('code');
+        let code = $(mthis).data('code');
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
-        if (id == 0) {
-            Common.BindValuesToStorageForm(new Storage(0, null));
-        }
-        else {
-            Common.GetUnitTypeById(id);
-        }
+        //Common.BindValuesToStorageForm(new Storage(null, null));
     }
 
     static ApplyAGGrid() {
@@ -106,7 +101,7 @@ class Common {
         new agGrid.Grid(gridDiv, unitTypeGridOptions);
         fetch(baseUrl + 'api/unittypes')
             .then((response) => response.json())
-            .then(data => {                
+            .then(data => {
                 unitTypeGridOptions.api.setRowData(data);
                 //Common.InitSelect2();
             })
@@ -158,13 +153,13 @@ class Common {
             toastr.success("Unit Type Saved", '', { positionClass: 'toast-top-center' });
             let target = $(mthis).data('target');
             $('#' + target).modal('hide');
-            if (Id == 0) {
+            //if (Id == 0) {
                 unitTypeGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
-            }
-            else {
-                unitTypeGridOptions.api.applyTransaction({ update: [response.data] });
-            }
-            let rowNode = unitTypeGridOptions.api.getRowNode(response.data.id);
+            //}
+            //else {
+            //    unitTypeGridOptions.api.applyTransaction({ update: [response.data] });
+            //}
+            let rowNode = unitTypeGridOptions.api.getRowNode(response.data.code);
             unitTypeGridOptions.api.flashCells({ rowNodes: [rowNode] });
             return;
         }
@@ -176,7 +171,7 @@ class Common {
             $('#UnitTypeErrorSection').html(errorHtml);
         }
     }
-    }
+}
 
 jQuery(document).ready(function () {
     Common.init();
