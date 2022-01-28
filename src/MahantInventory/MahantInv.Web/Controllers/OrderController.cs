@@ -38,6 +38,10 @@ namespace MahantInv.Web.Controllers
                 var props = type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
                 ViewBag.PartyTypes = new SelectList(props.Select(p => new SelectListItem() { Value = p.Name, Text = p.Name }).OrderBy(o => o.Value), "Value", "Text");
                 ViewBag.Categories = (await _partyCategoryRepository.ListAllAsync()).OrderBy(o => o.Name);
+
+                ViewBag.Storages = await _storageRepository.ListAllAsync();
+                ViewBag.UnitTypes = await _unitTypeRepository.ListAllAsync();
+                ViewBag.Buyers = new SelectList((await _productUsageRepository.ListAllAsync()), "Buyer", "Buyer");
                 return View();
             }
             catch (Exception e)

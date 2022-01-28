@@ -192,7 +192,20 @@ var orderGridOptions = {
             </div>`
 };
 
-
+class Product {
+    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId, StorageName) {
+        this.Id = parseInt(Id);
+        this.Name = Common.ParseValue(Name);
+        this.Description = Common.ParseValue(Description);
+        this.Size = Size;
+        this.UnitTypeCode = Common.ParseValue(UnitTypeCode);
+        this.ReorderLevel = ReorderLevel;
+        this.IsDisposable = IsDisposable;
+        this.Company = Common.ParseValue(Company);
+        this.StorageId = StorageId;
+        this.StorageName = StorageName;
+    }
+}
 class Order {
     constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate, PricePerItem, Discount, Tax, DiscountAmount, NetAmount) {
         this.Id = parseInt(Id);
@@ -268,6 +281,12 @@ class Common {
             Common.GetOrderById(id);
         }
     }
+
+    static OpenProductModal(mthis) {
+        let target = $(mthis).data('target');
+        $('#' + target).modal('show');
+    }
+
     static OpenPartyModal(mthis) {
         $('#AddParty').modal('show');
     }
@@ -456,26 +475,11 @@ class Common {
                 "<div class='select2-result-repository__statistics'>" +
                 "</div>"
             );
-            //var $container = $(
-            //    "<div class='select2-result-repository clearfix'>" +
-            //    "<div class='select2-result-repository__meta'>" +
-            //    "<div class='select2-result-repository__title'></div>" +
-            //    "<div class='select2-result-repository__description'></div>" +
-            //    "<div class='select2-result-repository__statistics'>" +
-            //    "<div class='select2-result-repository__forks'></div>" +
-            //    "<div class='select2-result-repository__stargazers'></div>" +
-            //    "<div class='select2-result-repository__watchers'></div>" +
-            //    "</div>" +
-            //    "</div>"
-            //);
 
             $container.find(".select2-result-repository__title").text(repo.name);
             let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
             $container.find(".select2-result-repository__description").text(repo.description + '' + detail);
-            //$container.find(".select2-result-repository__forks").append();
-            //$container.find(".select2-result-repository__stargazers").append(" Company:"+repo.company);
-            //$container.find(".select2-result-repository__watchers").append(" Unit:"+repo.unitTypeCode);
-
+          
             return $container;
         },
         templateSelection: function (repo) {
@@ -818,6 +822,58 @@ class Common {
 
     static async ExportToExcel() {
         orderGridOptions.api.exportDataAsExcel({ fileName: 'Orders_' + $('#ordersdaterange').val()+'.xlsx'});
+    }
+
+    static async SaveProduct(mthis) {
+        $('#ProductErrorSection').empty();
+        let Id = $('#ProductId').val();
+        let Name = $('#ProductName').val();
+        let Description = $('#Description').val();
+        let Size = $('#Size').val();
+        let UnitTypeCode = $('#UnitTypeCode').val();
+        let ReorderLevel = $('#ReorderLevel').val();
+        let IsDisposable = $('#IsDisposable').is(':checked');
+        let Company = $('#Company').val();
+        let StorageName = $('#StorageId :selected').text();
+        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, 0, StorageName);
+
+        var response = await fetch(baseUrl + 'api/product/save', {
+            method: 'POST',
+            body: JSON.stringify(product),
+            headers: {
+                //'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        }).then(response => { return response.json() });
+
+        if (response.status > 399 && response.status < 500) {
+            if (response != null) {
+                var errorHtml = "";
+                $.each(response.errors, function (index, element) {
+                    errorHtml += element[0] + '<br/>';
+                });
+                $('#ProductErrorSection').html(errorHtml);
+            }
+        }
+        if (response.success) {
+            toastr.success("Product Saved", '', { positionClass: 'toast-top-center' });
+            let target = $(mthis).data('target');
+            $('#' + target).modal('hide');
+            $("#ProductId").select2('destroy').empty();
+            Common.GetAllProducts();
+            //if (Id == 0) {
+            //    productGridOptions.api.applyTransaction({ add: [response.data] });//addIndex
+            //}
+            //else {
+            //    productGridOptions.api.applyTransaction({ update: [response.data] });
+            //}
+            let rowNode = productGridOptions.api.getRowNode(response.data.id);
+            productGridOptions.api.flashCells({ rowNodes: [rowNode] });
+            $("#ProductUsageSelect").select2('destroy').empty();
+            setTimeout(function () {
+                Common.InitSelect2();
+            }, 1000);
+        }
     }
 }
 
