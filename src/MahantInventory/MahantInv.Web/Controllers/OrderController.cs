@@ -19,12 +19,18 @@ namespace MahantInv.Web.Controllers
         private readonly IAsyncRepository<Party> _partyRespository;
         private readonly IAsyncRepository<PaymentType> _paymentTypeRespository;
         private readonly IProductsRepository _productsRepository;
-        public OrderController(IMapper mapper, ILogger<OrderController> logger, IProductsRepository productsRepository, IAsyncRepository<PaymentType> paymentTypeRespository, IAsyncRepository<Party> partyRespository) : base(mapper)
+        private readonly IStorageRepository _storageRepository;
+        private readonly IAsyncRepository<UnitType> _unitTypeRepository;
+        private readonly IProductUsageRepository _productUsageRepository;
+        public OrderController(IProductUsageRepository productUsageRepository,IAsyncRepository<UnitType> unitTypeRepository,IStorageRepository storageRepository,IMapper mapper, ILogger<OrderController> logger, IProductsRepository productsRepository, IAsyncRepository<PaymentType> paymentTypeRespository, IAsyncRepository<Party> partyRespository) : base(mapper)
         {
             _logger = logger;
             _partyRespository = partyRespository;
             _paymentTypeRespository = paymentTypeRespository;
             _productsRepository = productsRepository;
+            _storageRepository = storageRepository;
+            _unitTypeRepository = unitTypeRepository;
+            _productUsageRepository = productUsageRepository;
         }
 
         public async Task<IActionResult> Index([FromServices] IAsyncRepository<PartyCategory> _partyCategoryRepository)
