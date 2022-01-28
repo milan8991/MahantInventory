@@ -20,12 +20,13 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<ProductApiController> _logger;
         private readonly IProductsRepository _productRepository;
-        
-        
-        public ProductApiController(IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
+        private readonly IStorageRepository _storageRepository;
+
+        public ProductApiController(IStorageRepository storageRepository, IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
         {
             _logger = logger;
-            _productRepository = productRepository;            
+            _productRepository = productRepository;
+            _storageRepository = storageRepository;
         }
         [HttpGet("products")]
         public async Task<object> GetAllProducats()
@@ -53,6 +54,18 @@ namespace MahantInv.Web.Api
                           .Where(y => y.Count > 0)
                           .ToList();
                     return BadRequest(errors);
+                }
+                var storages = await _storageRepository.ListAllAsync();
+
+                Storage matchedStorage = storages.SingleOrDefault(s => s.Name.Equals(product.StorageName, StringComparison.Ordinal));
+
+                if (matchedStorage == null)
+                {
+                    product.StorageId = await _storageRepository.AddAsync(new Storage { Name = product.StorageName, Enabled = true });
+                }
+                else
+                {
+                    product.StorageId = matchedStorage.Id;
                 }
                 product.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 product.ModifiedAt = DateTime.UtcNow;
@@ -90,7 +103,7 @@ namespace MahantInv.Web.Api
                 return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
             }
         }
-        
+
 
     }
 

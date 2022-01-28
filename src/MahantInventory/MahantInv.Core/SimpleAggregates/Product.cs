@@ -26,6 +26,8 @@ namespace MahantInv.Core.SimpleAggregates
         public string Company { get; set; }
         [Required(ErrorMessage = "Storage field is required"),Display(Name ="Storage")]
         public int? StorageId { get; set; }
+        [Dapper.Contrib.Extensions.Write(false)]
+        public string StorageName { get; set; }
         public bool Enabled { get; set; }
         public string LastModifiedById { get; set; }
         public DateTime? ModifiedAt { get; set; }

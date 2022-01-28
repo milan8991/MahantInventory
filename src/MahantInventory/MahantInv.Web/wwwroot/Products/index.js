@@ -139,7 +139,7 @@ var productGridOptions = {
 
 
 class Product {
-    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId) {
+    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId, StorageName) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
         this.Description = Common.ParseValue(Description);
@@ -149,6 +149,7 @@ class Product {
         this.IsDisposable = IsDisposable;
         this.Company = Common.ParseValue(Company);
         this.StorageId = StorageId;
+        this.StorageName = StorageName;
     }
 }
 class ProductUsageModel {
@@ -175,7 +176,7 @@ class Common {
         $('#' + target).modal('show');
         if (id == 0) {
             $('#ModalTitle').html('Add Product');
-            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
+            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null,null));
         }
         else {
             $('#ModalTitle').html('Edit Product');
@@ -230,7 +231,8 @@ class Common {
         let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
         let StorageId = $('#StorageId').val();
-        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId);
+        let StorageName = $('#StorageId :selected').text();
+        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, 0, StorageName);
 
         var response = await fetch(baseUrl + 'api/product/save', {
             method: 'POST',
@@ -310,6 +312,14 @@ class Common {
             closeOnSelect: true,
             tags: true
         });
+        $('#StorageId').select2({
+            dropdownParent: $('#AddEditProduct'),
+            placeholder: 'Search Storage',
+            theme: "bootstrap4",
+            closeOnSelect: true,
+            tags: true
+        });
+        
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });
