@@ -443,6 +443,13 @@ class Common {
         theme: "bootstrap4",
         dropdownParent: $("#AddParty")
     });
+        $('#StorageId').select2({
+            dropdownParent: $('#AddProduct'),
+            placeholder: 'Search Storage',
+            theme: "bootstrap4",
+            closeOnSelect: true,
+            tags: true
+        });
     Common.GetAllProducts();
     Common.InitCountable();
 
@@ -826,7 +833,6 @@ class Common {
 
     static async SaveProduct(mthis) {
         $('#ProductErrorSection').empty();
-        let Id = $('#ProductId').val();
         let Name = $('#ProductName').val();
         let Description = $('#Description').val();
         let Size = $('#Size').val();
@@ -835,7 +841,7 @@ class Common {
         let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
         let StorageName = $('#StorageId :selected').text();
-        let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, 0, StorageName);
+        let product = new Product(0, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, 0, StorageName);
 
         var response = await fetch(baseUrl + 'api/product/save', {
             method: 'POST',

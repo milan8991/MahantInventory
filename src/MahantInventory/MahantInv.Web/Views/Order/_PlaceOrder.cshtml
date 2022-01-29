@@ -19,7 +19,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label asp-for="@Model.ProductId"></label>
-                            <a href="#" class="pl-2" onclick="Common.OpenProductModal(this)" data-type="s">(New)</a>
+                            <a href="#" class="pl-2" onclick="Common.OpenProductModal(this)" data-target="AddProduct" data-type="s">(New)</a>
                             <select asp-for="@Model.ProductId" class="form-control form-control-sm" style="width:100%" placeholder="Product">
                             </select>
                         </div>
