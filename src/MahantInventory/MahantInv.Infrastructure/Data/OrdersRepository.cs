@@ -37,7 +37,10 @@ namespace MahantInv.Infrastructure.Data
                     }
                     if (orderTransaction != null)
                     {
-                        orderVMEntry.OrderTransactionVMs = new();
+                        if (orderVMEntry.OrderTransactionVMs == null)
+                        {
+                            orderVMEntry.OrderTransactionVMs = new();
+                        }
                         orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
                     }
                     return orderVMEntry;
@@ -64,7 +67,10 @@ namespace MahantInv.Infrastructure.Data
                     }
                     if (orderTransaction != null)
                     {
-                        orderVMEntry.OrderTransactionVMs = new();
+                        if (orderVMEntry.OrderTransactionVMs == null)
+                        {
+                            orderVMEntry.OrderTransactionVMs = new();
+                        }
                         orderVMEntry.OrderTransactionVMs.Add(orderTransaction);
                     }
                     return orderVMEntry;

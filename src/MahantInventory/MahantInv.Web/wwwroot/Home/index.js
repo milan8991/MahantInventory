@@ -117,7 +117,7 @@ var productUsageGridOptions = {
         '<span class="ag-overlay-loading-center">Please wait while your data are loading</span>',
     overlayNoRowsTemplate:
         `<div class="text-center">
-                <h5 class="text-center"><b>Data will appear here.</b></h5>
+                <h5 class="text-center"><b>Data will be appear here.</b></h5>
             </div>`
 };
 
