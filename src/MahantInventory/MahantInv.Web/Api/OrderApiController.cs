@@ -100,6 +100,7 @@ namespace MahantInv.Web.Api
                 oldOrder.Remark = order.Remark;
                 oldOrder.ReceivedDate = order.ReceivedDate;
                 oldOrder.ReceivedQuantity = order.ReceivedQuantity;
+                oldOrder.SellerId= order.SellerId;
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 oldOrder.PricePerItem = order.PricePerItem;
                 oldOrder.Discount = order.Discount;
