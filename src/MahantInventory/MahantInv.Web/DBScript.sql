@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 09:24:46 2022
+-- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 09:32:43 2022
 --
 -- Text encoding used: System
 --
@@ -727,7 +727,11 @@ WITH ords AS (
 -- View: vOrderTransactions
 DROP VIEW IF EXISTS vOrderTransactions;
 CREATE VIEW vOrderTransactions AS
-    SELECT ot.*,
+    SELECT ot.Id,
+           ot.OrderId,
+           ot.PartyId,
+           ot.PaymentTypeId,
+           CAST (ot.Amount AS REAL) AS Amount,
            p.Name AS Party,
            pt.Title AS PaymentType
       FROM OrderTransactions ot
