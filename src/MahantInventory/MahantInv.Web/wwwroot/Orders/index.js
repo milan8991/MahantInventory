@@ -560,15 +560,14 @@ class Common {
                     }
                 }
                 Common.BindValuesToOrderForm(order);
-                if (data.status != 'Ordered') {
-                    $('.cancelbtn').hide();
-                    //$('.saveorderbtn').hide();
-                    $('.receiveorderbtn').hide();
-                }
-                else {
+                if (data.status == 'Ordered') {
                     $('.cancelbtn').show();
                     $('.saveorderbtn').show();
                     $('.receiveorderbtn').show();
+                }
+                else {
+                    $('.cancelbtn').hide();
+                    $('.receiveorderbtn').hide();
                 }
             })
             .catch(error => {

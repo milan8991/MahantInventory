@@ -112,6 +112,7 @@ namespace MahantInv.Web.Api
                 await _orderRepository.UpdateAsync(oldOrder);
                 await _orderRepository.DeleteOrderTransactionByOrderId(oldOrder.Id);
                 returnOrder = _mapper.Map<Order>(order);
+                order.RefNo= oldOrder.RefNo;
             }
             foreach (OrderTransaction orderTransaction in order.OrderTransactions)
             {
