@@ -89,7 +89,7 @@ namespace MahantInv.Web.Api
             {
                 order.RefNo = Guid.NewGuid().ToString();
                 order.Id = await _orderRepository.AddAsync(order);
-                returnOrder = order;
+                returnOrder = _mapper.Map<Order>(order);
             }
             else
             {
@@ -100,7 +100,7 @@ namespace MahantInv.Web.Api
                 oldOrder.Remark = order.Remark;
                 oldOrder.ReceivedDate = order.ReceivedDate;
                 oldOrder.ReceivedQuantity = order.ReceivedQuantity;
-                oldOrder.SellerId= order.SellerId;
+                oldOrder.SellerId = order.SellerId;
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 oldOrder.PricePerItem = order.PricePerItem;
                 oldOrder.Discount = order.Discount;
@@ -111,7 +111,7 @@ namespace MahantInv.Web.Api
                 oldOrder.StatusId = order.StatusId;
                 await _orderRepository.UpdateAsync(oldOrder);
                 await _orderRepository.DeleteOrderTransactionByOrderId(oldOrder.Id);
-                returnOrder = oldOrder;
+                returnOrder = _mapper.Map<Order>(order);
             }
             foreach (OrderTransaction orderTransaction in order.OrderTransactions)
             {
@@ -123,7 +123,7 @@ namespace MahantInv.Web.Api
                     Amount = orderTransaction.Amount
                 };
                 await _orderTransactionRepository.AddAsync(ot);
-                returnOrder.OrderTransactions.Add(ot);
+                //returnOrder.OrderTransactions.Add(ot);
             }
             return returnOrder;
         }
@@ -157,15 +157,18 @@ namespace MahantInv.Web.Api
                 }
                 if (!order.ReceivedDate.HasValue)
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Date field is required");
+                    ModelState.AddModelError(nameof(order.ReceivedDate), "Received Date field is required");
                 }
-                if (order.ReceivedDate.Value > DateTime.Today.Date)
+                else
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Date can't be future date");
+                    if (order.ReceivedDate.Value > DateTime.Today.Date)
+                    {
+                        ModelState.AddModelError(nameof(order.ReceivedDate), "Received Date can't be future date");
+                    }
                 }
                 if (!order.OrderTransactions.Any())
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Please add atleast one payer");
+                    ModelState.AddModelError(nameof(order.OrderTransactions), "Please add atleast one payer");
                 }
                 if (!ModelState.IsValid)
                 {

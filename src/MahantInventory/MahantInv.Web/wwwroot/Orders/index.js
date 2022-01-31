@@ -524,7 +524,7 @@ class Common {
             $('#' + target).modal('hide');
             let gridData = [];
             Common.BuildGridData([response.data], gridData);
-            if (Id == 0) {
+            if (order.Id == 0) {
                 orderGridOptions.api.applyTransaction({ add: gridData });
             }
             else {
