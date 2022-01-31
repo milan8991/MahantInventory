@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Wed Jan 26 13:12:13 2022
+-- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 09:24:46 2022
 --
 -- Text encoding used: System
 --
@@ -676,7 +676,23 @@ CREATE UNIQUE INDEX UserNameIndex ON AspNetUsers (
 DROP VIEW IF EXISTS vOrders;
 CREATE VIEW vOrders AS
 WITH ords AS (
-        SELECT o.*,
+        SELECT o.Id,
+               o.ProductId,
+               CAST (o.Quantity AS REAL) AS Quantity,
+               CAST (o.ReceivedQuantity AS REAL) AS ReceivedQuantity,
+               o.RefNo,
+               o.StatusId,
+               o.SellerId,
+               o.OrderDate,
+               o.ReceivedDate,
+               CAST (o.PricePerItem AS REAL) AS PricePerItem,
+               CAST (o.Discount AS REAL) AS Discount,
+               CAST (o.Tax AS REAL) AS Tax,
+               CAST (o.DiscountAmount AS REAL) AS DiscountAmount,
+               CAST (o.NetAmount AS REAL) AS NetAmount,
+               o.Remark,
+               o.LastModifiedById,
+               o.ModifiedAt,
                p.Name AS ProductName,
                ost.Title AS Status,
                u.UserName AS LastModifiedBy,
