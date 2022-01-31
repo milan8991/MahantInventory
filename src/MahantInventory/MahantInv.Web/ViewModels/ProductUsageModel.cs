@@ -6,7 +6,7 @@ namespace MahantInv.Web.ViewModels
     {
         public int ProductId { get; set; }
         public string Buyer { get; set; }
-        public decimal Quantity { get; set; }
+        public double Quantity { get; set; }
         public DateTime? UsageDate { get; set; }
     }
 }

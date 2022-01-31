@@ -13,9 +13,9 @@ namespace MahantInv.Core.ViewModels
         public string Status { get; set; }
         public string Seller { get; set; }
         public string LastModifiedBy { get; set; }
-        public decimal? CurrentStock { get; set; }
-        public decimal ReorderLevel { get; set; }
-        public decimal? PaidAmount { get; set; }
+        public double? CurrentStock { get; set; }
+        public double ReorderLevel { get; set; }
+        public double? PaidAmount { get; set; }
         public string PaymentStatus
         {
             get
@@ -61,13 +61,13 @@ namespace MahantInv.Core.ViewModels
         public string Status { get; set; }
         public string Seller { get; set; }
         public string LastModifiedBy { get; set; }
-        public decimal? CurrentStock { get; set; }
-        public decimal ReorderLevel { get; set; }
+        public double? CurrentStock { get; set; }
+        public double ReorderLevel { get; set; }
         public string OrderDateFormat { get; set; }
         public string ReceivedDateFormat { get; set; }
         public string Payer { get; set; }//Party
         public string PaymentType { get; set; }
-        public decimal? Amount { get; set; }
+        public double? Amount { get; set; }
         public int OrderTransactionsCount { get; set; }
     }
 }

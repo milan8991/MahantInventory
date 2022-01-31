@@ -108,7 +108,7 @@ namespace MahantInv.Web.Api
                 oldOrder.DiscountAmount = order.DiscountAmount;
                 oldOrder.NetAmount = order.NetAmount;
                 oldOrder.ModifiedAt = DateTime.UtcNow;
-                oldOrder.StatusId = order.StatusId;
+                oldOrder.StatusId = !isReceived && oldOrder.StatusId == Meta.OrderStatusTypes.Received ? oldOrder.StatusId : order.StatusId;
                 await _orderRepository.UpdateAsync(oldOrder);
                 await _orderRepository.DeleteOrderTransactionByOrderId(oldOrder.Id);
                 returnOrder = _mapper.Map<Order>(order);
@@ -177,7 +177,14 @@ namespace MahantInv.Web.Api
                           .ToList();
                     return BadRequest(new { success = false, errors });
                 }
-
+                if (order.Id != 0)
+                {
+                    var existingOrder = await _orderRepository.GetOrderById(order.Id);
+                    if (existingOrder != null && !existingOrder.StatusId.Equals(OrderStatusTypes.Ordered, StringComparison.Ordinal))
+                    {
+                        ModelState.AddModelError(nameof(order.StatusId), "Order either received or calcelled");
+                    }
+                }
                 ProductInventory productInventory = await _productInventoryRepository.GetByProductId(order.ProductId.Value);
 
                 await _unitOfWork.BeginAsync();

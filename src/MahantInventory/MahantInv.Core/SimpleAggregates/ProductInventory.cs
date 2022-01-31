@@ -14,7 +14,7 @@ namespace MahantInv.Core.SimpleAggregates
     public class ProductInventory : BaseEntity, IAggregateRoot
     {
         public int? ProductId { get; set; }
-        public decimal? Quantity { get; set; }
+        public double? Quantity { get; set; }
         public string RefNo { get; set; }
         public string LastModifiedById { get; set; }
         public DateTime? ModifiedAt { get; set; }

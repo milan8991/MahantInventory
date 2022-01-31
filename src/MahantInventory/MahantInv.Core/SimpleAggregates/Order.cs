@@ -16,9 +16,9 @@ namespace MahantInv.Core.SimpleAggregates
         [Required, Display(Name = "Product")]
         public int? ProductId { get; set; }
         [Required, Display(Name = "Quantity")]
-        public decimal? Quantity { get; set; }
+        public double? Quantity { get; set; }
         [Display(Name = "Received Quantity")]
-        public decimal? ReceivedQuantity { get; set; }
+        public double? ReceivedQuantity { get; set; }
         public string RefNo { get; set; }
         [Display(Name = "Status")]
         public string StatusId { get; set; }
@@ -29,15 +29,15 @@ namespace MahantInv.Core.SimpleAggregates
         [Display(Name = "Received Date")]
         public DateTime? ReceivedDate { get; set; }
         [Display(Name ="Price Per Item")]
-        public decimal? PricePerItem { get; set; }
+        public double? PricePerItem { get; set; }
         [Display(Name ="Discount(%)")]
-        public decimal? Discount { get; set; }
+        public double? Discount { get; set; }
         [Display(Name ="Tax(%)")]
-        public decimal? Tax { get; set; }
+        public double? Tax { get; set; }
         [Display(Name ="Discount Amount")]
-        public decimal? DiscountAmount { get; set; }
+        public double? DiscountAmount { get; set; }
         [Display(Name ="Net Amount")]
-        public decimal? NetAmount { get; set; }
+        public double? NetAmount { get; set; }
         public string Remark { get; set; }
         [Display(Name = "Last Modified By")]
         public string LastModifiedById { get; set; }

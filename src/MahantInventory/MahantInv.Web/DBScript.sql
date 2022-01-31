@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 09:32:43 2022
+-- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 19:46:17 2022
 --
 -- Text encoding used: System
 --
@@ -713,7 +713,7 @@ WITH ords AS (
     ),
     trans AS (
         SELECT OrderId,
-               sum(Amount) PaidAmount
+               CAST (CAST (sum(Amount) AS DECIMAL (10, 2) ) AS REAL) PaidAmount
           FROM OrderTransactions
          GROUP BY OrderId
     )
