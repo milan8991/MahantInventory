@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Mon Jan 31 19:46:17 2022
+-- File generated with SQLiteStudio v3.3.3 on Sat Feb 12 16:10:37 2022
 --
 -- Text encoding used: System
 --
@@ -203,6 +203,19 @@ CREATE TABLE Buyers (
                           NOT NULL,
     Name    VARCHAR (255) NOT NULL,
     Contact VARCHAR (15) 
+);
+
+
+-- Table: Notifications
+DROP TABLE IF EXISTS Notifications;
+
+CREATE TABLE Notifications (
+    Id         INTEGER    CONSTRAINT PK_Notifications_Id PRIMARY KEY ASC AUTOINCREMENT
+                          NOT NULL,
+    Message    TEXT (900) NOT NULL,
+    Status     TEXT (10)  NOT NULL,
+    ModifiedAt DATETIME   NOT NULL,
+    CreatedAt  DATETIME   NOT NULL
 );
 
 

@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace MahantInv.Core.Interfaces
 {
-    public interface IPayersReposiroty : IAsyncRepository<ProductInventory>
+    public interface IProductInventoryReposiroty : IAsyncRepository<ProductInventory>
     {
         Task<ProductInventory> GetByProductId(int productId);
+        Task IFStockLowGenerateNotification(int productId);
     }
 }

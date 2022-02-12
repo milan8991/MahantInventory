@@ -22,11 +22,11 @@ namespace MahantInv.Web.Api
     {
         private readonly ILogger<OrderApiController> _logger;
         private readonly IOrdersRepository _orderRepository;
-        private readonly IPayersReposiroty _productInventoryRepository;
+        private readonly IProductInventoryReposiroty _productInventoryRepository;
         private readonly IAsyncRepository<ProductInventoryHistory> _productInventoryHistoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAsyncRepository<OrderTransaction> _orderTransactionRepository;
-        public OrderApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<OrderTransaction> orderTransactionRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IPayersReposiroty productInventoryRepository, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
+        public OrderApiController(IMapper mapper, IUnitOfWork unitOfWork, IAsyncRepository<OrderTransaction> orderTransactionRepository, IAsyncRepository<ProductInventoryHistory> productInventoryHistoryRepository, IProductInventoryReposiroty productInventoryRepository, ILogger<OrderApiController> logger, IOrdersRepository orderRepository) : base(mapper)
         {
             _logger = logger;
             _orderRepository = orderRepository;
