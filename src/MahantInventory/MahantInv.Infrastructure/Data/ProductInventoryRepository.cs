@@ -11,7 +11,7 @@ using MahantInv.Core.Utility;
 
 namespace MahantInv.Infrastructure.Data
 {
-    public class ProductInventoryRepository : DapperRepository<ProductInventory>, IProductInventoryReposiroty
+    public class ProductInventoryRepository : DapperRepository<ProductInventory>, IProductInventoryRepository
     {
         private readonly IProductsRepository _productRepository;
         private readonly IAsyncRepository<Notification> _notificationRepository;
@@ -24,6 +24,11 @@ namespace MahantInv.Infrastructure.Data
         public Task<ProductInventory> GetByProductId(int productId)
         {
             return db.QuerySingleOrDefaultAsync<ProductInventory>("select * from ProductInventory where ProductId = @productId", new { productId }, transaction: t);
+        }
+
+        public Task<IEnumerable<Notification>> GetNotificationByStatus(string status)
+        {
+            return db.QueryAsync<Notification>("select * from Notifications where status = @status", new { status }, transaction: t);
         }
 
         public async Task IFStockLowGenerateNotification(int productId)

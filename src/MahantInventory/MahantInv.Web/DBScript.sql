@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sat Feb 12 16:10:37 2022
+-- File generated with SQLiteStudio v3.3.3 on Sat Feb 12 16:30:21 2022
 --
 -- Text encoding used: System
 --
@@ -212,6 +212,7 @@ DROP TABLE IF EXISTS Notifications;
 CREATE TABLE Notifications (
     Id         INTEGER    CONSTRAINT PK_Notifications_Id PRIMARY KEY ASC AUTOINCREMENT
                           NOT NULL,
+    Title      TEXT (100) NOT NULL,
     Message    TEXT (900) NOT NULL,
     Status     TEXT (10)  NOT NULL,
     ModifiedAt DATETIME   NOT NULL,
