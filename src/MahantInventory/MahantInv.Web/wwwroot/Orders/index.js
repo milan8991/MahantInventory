@@ -560,6 +560,14 @@ class Common {
                     }
                 }
                 Common.BindValuesToOrderForm(order);
+
+                if (data.status == 'Received') {
+                    $('#ReceivedQuantity').attr('readonly',true);
+                }
+                else {
+                    $('#ReceivedQuantity').attr('readonly', false);
+                }
+
                 if (data.status == 'Ordered') {
                     $('.cancelbtn').show();
                     $('.saveorderbtn').show();
