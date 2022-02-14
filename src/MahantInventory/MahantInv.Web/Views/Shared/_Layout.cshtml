@@ -12,6 +12,118 @@
     <link rel="stylesheet" href="~/lib/select2/css/select2-bootstrap4.min.css" />
     <link rel="stylesheet" href="~/lib/daterangepicker/daterangepicker.css" />
     <link rel="stylesheet" href="~/css/plugins.css" />
+    <style>
+        /*import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap');
+
+        * {
+            padding: 0px;
+            margin: 0px
+        }
+
+        body {
+            background: #8E24AA;
+            color: #fff;
+            font-family: 'Manrope', sans-serif
+        }*/
+
+        /*nav {
+            display: flex;
+            align-items: center;
+            background: #AB47BC;
+            height: 60px;
+            position: relative;
+            border-bottom: 1px solid #495057
+        }*/
+
+
+        .icon {
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+            .icon span {
+                background: #f00;
+                padding: 7px;
+                border-radius: 50%;
+                color: #fff;
+                vertical-align: top;
+                margin-left: -25px
+            }
+
+            .icon img {
+                display: inline-block;
+                width: 26px;
+                margin-top: 4px
+            }
+
+            .icon:hover {
+                opacity: .7
+            }
+
+        .logo {
+            flex: 1;
+            margin-left: 50px;
+            color: #eee;
+            font-size: 20px;
+            font-family: monospace
+        }
+
+        .notifications {
+            width: 300px;
+            height: 0px;
+            opacity: 0;
+            z-index:1024;
+            position: absolute;
+            top: 63px;
+            right: 62px;
+            border-radius: 5px 0px 5px 5px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)
+        }
+
+            .notifications h2 {
+                font-size: 14px;
+                padding: 10px;
+                border-bottom: 1px solid #eee;
+                color: #999
+            }
+
+                .notifications h2 span {
+                    color: #f00
+                }
+
+        .notifications-item {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 6px 9px;
+            margin-bottom: 0px;
+            cursor: pointer
+        }
+
+            .notifications-item:hover {
+                background-color: #eee
+            }
+
+            .notifications-item img {
+                display: block;
+                width: 50px;
+                height: 50px;
+                margin-right: 9px;
+                border-radius: 50%;
+                margin-top: 2px
+            }
+
+            .notifications-item .text h4 {
+                color: #777;
+                font-size: 16px;
+                margin-top: 3px
+            }
+
+            .notifications-item .text p {
+                color: #aaa;
+                font-size: 12px
+            }
+    </style>
 </head>
 <body style="background-image: linear-gradient(0deg, rgb(222 187 116), rgb(0 123 255 / 50%))">
     <nav class="navbar navbar-light navbar-expand-lg" style="background-color: #064482">
@@ -37,32 +149,58 @@
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
     <script src="~/lib/daterangepicker/daterangepicker.js" asp-append-version="true"></script>
     <script type="text/javascript">
-                var baseUrl = '@Url.Content("~/")';
-                Array.prototype.uniquePush = function (item) {
-            if (this.indexOf(item) == -1)
-                this.push(item);
-        };
+                        var baseUrl = '@Url.Content("~/")';
+                        Array.prototype.uniquePush = function (item) {
+                    if (this.indexOf(item) == -1)
+                        this.push(item);
+                };
 
-        if (!String.prototype.supplant) {
-            String.prototype.supplant = function (o) {
-                return this.replace(/{([^{}]*)}/g,
-                    function (a, b) {
-                        var lst = b.split('.');
-                        $obj = o;
-                        for (var i = 0; i < (lst.length); i++) {
-                            var r = $obj[lst[i]];
-                            if (r === null || typeof r === "undefined") return "";
-                            if (typeof r === 'object') {
-                                $obj = r;
+                if (!String.prototype.supplant) {
+                    String.prototype.supplant = function (o) {
+                        return this.replace(/{([^{}]*)}/g,
+                            function (a, b) {
+                                var lst = b.split('.');
+                                $obj = o;
+                                for (var i = 0; i < (lst.length); i++) {
+                                    var r = $obj[lst[i]];
+                                    if (r === null || typeof r === "undefined") return "";
+                                    if (typeof r === 'object') {
+                                        $obj = r;
+                                    }
+                                    else {
+                                        return typeof r === 'string' || typeof r === 'number' ? r : a;
+                                    }
+                                }
                             }
-                            else {
-                                return typeof r === 'string' || typeof r === 'number' ? r : a;
-                            }
-                        }
-                    }
-                );
-            };
+                        );
+                    };
+                }
+                $(document).ready(function(){
+
+
+
+
+        let down = false;
+
+        $('#bell').click(function(e){
+
+        var color = $(this).text();
+        if(down){
+
+        $('#NotificationMessages').css('height','0px');
+        $('#NotificationMessages').css('opacity','0');
+        down = false;
+        }else{
+
+        $('#NotificationMessages').css('height','auto');
+        $('#NotificationMessages').css('opacity','1');
+        down = true;
+
         }
+
+        });
+
+        });
     </script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
     <script src="~/lib/aggrid/ag-grid-enterprise.min.js"></script>

@@ -33,9 +33,9 @@ namespace MahantInv.Core.Utility
         {
             public const string Pending = "Pending";
             public const string Notified = "Notified";
-            public const string Marked = "Marked";
+            //public const string Marked = "Marked";
             public const string Read = "Read";
-            public const string Cancelled = "Cancelled";
+            //public const string Cancelled = "Cancelled";
         }
     }
 }

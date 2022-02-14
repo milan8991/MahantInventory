@@ -12,6 +12,6 @@ namespace MahantInv.Core.Interfaces
     {
         Task<ProductInventory> GetByProductId(int productId);
         Task IFStockLowGenerateNotification(int productId);
-        Task<IEnumerable<Notification>> GetNotificationByStatus(string status);
+        Task<IEnumerable<Notification>> GetNotificationByStatus(List<string> status);
     }
 }

@@ -26,9 +26,9 @@ namespace MahantInv.Infrastructure.Data
             return db.QuerySingleOrDefaultAsync<ProductInventory>("select * from ProductInventory where ProductId = @productId", new { productId }, transaction: t);
         }
 
-        public Task<IEnumerable<Notification>> GetNotificationByStatus(string status)
+        public Task<IEnumerable<Notification>> GetNotificationByStatus(List<string> status)
         {
-            return db.QueryAsync<Notification>("select * from Notifications where status = @status", new { status }, transaction: t);
+            return db.QueryAsync<Notification>("select * from Notifications where status in @status order by CreatedAt desc", new { status }, transaction: t);
         }
 
         public async Task IFStockLowGenerateNotification(int productId)

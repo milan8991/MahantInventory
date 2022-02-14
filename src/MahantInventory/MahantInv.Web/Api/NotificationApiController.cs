@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MahantInv.Web.Api
@@ -22,31 +24,44 @@ namespace MahantInv.Web.Api
             _productInventoryReposiroty = productInventoryReposiroty;
             _notificationRepository = notificationRepository;
         }
-        [HttpGet("notification/pending")]
+        [HttpGet("notification/pendingornotified")]
         public async Task<IActionResult> PendingNotification(int notificationId)
         {
             try
             {
-                var pendingNotifications = await _productInventoryReposiroty.GetNotificationByStatus(Meta.NotificationStatusTypes.Pending);
-                return Ok(pendingNotifications);
+                var myNotifications = await _productInventoryReposiroty.GetNotificationByStatus(new List<string>() { Meta.NotificationStatusTypes.Pending, Meta.NotificationStatusTypes.Notified });
+                var model = new
+                {
+                    pendingNotificationCount = myNotifications.Count(n => n.Status == Meta.NotificationStatusTypes.Pending),
+                    myNotifications = myNotifications
+                };
+                return Ok(model);
             }
             catch (Exception e)
             {
                 string GUID = Guid.NewGuid().ToString();
                 _logger.LogError(e, GUID, null);
-                return BadRequest(new { success = false, errors = new[] { "Unexpected Error " + GUID } });
+                return BadRequest(new
+                {
+                    success = false,
+                    errors = new[] { "Unexpected Error " + GUID
+    }
+                });
             }
         }
 
         [HttpPost("notification/notified")]
-        public async Task<IActionResult> NotificationMarkAsNotified(int notificationId)
+        public async Task<IActionResult> NotificationMarkAsNotified(List<int> notificationIds)
         {
             try
             {
-                Notification notification = await _notificationRepository.GetByIdAsync(notificationId);
-                notification.ModifiedAt = Meta.Now;
-                notification.Status = Meta.NotificationStatusTypes.Notified;
-                await _notificationRepository.UpdateAsync(notification);
+                foreach (var notificationId in notificationIds)
+                {
+                    Notification notification = await _notificationRepository.GetByIdAsync(notificationId);
+                    notification.ModifiedAt = Meta.Now;
+                    notification.Status = Meta.NotificationStatusTypes.Notified;
+                    await _notificationRepository.UpdateAsync(notification);
+                }
                 return Ok();
             }
             catch (Exception e)
@@ -57,14 +72,17 @@ namespace MahantInv.Web.Api
             }
         }
         [HttpPost("notification/read")]
-        public async Task<IActionResult> NotificationMarkAsRead(int notificationId)
+        public async Task<IActionResult> NotificationMarkAsRead(List<int> notificationIds)
         {
             try
             {
-                Notification notification = await _notificationRepository.GetByIdAsync(notificationId);
-                notification.ModifiedAt = Meta.Now;
-                notification.Status = Meta.NotificationStatusTypes.Read;
-                await _notificationRepository.UpdateAsync(notification);
+                foreach (var notificationId in notificationIds)
+                {
+                    Notification notification = await _notificationRepository.GetByIdAsync(notificationId);
+                    notification.ModifiedAt = Meta.Now;
+                    notification.Status = Meta.NotificationStatusTypes.Read;
+                    await _notificationRepository.UpdateAsync(notification);
+                }
                 return Ok();
             }
             catch (Exception e)
