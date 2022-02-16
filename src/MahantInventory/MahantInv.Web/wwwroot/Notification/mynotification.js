@@ -3,7 +3,7 @@
 class MyNotification {
 
     static async NotificationMessageTemplate() {
-        let template = '<div class="notifications-item"><div class="text"><h4>{title}</h4><p>{message}</p><div class="notifications-item"> <div class="text"> <h4>{title}</h4> <p>{message}</p> </div> </div></div>             </div>'
+        let template = ' <div class="notifications-item"> <div class="notification-text"> <h4>{title}</h4> <p>{message}</p> </div> <div class="notification-action"> <button class="btn btn-light btn-sm" data-id="{id}">√</button> </div> </div> ';
         return template;
     }
 
@@ -12,6 +12,7 @@ class MyNotification {
             .then((response) => response.json())
             .then(data => {
                 if (data.pendingNotificationCount > 0) {
+                    $('#NotificationPendingCount').show();
                     $('#NotificationPendingCount').html(data.pendingNotificationCount);
                 } else {
                     $('#NotificationPendingCount').hide();
