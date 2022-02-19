@@ -4,35 +4,37 @@ let notificationIds = [];
 let pendingNotificationCount = 0;
 class MyNotification {
 
-    static async NotificationMessageTemplate() {
-        let template = ' <div class="notifications-item"> <div class="notification-text"> <h4>{title}</h4> <p>{message}</p> </div> <div class="notification-action"> <button class="btn btn-light btn-sm" onclick="MyNotification.MarkAsRead(this)" data-id="{id}">√</button> </div> </div> ';
-        return template;
+    static NotificationMessageTemplate() {
+        return ' <div class="notifications-item"> <div class="notification-text"> <h4>{title}</h4> <p>{message}</p> </div> <div class="notification-action"> <button class="btn btn-light btn-sm" onclick="MyNotification.MarkAsRead(this)" data-id="{id}">√</button> </div> </div> ';
     }
 
     static async GetPendingORNotifiedNotifications() {
+
         fetch(baseUrl + 'api/notification/pendingornotified')
             .then((response) => response.json())
             .then(data => {
+                $('#NotificationMessages').empty();
                 if (data.pendingNotificationCount > 0) {
                     $('#NotificationPendingCount').show();
                     $('#NotificationPendingCount').html(data.pendingNotificationCount);
                     pendingNotificationCount = data.pendingNotificationCount;
+
+                    $('#NotificationMessages').html('<h2>Notifications</h2>');
+                    let template = MyNotification.NotificationMessageTemplate();
+                    $.each(data.myNotifications, function (i, v) {
+                        let message = template.supplant(v);
+                        $('#NotificationMessages').append(message);
+                        if (v.status === 'Pending') {
+                            notificationIds.push(v.id);
+                        }
+                    });
                 } else {
                     $('#NotificationPendingCount').hide();
+                    pendingNotificationCount = 0;
+                    $('#NotificationMessages').html('<h2>Notifications</h2><h6>Notifications will be appear here</h6>');
                 }
-                pendingNotificationCount = 0;
-                $('#NotificationMessages').empty();
-                $('#NotificationMessages').html('<h2>Notifications</h2>');
-                let template = MyNotification.NotificationMessageTemplate();
+
                 
-                $.each(data.myNotifications, function (i, v) {
-                    let message = template.supplant(v);
-                    $('#NotificationMessages').appand(message);
-                    if (v.status === 'Pending') {
-                        notificationIds.push(v.id);
-                    }
-                });
-                //MyNotification.MarkAsNotified(notificationIds);
             })
             .catch(error => {
                 console.log(error);
@@ -45,7 +47,8 @@ class MyNotification {
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            })
+            },
+        })
             .then((response) => response.json())
             .then(data => {
 
@@ -53,6 +56,7 @@ class MyNotification {
             .catch(error => {
                 console.log(error);
             });
+
     }
     static async MarkAsRead(mthis) {
         fetch(baseUrl + 'api/notification/read', {
@@ -61,7 +65,8 @@ class MyNotification {
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            })
+            },
+        })
             .then((response) => response.json())
             .then(data => {
                 //MArk as read

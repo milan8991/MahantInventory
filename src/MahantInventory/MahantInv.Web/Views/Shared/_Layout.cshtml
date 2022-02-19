@@ -151,7 +151,7 @@
     <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
     <script src="~/lib/daterangepicker/daterangepicker.js" asp-append-version="true"></script>
-    <script src="~/Notification/mynotification.js" asp-append-version="true"></script>
+    
     <script type="text/javascript">
                         var baseUrl = '@Url.Content("~/")';
                         Array.prototype.uniquePush = function (item) {
@@ -206,6 +206,7 @@
 
         //});
     </script>
+    <script src="~/Notification/mynotification.js" asp-append-version="true"></script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
     <script src="~/lib/aggrid/ag-grid-enterprise.min.js"></script>
 
