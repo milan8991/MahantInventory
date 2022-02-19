@@ -166,7 +166,7 @@ class Common {
                 Common.InitSelect2();
             })
             .catch(error => {
-                console.log('err:',error);
+                console.log('err:', error);
                 productUsageGridOptions.api.setRowData([])
                 //toastr.error(error, '', {
                 //    positionClass: 'toast-top-center'
@@ -291,6 +291,7 @@ class Common {
             $('#UsageDate').val('');
             //$('#ProductUsageSelect').select2('open');
             $('.select2-search__field').focus();
+            MyNotification.GetPendingORNotifiedNotifications();
         }
         if (response.success == false) {
             toastr.error(response.errors, '', { positionClass: 'toast-top-center' });

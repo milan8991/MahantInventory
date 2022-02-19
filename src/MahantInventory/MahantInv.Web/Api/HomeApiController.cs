@@ -87,6 +87,7 @@ namespace MahantInv.Web.Api
                 await _productInventoryHistoryRepository.AddAsync(productInventoryHistory);
                 await _productInventoryRepository.UpdateAsync(productInventory);
                 await _productUsageRepository.AddAsync(productUsage);
+                await _productInventoryRepository.IFStockLowGenerateNotification(productUsage.ProductId.Value);
                 await _unitOfWork.CommitAsync();
 
                 ProductUsageVM productUsageVM = await _productUsageRepository.GetProductUsageById(productUsage.Id);

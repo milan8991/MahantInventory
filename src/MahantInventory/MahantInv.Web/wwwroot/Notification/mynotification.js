@@ -1,9 +1,11 @@
 ﻿
-
+let down = false;
+let notificationIds = [];
+let pendingNotificationCount = 0;
 class MyNotification {
 
     static async NotificationMessageTemplate() {
-        let template = ' <div class="notifications-item"> <div class="notification-text"> <h4>{title}</h4> <p>{message}</p> </div> <div class="notification-action"> <button class="btn btn-light btn-sm" data-id="{id}">√</button> </div> </div> ';
+        let template = ' <div class="notifications-item"> <div class="notification-text"> <h4>{title}</h4> <p>{message}</p> </div> <div class="notification-action"> <button class="btn btn-light btn-sm" onclick="MyNotification.MarkAsRead(this)" data-id="{id}">√</button> </div> </div> ';
         return template;
     }
 
@@ -14,13 +16,15 @@ class MyNotification {
                 if (data.pendingNotificationCount > 0) {
                     $('#NotificationPendingCount').show();
                     $('#NotificationPendingCount').html(data.pendingNotificationCount);
+                    pendingNotificationCount = data.pendingNotificationCount;
                 } else {
                     $('#NotificationPendingCount').hide();
                 }
+                pendingNotificationCount = 0;
                 $('#NotificationMessages').empty();
                 $('#NotificationMessages').html('<h2>Notifications</h2>');
                 let template = MyNotification.NotificationMessageTemplate();
-                let notificationIds = [];
+                
                 $.each(data.myNotifications, function (i, v) {
                     let message = template.supplant(v);
                     $('#NotificationMessages').appand(message);
@@ -28,13 +32,13 @@ class MyNotification {
                         notificationIds.push(v.id);
                     }
                 });
-                MyNotification.MarkAsNotified(notificationIds);
+                //MyNotification.MarkAsNotified(notificationIds);
             })
             .catch(error => {
                 console.log(error);
             });
     }
-    static async MarkAsNotified(notificationIds) {
+    static async MarkAsNotified() {
         fetch(baseUrl + 'api/notification/notified', {
             method: 'POST',
             body: JSON.stringify(notificationIds),
@@ -67,8 +71,25 @@ class MyNotification {
             });
     }
 
-    static init() {
+    static async ViewNotificationModal(mthis) {
+        if (down) {
 
+            $('#NotificationMessages').css('height', '0px');
+            $('#NotificationMessages').css('opacity', '0');
+            down = false;
+        } else {
+            $('#NotificationMessages').css('height', 'auto');
+            $('#NotificationMessages').css('opacity', '1');
+            down = true;
+        }
+        if (pendingNotificationCount > 0) {
+            MyNotification.MarkAsNotified();
+        }
+
+    }
+
+    static init() {
+        MyNotification.GetPendingORNotifiedNotifications();
     }
 
 

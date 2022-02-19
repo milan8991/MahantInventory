@@ -151,6 +151,7 @@
     <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
     <script src="~/lib/daterangepicker/daterangepicker.js" asp-append-version="true"></script>
+    <script src="~/Notification/mynotification.js" asp-append-version="true"></script>
     <script type="text/javascript">
                         var baseUrl = '@Url.Content("~/")';
                         Array.prototype.uniquePush = function (item) {
@@ -178,32 +179,32 @@
                         );
                     };
                 }
-                $(document).ready(function(){
+        //        $(document).ready(function(){
 
 
 
 
-        let down = false;
+        //let down = false;
 
-        $('#bell').click(function(e){
+        //$('#bell').click(function(e){
 
-        var color = $(this).text();
-        if(down){
+        //var color = $(this).text();
+        //if(down){
 
-        $('#NotificationMessages').css('height','0px');
-        $('#NotificationMessages').css('opacity','0');
-        down = false;
-        }else{
+        //$('#NotificationMessages').css('height','0px');
+        //$('#NotificationMessages').css('opacity','0');
+        //down = false;
+        //}else{
 
-        $('#NotificationMessages').css('height','auto');
-        $('#NotificationMessages').css('opacity','1');
-        down = true;
+        //$('#NotificationMessages').css('height','auto');
+        //$('#NotificationMessages').css('opacity','1');
+        //down = true;
 
-        }
+        //}
 
-        });
+        //});
 
-        });
+        //});
     </script>
     @await RenderSectionAsync("scripts", required: false).ConfigureAwait(false)
     <script src="~/lib/aggrid/ag-grid-enterprise.min.js"></script>
