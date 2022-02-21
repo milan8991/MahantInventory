@@ -72,17 +72,15 @@ namespace MahantInv.Web.Api
             }
         }
         [HttpPost("notification/read")]
-        public async Task<IActionResult> NotificationMarkAsRead(List<int> notificationIds)
+        public async Task<IActionResult> NotificationMarkAsRead(int id)
         {
             try
             {
-                foreach (var notificationId in notificationIds)
-                {
-                    Notification notification = await _notificationRepository.GetByIdAsync(notificationId);
-                    notification.ModifiedAt = Meta.Now;
-                    notification.Status = Meta.NotificationStatusTypes.Read;
-                    await _notificationRepository.UpdateAsync(notification);
-                }
+                Notification notification = await _notificationRepository.GetByIdAsync(id);
+                notification.ModifiedAt = Meta.Now;
+                notification.Status = Meta.NotificationStatusTypes.Read;
+                await _notificationRepository.UpdateAsync(notification);
+
                 return Ok();
             }
             catch (Exception e)

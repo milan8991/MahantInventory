@@ -19,6 +19,15 @@ class MyNotification {
                     $('#NotificationPendingCount').html(data.pendingNotificationCount);
                     pendingNotificationCount = data.pendingNotificationCount;
 
+                } else {
+                    $('#NotificationPendingCount').hide();
+                    pendingNotificationCount = 0;
+
+                }
+                if (data.myNotifications.length == 0) {
+                    $('#NotificationMessages').html('<h2>Notifications</h2><h6>Notifications will be appear here</h6>');
+                }
+                else {
                     $('#NotificationMessages').html('<h2>Notifications</h2>');
                     let template = MyNotification.NotificationMessageTemplate();
                     $.each(data.myNotifications, function (i, v) {
@@ -28,13 +37,8 @@ class MyNotification {
                             notificationIds.push(v.id);
                         }
                     });
-                } else {
-                    $('#NotificationPendingCount').hide();
-                    pendingNotificationCount = 0;
-                    $('#NotificationMessages').html('<h2>Notifications</h2><h6>Notifications will be appear here</h6>');
                 }
 
-                
             })
             .catch(error => {
                 console.log(error);
@@ -59,9 +63,10 @@ class MyNotification {
 
     }
     static async MarkAsRead(mthis) {
+        let id = $(mthis).data('id');
         fetch(baseUrl + 'api/notification/read', {
             method: 'POST',
-            body: JSON.stringify(notificationIds),
+            body: JSON.stringify({ id: id }),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -69,7 +74,7 @@ class MyNotification {
         })
             .then((response) => response.json())
             .then(data => {
-                //MArk as read
+                $(mthis).closets('.notifications-item').remove();
             })
             .catch(error => {
                 console.log(error);
