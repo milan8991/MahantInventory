@@ -66,7 +66,7 @@ class MyNotification {
         let id = $(mthis).data('id');
         fetch(baseUrl + 'api/notification/read', {
             method: 'POST',
-            body: JSON.stringify({ id: id }),
+            body: JSON.stringify(id),
             headers: {
                 //'Accept': 'application/json',
                 'Content-Type': 'application/json'

@@ -72,7 +72,7 @@ namespace MahantInv.Web.Api
             }
         }
         [HttpPost("notification/read")]
-        public async Task<IActionResult> NotificationMarkAsRead(int id)
+        public async Task<IActionResult> NotificationMarkAsRead([FromBody] int id)
         {
             try
             {
