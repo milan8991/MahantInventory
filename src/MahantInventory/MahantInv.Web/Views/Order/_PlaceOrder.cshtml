@@ -84,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                @*<div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="@Model.ReceivedQuantity"></label>
@@ -97,7 +97,7 @@
                             <input type="date" asp-for="@Model.ReceivedDate" class="form-control form-control-sm" placeholder="Received Date" />
                         </div>
                     </div>
-                </div>
+                </div>*@
                 <div class="form-group">
                     <label asp-for="@Model.Remark"></label>
                     <textarea asp-for="@Model.Remark" rows="2" class="form-control form-control-sm" placeholder="Remark"></textarea>
@@ -112,6 +112,7 @@
                                             <th scope="col">Payer <a href="#" class="pl-2" onclick="Common.OpenPartyModal(this)" data-type="p">(New)</a></th>
                                             <th scope="col">Payment Type</th>
                                             <th scope="col">Amount</th>
+                                            <th scope="col">Payment Date</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                         <tr>
@@ -137,8 +138,11 @@
                                                 <input type="number" id="Amount" class="form-control" placeholder="Paid Amount" />
                                             </th>
                                             <th>
-                                                <button type="button" class="btn btn-outline-success" onclick="Common.AddOrderTransaction(this)">Add</button>
-                                                <button type="button" class="btn btn-outline-danger" onclick="Common.CancelOrderTransaction(this)">Cancel</button>
+                                                <input type="date" id="PaymentDate" class="form-control" placeholder="Payment Date" value="@DateTime.Today.ToString("dd/MM/yyyy")"/>
+                                            </th>
+                                            <th>
+                                                <button type="button" class="btn btn-outline-success" onclick="Common.AddOrderTransaction(this)">A</button>
+                                                <button type="button" class="btn btn-outline-danger" onclick="Common.CancelOrderTransaction(this)">C</button>
                                             </th>
                                         </tr>
                                     </thead>

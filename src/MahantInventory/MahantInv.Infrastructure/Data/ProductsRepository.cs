@@ -21,7 +21,8 @@ namespace MahantInv.Infrastructure.Data
         {
             return db.QuerySingleAsync<ProductVM>(@"select p.*, s.Name as [Storage], u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
-                        left outer join Storages s on p.StorageId = s.Id
+                        left outer join ProductStorages ps on p.Id = ps.ProductId                        
+                        left outer join Storages s on ps.StorageId = s.Id
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
                         left outer join ProductInventory pi on p.Id = pi.ProductId
                         where p.Id = @productId", new { productId }, transaction: t);
@@ -31,7 +32,8 @@ namespace MahantInv.Infrastructure.Data
         {
             return db.QueryAsync<ProductVM>(@"select p.*, s.Name as [Storage], u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
-                        left outer join Storages s on p.StorageId = s.Id
+                        left outer join ProductStorages ps on p.Id = ps.ProductId                        
+                        left outer join Storages s on ps.StorageId = s.Id
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
                         left outer join ProductInventory pi on p.Id = pi.ProductId", transaction: t);
         }

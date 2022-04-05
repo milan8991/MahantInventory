@@ -34,7 +34,7 @@ var orderGridOptions = {
     // define grid columns
     columnDefs: [
         {
-            headerName: 'Product', field: 'productName', filter: 'agTextColumnFilter', headerTooltip: 'Name'
+            headerName: 'Product', field: 'productFullName', filter: 'agTextColumnFilter', headerTooltip: 'Name'
             , rowSpan: function (params) {
                 return params.data.orderTransactionsCount;
             }
@@ -47,13 +47,13 @@ var orderGridOptions = {
             },
             cellClassRules: spanCellClassRules
         },
-        {
-            headerName: 'Received Quantity', field: 'receivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
-            , rowSpan: function (params) {
-                return params.data.orderTransactionsCount;
-            },
-            cellClassRules: spanCellClassRules
-        },
+        //{
+        //    headerName: 'Received Quantity', field: 'receivedQuantity', filter: 'agNumberColumnFilter', headerTooltip: 'Received Quantity'
+        //    , rowSpan: function (params) {
+        //        return params.data.orderTransactionsCount;
+        //    },
+        //    cellClassRules: spanCellClassRules
+        //},
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
             , cellClassRules: stockClassRules
@@ -85,6 +85,13 @@ var orderGridOptions = {
             cellClassRules: spanCellClassRules
         },
         {
+            headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            }
+            , cellClassRules: spanCellClassRules
+        },
+        {
             headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
             cellRenderer: function (params) {
                 if (params.value == 'Ordered') {
@@ -110,19 +117,16 @@ var orderGridOptions = {
             field: 'paymentType', filter: 'agSetColumnFilter', headerTooltip: 'Payment Type'
         },
         {
-            headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
-            , rowSpan: function (params) {
-                return params.data.orderTransactionsCount;
-            }
-            , cellClassRules: spanCellClassRules
+            headerName: 'Payment Date', field: 'paymentDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Payment Date'
         },
-        {
-            headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date',
-            rowSpan: function (params) {
-                return params.data.orderTransactionsCount;
-            },
-            cellClassRules: spanCellClassRules
-        },
+        
+        //{
+        //    headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date',
+        //    rowSpan: function (params) {
+        //        return params.data.orderTransactionsCount;
+        //    },
+        //    cellClassRules: spanCellClassRules
+        //},
         //{
         //    headerName: 'Remark', field: 'remark', filter: 'agTextColumnFilter', headerTooltip: 'Remark', minWidth: 100
         //},
@@ -207,15 +211,15 @@ class Product {
     }
 }
 class Order {
-    constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate, PricePerItem, Discount, Tax, DiscountAmount, NetAmount) {
+    constructor(Id, ProductId, Quantity, SellerId, OrderDate, Remark, PricePerItem, Discount, Tax, DiscountAmount, NetAmount) {
         this.Id = parseInt(Id);
         this.ProductId = ProductId;
         this.Quantity = Quantity;
         this.SellerId = SellerId;
         this.OrderDate = OrderDate;
         this.Remark = Common.ParseValue(Remark);
-        this.ReceivedQuantity = ReceivedQuantity;
-        this.ReceivedDate = ReceivedDate;
+        //this.ReceivedQuantity = ReceivedQuantity;
+        //this.ReceivedDate = ReceivedDate;
         this.OrderTransactions = [];
         this.PricePerItem = PricePerItem;
         this.Discount = Discount;
@@ -225,13 +229,14 @@ class Order {
     }
 }
 class OrderTransaction {
-    constructor(Id, PartyId, Party, PaymentTypeId, PaymentType, Amount) {
+    constructor(Id, PartyId, Party, PaymentTypeId, PaymentType, Amount, PaymentDate) {
         this.Id = Id;
         this.PartyId = PartyId;
         this.Party = Party;
         this.PaymentTypeId = PaymentTypeId;
         this.PaymentType = PaymentType;
         this.Amount = Amount;
+        this.PaymentDate = PaymentDate;
     }
 }
 class Party {
@@ -399,7 +404,7 @@ class Common {
         $('#DiscountAmount').val(model.DiscountAmount);
         $('#NetAmount').val(model.NetAmount);
         if (model.OrderTransactions.length == 0) {
-            $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
+            $('#OrderTransactionBody').html("<tr><td colspan='5' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
         else {
             orderTransaction = model.OrderTransactions;
@@ -590,14 +595,14 @@ class Common {
         let SellerId = $('#SellerId').val();
         let OrderDate = $('#OrderDate').val();
         let Remark = $('#Remark').val();
-        let ReceivedQuantity = $('#ReceivedQuantity').val();
-        let ReceivedDate = $('#ReceivedDate').val();
+        //let ReceivedQuantity = $('#ReceivedQuantity').val();
+        //let ReceivedDate = $('#ReceivedDate').val();
         let PricePerItem = $('#PricePerItem').val();
         let Discount = $('#Discount').val();
         let Tax = $('#Tax').val();
         let DiscountAmount = $('#DiscountAmount').val();
         let NetAmount = $('#NetAmount').val();
-        let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, ReceivedQuantity, ReceivedDate, PricePerItem, Discount, Tax, DiscountAmount, NetAmount);
+        let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, PricePerItem, Discount, Tax, DiscountAmount, NetAmount);
         order.OrderTransactions = orderTransaction;
         return order;
     }
@@ -700,6 +705,7 @@ class Common {
         let PartyId = $('#PartyId').val();
         let PaymentTypeId = $('#PaymentTypeId').val();
         let Amount = $('#Amount').val();
+        let PaymentDate = $('#PaymentDate').val();
 
         if (PartyId == null || PartyId == "") {
             toastr.error('Payer field is required', '', {
@@ -729,13 +735,14 @@ class Common {
         let Party = $('#PartyId option:selected').text();
         let PaymentType = $('#PaymentTypeId option:selected').text();
         if (editModeIdx === -1) {
-            orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount));
+            orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount, PaymentDate));
         } else {
             orderTransaction[editModeIdx].PartyId = PartyId;
             orderTransaction[editModeIdx].Party = Party;
             orderTransaction[editModeIdx].PaymentTypeId = PaymentTypeId;
             orderTransaction[editModeIdx].PaymentType = PaymentType;
             orderTransaction[editModeIdx].Amount = Amount;
+            orderTransaction[editModeIdx].PaymentDate = PaymentDate;
             editModeIdx = -1;
         }
         Common.UpdateOrderTransactionGrid();

@@ -16,5 +16,6 @@ namespace MahantInv.Core.SimpleAggregates
         public int PartyId { get; set; }
         public string PaymentTypeId { get; set; }
         public decimal Amount { get; set; }
+        public DateTime? PaymentDate { get; set; }
     }
 }

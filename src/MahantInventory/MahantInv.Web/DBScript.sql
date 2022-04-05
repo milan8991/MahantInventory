@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Sat Feb 12 16:30:21 2022
+-- File generated with SQLiteStudio v3.3.3 on Tue Apr 5 22:46:53 2022
 --
 -- Text encoding used: System
 --
@@ -227,12 +227,10 @@ CREATE TABLE Orders (
     Id               INTEGER         NOT NULL,
     ProductId        INTEGER         NOT NULL,
     Quantity         NUMERIC (10, 2) NOT NULL,
-    ReceivedQuantity NUMERIC (10, 2),
     RefNo            VARCHAR (50)    NOT NULL,
     StatusId         VARCHAR (50)    NOT NULL,
     SellerId         INTEGER         CONSTRAINT FK_Orders_SellerId_Parties_Id REFERENCES Parties (Id),
     OrderDate        DATE            NOT NULL,
-    ReceivedDate     DATE,
     PricePerItem     NUMERIC (10, 2),
     Discount         NUMERIC (7, 2),
     Tax              NUMERIC (7, 2),
@@ -313,7 +311,8 @@ CREATE TABLE OrderTransactions (
                                   NOT NULL,
     PaymentTypeId VARCHAR (20)    CONSTRAINT FK_OrderTransactions_PaymentTypeId_PaymentTypes_Id REFERENCES PaymentTypes (Id) 
                                   NOT NULL,
-    Amount        NUMERIC (10, 2) NOT NULL
+    Amount        NUMERIC (10, 2) NOT NULL,
+    PaymentDate   DATE
 );
 
 
@@ -524,7 +523,6 @@ CREATE TABLE Products (
     ReorderLevel     NUMERIC (10, 2) NOT NULL,
     IsDisposable     BOOL            NOT NULL,
     Company          VARCHAR (256),
-    StorageId        INTEGER,
     Enabled          BOOL            NOT NULL,
     LastModifiedById VARCHAR (450)   NOT NULL,
     ModifiedAt       DATETIME        NOT NULL,
@@ -533,11 +531,6 @@ CREATE TABLE Products (
     )
     REFERENCES UnitTypes (Code) ON UPDATE NO ACTION
                                 ON DELETE NO ACTION,
-    CONSTRAINT FK_Products_StorageId FOREIGN KEY (
-        StorageId
-    )
-    REFERENCES Storages (Id) ON UPDATE NO ACTION
-                             ON DELETE NO ACTION,
     CONSTRAINT FK_Products_LastModifiedById FOREIGN KEY (
         LastModifiedById
     )
@@ -546,6 +539,17 @@ CREATE TABLE Products (
     CONSTRAINT PK_Products_Id PRIMARY KEY (
         Id
     )
+);
+
+
+-- Table: ProductStorages
+DROP TABLE IF EXISTS ProductStorages;
+
+CREATE TABLE ProductStorages (
+    ProductId INTEGER CONSTRAINT FK_ProductStorages_ProductId REFERENCES Products (Id) 
+                      NOT NULL,
+    StorageId INTEGER CONSTRAINT FK_ProductStorages_StorageId REFERENCES Storages (Id) 
+                      NOT NULL
 );
 
 
@@ -693,12 +697,10 @@ WITH ords AS (
         SELECT o.Id,
                o.ProductId,
                CAST (o.Quantity AS REAL) AS Quantity,
-               CAST (o.ReceivedQuantity AS REAL) AS ReceivedQuantity,
                o.RefNo,
                o.StatusId,
                o.SellerId,
                o.OrderDate,
-               o.ReceivedDate,
                CAST (o.PricePerItem AS REAL) AS PricePerItem,
                CAST (o.Discount AS REAL) AS Discount,
                CAST (o.Tax AS REAL) AS Tax,
@@ -747,7 +749,8 @@ CREATE VIEW vOrderTransactions AS
            ot.PaymentTypeId,
            CAST (ot.Amount AS REAL) AS Amount,
            p.Name AS Party,
-           pt.Title AS PaymentType
+           pt.Title AS PaymentType,
+           ot.PaymentDate
       FROM OrderTransactions ot
            INNER JOIN
            Parties p ON ot.PartyId = p.Id

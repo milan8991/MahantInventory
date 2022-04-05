@@ -98,8 +98,6 @@ namespace MahantInv.Web.Api
                 oldOrder.Quantity = order.Quantity;
                 oldOrder.OrderDate = order.OrderDate;
                 oldOrder.Remark = order.Remark;
-                oldOrder.ReceivedDate = order.ReceivedDate;
-                oldOrder.ReceivedQuantity = order.ReceivedQuantity;
                 oldOrder.SellerId = order.SellerId;
                 oldOrder.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 oldOrder.PricePerItem = order.PricePerItem;
@@ -121,7 +119,8 @@ namespace MahantInv.Web.Api
                     OrderId = order.Id,
                     PartyId = orderTransaction.PartyId,
                     PaymentTypeId = orderTransaction.PaymentTypeId,
-                    Amount = orderTransaction.Amount
+                    Amount = orderTransaction.Amount,
+                    PaymentDate= orderTransaction.PaymentDate
                 };
                 await _orderTransactionRepository.AddAsync(ot);
                 //returnOrder.OrderTransactions.Add(ot);
@@ -148,23 +147,23 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                if (!order.ReceivedQuantity.HasValue)
+                if (!order.Quantity.HasValue)
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Quantity field is required");
+                    ModelState.AddModelError(nameof(order.Quantity), "Quantity field is required");
                 }
-                if (order.ReceivedQuantity <= 0)
+                if (order.Quantity <= 0)
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedQuantity), "Received Quantity larger than 0");
+                    ModelState.AddModelError(nameof(order.Quantity), "Quantity larger than 0");
                 }
-                if (!order.ReceivedDate.HasValue)
+                if (!order.OrderDate.HasValue)
                 {
-                    ModelState.AddModelError(nameof(order.ReceivedDate), "Received Date field is required");
+                    ModelState.AddModelError(nameof(order.OrderDate), "Order Date field is required");
                 }
                 else
                 {
-                    if (order.ReceivedDate.Value > DateTime.Today.Date)
+                    if (order.OrderDate.Value > DateTime.Today.Date)
                     {
-                        ModelState.AddModelError(nameof(order.ReceivedDate), "Received Date can't be future date");
+                        ModelState.AddModelError(nameof(order.OrderDate), "Order Date can't be future date");
                     }
                 }
                 if (!order.OrderTransactions.Any())
@@ -196,7 +195,7 @@ namespace MahantInv.Web.Api
                     await _productInventoryRepository.AddAsync(new ProductInventory
                     {
                         ProductId = oldOrder.ProductId.Value,
-                        Quantity = order.ReceivedQuantity,
+                        Quantity = order.Quantity,
                         RefNo = oldOrder.RefNo,
                         LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value,
                         ModifiedAt = DateTime.UtcNow
@@ -213,7 +212,7 @@ namespace MahantInv.Web.Api
                         RefNo = productInventory.RefNo
                     });
 
-                    productInventory.Quantity += order.ReceivedQuantity;
+                    productInventory.Quantity += order.Quantity;
                     productInventory.RefNo = oldOrder.RefNo;
                     productInventory.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                     productInventory.ModifiedAt = DateTime.UtcNow;

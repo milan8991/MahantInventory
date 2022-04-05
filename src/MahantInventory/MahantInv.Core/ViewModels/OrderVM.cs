@@ -10,6 +10,18 @@ namespace MahantInv.Core.ViewModels
     public class OrderVM : Order
     {
         public string ProductName { get; set; }
+        public string Company { get; set; }
+        public string ProductFullName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Company))
+                {
+                    return ProductName;
+                }
+                return $"{ProductName} - {Company}";
+            }
+        }
         public string Status { get; set; }
         public string Seller { get; set; }
         public string LastModifiedBy { get; set; }
@@ -21,7 +33,7 @@ namespace MahantInv.Core.ViewModels
             get
             {
                 if (!NetAmount.HasValue || NetAmount.Value == 0) return "No Need";
-                if (!PaidAmount.HasValue || PaidAmount.Value==0) return "Pending";
+                if (!PaidAmount.HasValue || PaidAmount.Value == 0) return "Pending";
                 if (NetAmount > PaidAmount) return "Partially Paid";
                 return "Paid";
             }
@@ -33,13 +45,7 @@ namespace MahantInv.Core.ViewModels
                 return OrderDate.HasValue ? $"{OrderDate:dd/MM/yyyy}" : null;
             }
         }
-        public string ReceivedDateFormat
-        {
-            get
-            {
-                return ReceivedDate.HasValue ? $"{ReceivedDate:dd/MM/yyyy}" : null;
-            }
-        }
+
         public List<OrderTransactionVM> OrderTransactionVMs { get; set; }
         public int OrderTransactionsCount
         {
@@ -54,6 +60,13 @@ namespace MahantInv.Core.ViewModels
     {
         public string Party { get; set; }
         public string PaymentType { get; set; }
+        public string PaymentDateFormat
+        {
+            get
+            {
+                return PaymentDate.HasValue ? $"{PaymentDate:dd/MM/yyyy}" : null;
+            }
+        }
     }
     public class OrdersGrid : Order
     {
