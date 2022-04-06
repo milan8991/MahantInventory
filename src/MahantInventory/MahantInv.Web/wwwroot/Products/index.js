@@ -205,7 +205,6 @@ class Common {
     }
 
     static BindValuesToProductForm(model) {
-        console.log('model', model.StorageNames);
         $('#ProductErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
@@ -217,6 +216,9 @@ class Common {
         $('#Company').val(model.Company);
         if (model.StorageNames != null) {
             $('#StorageNames').val(model.StorageNames.split(',')).trigger('change');
+        }
+        else {
+            $('#StorageNames').val('').trigger('change');
         }
     }
 

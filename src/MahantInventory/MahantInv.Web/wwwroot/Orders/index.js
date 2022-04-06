@@ -119,7 +119,7 @@ var orderGridOptions = {
         {
             headerName: 'Payment Date', field: 'paymentDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Payment Date'
         },
-        
+
         //{
         //    headerName: 'Received Date', field: 'receivedDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Received Date',
         //    rowSpan: function (params) {
@@ -287,11 +287,39 @@ class Common {
     }
 
     static OpenProductModal(mthis) {
+
+        $('#ProductErrorSection').empty();
+        //$('#Id').val(model.Id);
+        $('#Name').val('');
+        $('#Description').val('');
+        $('#Size').val('');
+        $('#UnitTypeCode').val('');
+        $('#ReorderLevel').val('');
+        $('#IsDisposable').prop("checked", false);
+        $('#Company').val('');
+        $('#StorageNames').val('').trigger('change');
+
         let target = $(mthis).data('target');
         $('#' + target).modal('show');
+
     }
 
     static OpenPartyModal(mthis) {
+
+        //$('#PartyErrorSection').empty();
+        //$('#Id').val(model.Id);
+        $('#Name').val('');
+        $('#Type').val('');
+        $('#CategoryId').val('');
+        $('#PrimaryContact').val('');
+        $('#SecondaryContact').val('');
+        $('#Line1').val('');
+        $('#Line2').val('');
+        $('#Taluk').val('');
+        $('#District').val('');
+        $('#State').val('');
+        $('#Country').val('');
+
         $('#AddParty').modal('show');
     }
     static OpenActionModal(mthis) {
@@ -395,13 +423,15 @@ class Common {
         $('#SellerId').val(model.ProductId).trigger('change');
         $('#OrderDate').val(moment(model.OrderDate).format("YYYY-MM-DD"));
         $('#Remark').val(model.Remark);
-        $('#ReceivedQuantity').val(model.ReceivedQuantity);
-        $('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
+        //$('#ReceivedQuantity').val(model.ReceivedQuantity);
+        //$('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
         $('#PricePerItem').val(model.PricePerItem);
         $('#Discount').val(model.Discount);
         $('#Tax').val(model.Tax);
         $('#DiscountAmount').val(model.DiscountAmount);
         $('#NetAmount').val(model.NetAmount);
+        $('#OrderTransactionSummarySectionPaidAmount').html(0);
+        $('#OrderTransactionSummarySectionPendingAmount').html(model.NetAmount);
         if (model.OrderTransactions.length == 0) {
             $('#OrderTransactionBody').html("<tr><td colspan='5' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
@@ -554,19 +584,19 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.receivedQuantity, data.receivedDate, data.pricePerItem, data.discount, data.tax, data.discountAmount, data.netAmount);
+                var order = new Order(data.id, data.productId, data.quantity, data.sellerId, data.orderDate, data.remark, data.pricePerItem, data.discount, data.tax, data.discountAmount, data.netAmount);
                 order.OrderTransactions = [];
                 if (data.orderTransactionVMs != null) {
                     if (data.orderTransactionVMs.length > 0) {
                         $.each(data.orderTransactionVMs, function (i, v) {
-                            order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount));
+                            order.OrderTransactions.push(new OrderTransaction(v.id, v.partyId, v.party, v.paymentTypeId, v.paymentType, v.amount, v.paymentDateFormat));
                         });
                     }
                 }
                 Common.BindValuesToOrderForm(order);
 
                 if (data.status == 'Received') {
-                    $('#ReceivedQuantity').attr('readonly',true);
+                    $('#ReceivedQuantity').attr('readonly', true);
                 }
                 else {
                     $('#ReceivedQuantity').attr('readonly', false);
@@ -762,11 +792,16 @@ class Common {
             $('#OrderTransactionBody').html("<tr><td colspan='4' class='text-center alert alert-info'>Transaction(s) will be apprear here.</td></tr>");
         }
         else {
+            let NetAmount = parseFloat($('#NetAmount').val());
+            let PaidAmount = parseFloat(0);
             $.each(orderTransaction, function (i, v) {
                 let template = $('#OrderTransactionBodyTemplate').find('tbody').html();
                 v.idx = i;
                 $('#OrderTransactionBody').prepend(template.supplant(v));
+                PaidAmount += parseFloat(v.Amount);
             });
+            $('#OrderTransactionSummarySectionPaidAmount').html(PaidAmount);
+            $('#OrderTransactionSummarySectionPendingAmount').html(NetAmount - PaidAmount);
         }
     }
     static async EditOrderTransaction(mthis) {
@@ -774,6 +809,7 @@ class Common {
         $('#PartyId').val(orderTransaction[idx].PartyId).trigger('change');
         $('#PaymentTypeId').val(orderTransaction[idx].PaymentTypeId).trigger('change');
         $('#Amount').val(orderTransaction[idx].Amount);
+        $('#PaymentDate').val(orderTransaction[idx].PaymentDate);
         editModeIdx = idx;
     }
     static async DeleteOrderTransaction(mthis) {
