@@ -450,7 +450,7 @@ class Common {
             theme: "bootstrap4",
             dropdownParent: $("#AddParty")
         });
-        $('#StorageId').select2({
+        $('#StorageNames').select2({
             dropdownParent: $('#AddProduct'),
             placeholder: 'Search Storage',
             theme: "bootstrap4",
@@ -866,7 +866,7 @@ class Common {
         let ReorderLevel = $('#ReorderLevel').val();
         let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
-        let StorageNames = $('#StorageId :selected').text();
+        let StorageNames = $('#StorageNames option:selected').toArray().map(item => item.text).join();
         let product = new Product(0, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageNames);
 
         var response = await fetch(baseUrl + 'api/product/save', {

@@ -49,7 +49,7 @@ var productGridOptions = {
             headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
         },
         {
-            headerName: 'Storage', field: 'storage', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
+            headerName: 'Storage', field: 'storageNames', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
         },
         {
             headerName: '', field: 'id', headerTooltip: 'Action', pinned: 'right', width: 80, suppressSizeToFit: true,
@@ -177,7 +177,7 @@ class Common {
         $('#' + target).modal('show');
         if (id == 0) {
             $('#ModalTitle').html('Add Product');
-            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null,null));
+            Common.BindValuesToProductForm(new Product(0, null, null, null, null, null, null, null, null));
         }
         else {
             $('#ModalTitle').html('Edit Product');
@@ -205,6 +205,7 @@ class Common {
     }
 
     static BindValuesToProductForm(model) {
+        console.log('model', model.StorageNames);
         $('#ProductErrorSection').empty();
         $('#Id').val(model.Id);
         $('#Name').val(model.Name);
@@ -214,7 +215,9 @@ class Common {
         $('#ReorderLevel').val(model.ReorderLevel);
         $('#IsDisposable').prop("checked", model.IsDisposable);
         $('#Company').val(model.Company);
-        $('#StorageId').val(model.StorageId);
+        if (model.StorageNames != null) {
+            $('#StorageNames').val(model.StorageNames.split(',')).trigger('change');
+        }
     }
 
     static init() {
@@ -231,7 +234,7 @@ class Common {
         let ReorderLevel = $('#ReorderLevel').val();
         let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
-        let StorageNames = $('#StorageId :selected').text();
+        let StorageNames = $('#StorageNames option:selected').toArray().map(item => item.text).join();
         let product = new Product(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageNames);
 
         var response = await fetch(baseUrl + 'api/product/save', {
@@ -279,7 +282,8 @@ class Common {
             },
         }).then(response => { return response.json() })
             .then(data => {
-                Common.BindValuesToProductForm(new Product(data.id, data.name, data.description, data.size, data.unitTypeCode, data.reorderLevel, data.isDisposable, data.company, data.storageId));
+                console.log('data:',data);
+                Common.BindValuesToProductForm(new Product(data.id, data.name, data.description, data.size, data.unitTypeCode, data.reorderLevel, data.isDisposable, data.company, data.storageIds));
             })
             .catch(error => {
                 console.log(error);
@@ -312,14 +316,14 @@ class Common {
             closeOnSelect: true,
             tags: true
         });
-        $('#StorageId').select2({
+        $('#StorageNames').select2({
             dropdownParent: $('#AddEditProduct'),
             placeholder: 'Search Storage',
             theme: "bootstrap4",
             closeOnSelect: true,
             tags: true
         });
-        
+
         $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
         });

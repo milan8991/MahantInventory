@@ -24,10 +24,17 @@ namespace MahantInv.Infrastructure.Data
 
         public Task<ProductVM> GetProductById(int productId)
         {
-            return db.QuerySingleAsync<ProductVM>(@"select p.*, s.Name as [Storage], u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
+            return db.QuerySingleAsync<ProductVM>(@"
+                        with storagecte as
+                        (
+                            select ps.ProductId,group_concat(s.Id) as StorageIds,group_concat(s.Name) as StorageNames from ProductStorages ps
+                            left outer join Storages s on ps.StorageId = s.Id
+                            where ps.ProductId = @productId
+                            group by ps.ProductId
+                        )
+                        select p.*, s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
-                        left outer join ProductStorages ps on p.Id = ps.ProductId                        
-                        left outer join Storages s on ps.StorageId = s.Id
+                        left outer join storagecte s on p.Id = s.ProductId
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
                         left outer join ProductInventory pi on p.Id = pi.ProductId
                         where p.Id = @productId", new { productId }, transaction: t);
@@ -35,10 +42,15 @@ namespace MahantInv.Infrastructure.Data
 
         public Task<IEnumerable<ProductVM>> GetProducts()
         {
-            return db.QueryAsync<ProductVM>(@"select p.*, s.Name as [Storage], u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
+            return db.QueryAsync<ProductVM>(@"with storagecte as
+                        (
+                            select ps.ProductId,group_concat(s.Id) as StorageIds,group_concat(s.Name) as StorageNames from ProductStorages ps
+                            left outer join Storages s on ps.StorageId = s.Id
+                            group by ps.ProductId
+                        )
+                        select p.*, s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
-                        left outer join ProductStorages ps on p.Id = ps.ProductId                        
-                        left outer join Storages s on ps.StorageId = s.Id
+                        left outer join storagecte s on p.Id = s.ProductId
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
                         left outer join ProductInventory pi on p.Id = pi.ProductId", transaction: t);
         }
@@ -57,7 +69,7 @@ namespace MahantInv.Infrastructure.Data
 
         public Task RemoveProductStorages(int productId)
         {
-            return db.ExecuteAsync("delete from ProductStorages where ProductId = @productId", productId,transaction:t);
+            return db.ExecuteAsync("delete from ProductStorages where ProductId = @productId",new { productId },transaction:t);
         }
     }
 }

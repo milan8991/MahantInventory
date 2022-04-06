@@ -15,6 +15,7 @@ namespace MahantInv.Core.SimpleAggregates
     {
         [Required(ErrorMessage = "Product Name field is required"), Display(Name = "Product Name")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "Size field is required"), Display(Name = "Size")]
         public decimal? Size { get; set; }
         public string Description { get; set; }
         [Display(Name = "Unit Type")]
@@ -30,15 +31,7 @@ namespace MahantInv.Core.SimpleAggregates
         [Display(Name ="Storage")]
         public string StorageNames { get; set; }
         [Dapper.Contrib.Extensions.Write(false)]
-        public string StorageIds
-        {
-            get
-            {
-                if (ProductStorages.Any())
-                    return string.Join(",", ProductStorages.Select(p => p.StorageId));
-                return null;
-            }
-        }
+        public string StorageIds { get; set; }
         public bool Enabled { get; set; }
         public string LastModifiedById { get; set; }
         public DateTime? ModifiedAt { get; set; }

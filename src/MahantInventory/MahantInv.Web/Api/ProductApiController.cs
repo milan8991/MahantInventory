@@ -61,7 +61,10 @@ namespace MahantInv.Web.Api
                 {
                     return BadRequest(new { success = false, errors = new[] { "Storage field is required" } });
                 }
-
+                if(!product.Size.HasValue)
+                {
+                    return BadRequest(new { success = false, errors = new[] { "Size field is required" } });
+                }
 
                 product.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 product.ModifiedAt = DateTime.UtcNow;
@@ -76,7 +79,7 @@ namespace MahantInv.Web.Api
                 {
                     await _productRepository.UpdateAsync(product);
                 }
-                await _unitOfWork.CommitAsync();
+                
 
                 List<ProductStorage> ProductStorages = product.StorageNames.Split(",")
                     .Select(s => new ProductStorage { ProductId = product.Id, StorageName = s.Trim() }).ToList();
@@ -99,7 +102,7 @@ namespace MahantInv.Web.Api
                 }
 
 
-
+                await _unitOfWork.CommitAsync();
 
                 ProductVM productVM = await _productRepository.GetProductById(product.Id);
                 return Ok(new { success = true, data = productVM });
@@ -116,7 +119,7 @@ namespace MahantInv.Web.Api
         {
             try
             {
-                Product product = await _productRepository.GetByIdAsync(productId);
+                ProductVM product = await _productRepository.GetProductById(productId);
                 return Ok(product);
             }
             catch (Exception e)
