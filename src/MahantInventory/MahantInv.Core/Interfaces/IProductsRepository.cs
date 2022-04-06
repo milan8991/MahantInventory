@@ -14,5 +14,7 @@ namespace MahantInv.Core.Interfaces
         Task<IEnumerable<ProductVM>> GetProducts();
         Task<ProductVM> GetProductById(int productId);
         Task<bool> IsProductExist(string unitTypeCode);
+        Task RemoveProductStorages(int productId);
+        Task AddProductStorage(ProductStorage productStorage);
     }
 }

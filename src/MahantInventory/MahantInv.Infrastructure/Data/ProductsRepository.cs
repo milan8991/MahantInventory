@@ -17,6 +17,11 @@ namespace MahantInv.Infrastructure.Data
         {
         }
 
+        public Task AddProductStorage(ProductStorage productStorage)
+        {
+            return db.ExecuteAsync("insert into ProductStorages (ProductId,StorageId) values (@ProductId,@StorageId)", productStorage, transaction: t);
+        }
+
         public Task<ProductVM> GetProductById(int productId)
         {
             return db.QuerySingleAsync<ProductVM>(@"select p.*, s.Name as [Storage], u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
@@ -48,6 +53,11 @@ namespace MahantInv.Infrastructure.Data
                                         BEGIN
                                         	select 0
                                         END", new { unitTypeCode }, transaction: t);
+        }
+
+        public Task RemoveProductStorages(int productId)
+        {
+            return db.ExecuteAsync("delete from ProductStorages where ProductId = @productId", productId,transaction:t);
         }
     }
 }

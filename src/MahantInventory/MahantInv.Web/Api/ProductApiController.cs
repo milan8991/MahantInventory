@@ -21,12 +21,14 @@ namespace MahantInv.Web.Api
         private readonly ILogger<ProductApiController> _logger;
         private readonly IProductsRepository _productRepository;
         private readonly IStorageRepository _storageRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProductApiController(IStorageRepository storageRepository, IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
+        public ProductApiController(IUnitOfWork unitOfWork, IStorageRepository storageRepository, IMapper mapper, ILogger<ProductApiController> logger, IProductsRepository productRepository) : base(mapper)
         {
             _logger = logger;
             _productRepository = productRepository;
             _storageRepository = storageRepository;
+            _unitOfWork = unitOfWork;
         }
         [HttpGet("products")]
         public async Task<object> GetAllProducats()
@@ -55,21 +57,17 @@ namespace MahantInv.Web.Api
                           .ToList();
                     return BadRequest(errors);
                 }
-                var storages = await _storageRepository.ListAllAsync();
-
-                Storage matchedStorage = storages.SingleOrDefault(s => s.Name.Equals(product.StorageName, StringComparison.Ordinal));
-
-                if (matchedStorage == null)
+                if (string.IsNullOrWhiteSpace(product.StorageNames))
                 {
-                    product.StorageId = await _storageRepository.AddAsync(new Storage { Name = product.StorageName, Enabled = true });
+                    return BadRequest(new { success = false, errors = new[] { "Storage field is required" } });
                 }
-                else
-                {
-                    product.StorageId = matchedStorage.Id;
-                }
+
+
                 product.LastModifiedById = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 product.ModifiedAt = DateTime.UtcNow;
                 product.Enabled = true;
+                var storages = await _storageRepository.ListAllAsync();
+                await _unitOfWork.BeginAsync();
                 if (product.Id == 0)
                 {
                     product.Id = await _productRepository.AddAsync(product);
@@ -78,6 +76,31 @@ namespace MahantInv.Web.Api
                 {
                     await _productRepository.UpdateAsync(product);
                 }
+                await _unitOfWork.CommitAsync();
+
+                List<ProductStorage> ProductStorages = product.StorageNames.Split(",")
+                    .Select(s => new ProductStorage { ProductId = product.Id, StorageName = s.Trim() }).ToList();
+
+                await _productRepository.RemoveProductStorages(product.Id);
+
+                foreach (var productStorage in ProductStorages)
+                {
+                    Storage matchedStorage = storages.SingleOrDefault(s => s.Name.Equals(productStorage.StorageName, StringComparison.Ordinal));
+
+                    if (matchedStorage == null)
+                    {
+                        productStorage.StorageId = await _storageRepository.AddAsync(new Storage { Name = productStorage.StorageName, Enabled = true });
+                    }
+                    else
+                    {
+                        productStorage.StorageId = matchedStorage.Id;
+                    }
+                    await _productRepository.AddProductStorage(productStorage);
+                }
+
+
+
+
                 ProductVM productVM = await _productRepository.GetProductById(product.Id);
                 return Ok(new { success = true, data = productVM });
             }

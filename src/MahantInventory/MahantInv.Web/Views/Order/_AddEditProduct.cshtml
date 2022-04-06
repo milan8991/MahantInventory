@@ -63,8 +63,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="@Model.StorageId"></label>
-                            <select id="StorageId" class="form-control form-control-sm" placeholder="Storage">
+                            <label asp-for="@Model.StorageNames"></label>
+                            <select id="StorageNames" class="form-control form-control-sm" placeholder="Storage" multiple>
                                 <option value="">Select Storage</option>
                                 @foreach (var item in (ViewBag.Storages as ICollection<MahantInv.Core.SimpleAggregates.Storage>).Where(s => s.Enabled))
                                 {
