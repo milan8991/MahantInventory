@@ -197,7 +197,7 @@ var orderGridOptions = {
 };
 
 class Product {
-    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageId, StorageName) {
+    constructor(Id, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageNames) {
         this.Id = parseInt(Id);
         this.Name = Common.ParseValue(Name);
         this.Description = Common.ParseValue(Description);
@@ -206,8 +206,7 @@ class Product {
         this.ReorderLevel = ReorderLevel;
         this.IsDisposable = IsDisposable;
         this.Company = Common.ParseValue(Company);
-        this.StorageId = StorageId;
-        this.StorageName = StorageName;
+        this.StorageNames = StorageNames;
     }
 }
 class Order {
@@ -867,8 +866,8 @@ class Common {
         let ReorderLevel = $('#ReorderLevel').val();
         let IsDisposable = $('#IsDisposable').is(':checked');
         let Company = $('#Company').val();
-        let StorageName = $('#StorageId :selected').text();
-        let product = new Product(0, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, 0, StorageName);
+        let StorageNames = $('#StorageId :selected').text();
+        let product = new Product(0, Name, Description, Size, UnitTypeCode, ReorderLevel, IsDisposable, Company, StorageNames);
 
         var response = await fetch(baseUrl + 'api/product/save', {
             method: 'POST',
