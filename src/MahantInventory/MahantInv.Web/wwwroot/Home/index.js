@@ -217,24 +217,24 @@ class Common {
             data: response,
             templateResult: function (repo) {
                 if (repo.loading) {
-                    return repo.name;
+                    return repo.fullName;
                 }
                 var $container = $(
                     "<div class='select2-result-repository clearfix'>" +
                     "<div class='select2-result-repository__title'></div>" +
-                    "<div class='select2-result-repository__description'></div>" +
+                    "<div class='select2-result-repository__description' style='color:#fff;'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
                     "</div>"
                 );
 
-                $container.find(".select2-result-repository__title").text(repo.name);
-                let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
-                $container.find(".select2-result-repository__description").text(repo.description + '' + detail);
+                $container.find(".select2-result-repository__title").text(repo.fullName);
+                let detail = ' Size:' + repo.size + ' ' + repo.unitTypeCode;
+                $container.find(".select2-result-repository__description").text(repo.description ?? '' + '' + detail);
 
                 return $container;
             },
             templateSelection: function (repo) {
-                return repo.name
+                return repo.fullName
             }
         });
     }

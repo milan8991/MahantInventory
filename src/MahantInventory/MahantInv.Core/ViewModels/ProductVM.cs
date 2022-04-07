@@ -20,5 +20,21 @@ namespace MahantInv.Core.ViewModels
                 return this.IsDisposable ? "Yes" : "No";
             }
         }
+        public string FullName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Company))
+                    return Name;
+                return $"{Name} - {Company}";
+            }
+        }
+        public string SizeUnitTypeCode
+        {
+            get
+            {
+                return $"{Size} {UnitTypeCode}";
+            }
+        }
     }
 }

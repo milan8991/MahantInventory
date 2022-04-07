@@ -38,6 +38,19 @@ namespace MahantInv.Core.ViewModels
                 return "Paid";
             }
         }
+        public decimal? PendingAmount
+        {
+            get
+            {
+                if (!NetAmount.HasValue || OrderTransactionVMs == null || !OrderTransactionVMs.Any()) return (decimal)NetAmount;
+                decimal unpaidAmt = (decimal)NetAmount.Value - OrderTransactionVMs.Sum(os => os.Amount);
+                //if (unpaidAmt > 0)
+                //{
+                //    OrderTransactionVMs.Add(new OrderTransactionVM { Party = "-", PaymentType = "Unpaid", Amount = unpaidAmt });
+                //}
+                return unpaidAmt;
+            }
+        }
         public string OrderDateFormat
         {
             get

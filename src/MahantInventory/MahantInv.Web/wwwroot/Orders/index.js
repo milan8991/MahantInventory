@@ -75,6 +75,14 @@ var orderGridOptions = {
             rowSpan: function (params) {
                 return params.data.orderTransactionsCount;
             },
+            cellRenderer: function (params) {
+                if (params.value == 'Partially Paid') {
+                    return '<span>' + params.value + '</span> <span class="badge badge-danger">' + params.data.pendingAmount + '</span>';
+                }
+                else {
+                    return params.value;
+                }
+            },
             cellClassRules: spanCellClassRules
         },
         {
@@ -114,7 +122,15 @@ var orderGridOptions = {
         },
         {
             headerName: 'Payment Type',
-            field: 'paymentType', filter: 'agSetColumnFilter', headerTooltip: 'Payment Type'
+            field: 'paymentType', filter: 'agSetColumnFilter', headerTooltip: 'Payment Type',
+            //cellRenderer: function (params) {
+            //    if (params.value == 'Unpaid') {
+            //        return '<span class="badge badge-danger">' + params.value + '</span>';
+            //    }
+            //    else {
+            //        return params.value;
+            //    }
+            //}
         },
         {
             headerName: 'Payment Date', field: 'paymentDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Payment Date'
@@ -376,7 +392,7 @@ class Common {
                 gData.productName = v.productName;
                 gData.orderDateFormat = v.orderDateFormat;
                 gData.id = v.id;
-                gData.receivedDateFormat = v.receivedDateFormat;
+                //gData.receivedDateFormat = v.receivedDateFormat;
                 gData.orderDateFormat = v.orderDateFormat;
                 gData.status = v.status;
                 gData.seller = v.seller;
@@ -386,6 +402,7 @@ class Common {
                 gData.quantity = v.quantity;
                 gData.netAmount = v.netAmount;
                 gData.paymentStatus = v.paymentStatus;
+                gData.pendingAmount = v.pendingAmount;
                 gridData.push(gData);
             }
             else {
@@ -398,7 +415,7 @@ class Common {
                         gData.productName = v.productName;
                         gData.orderDateFormat = v.orderDateFormat;
                         gData.id = v.id;
-                        gData.receivedDateFormat = v.receivedDateFormat;
+                        //gData.receivedDateFormat = v.receivedDateFormat;
                         gData.orderDateFormat = v.orderDateFormat;
                         gData.status = v.status;
                         gData.seller = v.seller;
@@ -408,6 +425,7 @@ class Common {
                         gData.quantity = v.quantity;
                         gData.netAmount = v.netAmount;
                         gData.paymentStatus = v.paymentStatus;
+                        gData.pendingAmount = v.pendingAmount;
                     }
                     gridData.push(gData);
                     idx++;
@@ -511,24 +529,24 @@ class Common {
             data: response,
             templateResult: function (repo) {
                 if (repo.loading) {
-                    return repo.name;
+                    return repo.fullName;
                 }
                 var $container = $(
                     "<div class='select2-result-repository clearfix'>" +
                     "<div class='select2-result-repository__title'></div>" +
-                    "<div class='select2-result-repository__description'></div>" +
+                    "<div class='select2-result-repository__description' style='color:#fff;'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
                     "</div>"
                 );
 
-                $container.find(".select2-result-repository__title").text(repo.name);
-                let detail = ' Size:' + repo.size + ' Unit: ' + repo.unitTypeCode + ' Company: ' + repo.company;
-                $container.find(".select2-result-repository__description").text(repo.description + '' + detail);
+                $container.find(".select2-result-repository__title").text(repo.fullName);
+                let detail = ' Size:' + repo.size + ' ' + repo.unitTypeCode;
+                $container.find(".select2-result-repository__description").text(repo.description ?? '' + '' + detail);
 
                 return $container;
             },
             templateSelection: function (repo) {
-                return repo.name
+                return repo.fullName
             }
         });
     }

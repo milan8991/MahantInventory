@@ -26,17 +26,17 @@ var productGridOptions = {
             headerName: 'Name', field: 'name', filter: 'agTextColumnFilter', headerTooltip: 'Name'
         },
         {
+            headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
+        },
+        {
             headerName: 'Description', field: 'description', filter: 'agTextColumnFilter', headerTooltip: 'Description'
         },
         {
-            headerName: 'Size', field: 'size', filter: 'agTextColumnFilter', headerTooltip: 'Size'
+            headerName: 'Size & Unit', field: 'sizeUnitTypeCode', filter: 'agTextColumnFilter', headerTooltip: 'Size & Unit'
         },
         {
             headerName: 'Current Stock', field: 'currentStock', filter: 'agNumberColumnFilter', headerTooltip: 'Storage'
             , cellClassRules: stockClassRules
-        },
-        {
-            headerName: 'Unit Type', field: 'unitTypeCode', filter: 'agSetColumnFilter', headerTooltip: 'Unit Type'
         },
         {
             headerName: 'Reorder Level',
@@ -44,10 +44,7 @@ var productGridOptions = {
         },
         {
             headerName: 'Is Disposable?', field: 'disposable', filter: 'agSetColumnFilter', headerTooltip: 'Is Disposable'
-        },
-        {
-            headerName: 'Company', field: 'company', filter: 'agTextColumnFilter', headerTooltip: 'Company'
-        },
+        },        
         {
             headerName: 'Storage', field: 'storageNames', filter: 'agTextColumnFilter', headerTooltip: 'Storage'
         },
