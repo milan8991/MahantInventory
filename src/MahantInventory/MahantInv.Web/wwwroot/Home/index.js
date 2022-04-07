@@ -288,7 +288,7 @@ class Common {
             $('#ProductUsageSelect').val('').trigger('change');
             $('#UsageQuantity').val('');
             $('#BuyersSelect').val('').trigger('change');
-            $('#UsageDate').val('');
+            //$('#UsageDate').val('');
             //$('#ProductUsageSelect').select2('open');
             $('.select2-search__field').focus();
             MyNotification.GetPendingORNotifiedNotifications();

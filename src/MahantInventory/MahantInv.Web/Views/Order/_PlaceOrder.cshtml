@@ -62,7 +62,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label asp-for="@Model.Discount"></label>
-                                    <input type="number" asp-for="@Model.Discount" class="form-control form-control-sm countable" placeholder="Discount(%)" />
+                                    <input type="text" asp-for="@Model.Discount" class="form-control form-control-sm countable" placeholder="Discount(%)" />
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -104,12 +104,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
-                        <div id="OrderTransactionSummarySection" class="d-inline p-2 bg-info text-white">
-                            Paid Amount :
-                            <span class="text-dark" id="OrderTransactionSummarySectionPaidAmount">0</span>
-                            Pending Amount  :
-                            <span class="text-danger" id="OrderTransactionSummarySectionPendingAmount">0</span>
-                        </div>
+                        
                         <div id="OrderTransactionSection">
                             <div class="table-responsive-sm">
                                 <table class="table table-sm table-bordered">
@@ -144,7 +139,7 @@
                                                 <input type="number" id="Amount" class="form-control" placeholder="Paid Amount" style="width:135px;"/>
                                             </th>
                                             <th>
-                                                <input type="date" id="PaymentDate" class="form-control" placeholder="Payment Date" value="@DateTime.Today.ToString("dd/MM/yyyy")" />
+                                                <input type="date" id="PaymentDate" class="form-control" placeholder="Payment Date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                                             </th>
                                             <th>
                                                 <button type="button" class="btn btn-outline-success" onclick="Common.AddOrderTransaction(this)">A</button>
@@ -156,6 +151,12 @@
                                     </tbody>
                                 </table>
                             </div>
+                            <div id="OrderTransactionSummarySection" class="d-inline p-2 bg-info text-white">
+                            Paid Amount :
+                            <span class="text-dark" id="OrderTransactionSummarySectionPaidAmount">0</span>
+                            Pending Amount  :
+                            <span class="text-danger" id="OrderTransactionSummarySectionPendingAmount">0</span>
+                        </div>
                         </div>
                     </div>
                 </div>

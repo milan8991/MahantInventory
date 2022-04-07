@@ -278,7 +278,7 @@ class Common {
         orderTransaction = [];
         if (id == 0) {
             $('#actionsection').find('.cancelbtn').hide();
-            Common.BindValuesToOrderForm(new Order(0, null, null, null, null, null, null, null, null, null, null, null, null));
+            Common.BindValuesToOrderForm(new Order(0, null, null, null, moment().format("YYYY-MM-DD"), null, null, null, null, null, null, null, null));
         }
         else {
             $('#actionsection').find('.cancelbtn').show();
@@ -372,6 +372,7 @@ class Common {
             if (v.orderTransactionVMs == null || v.orderTransactionVMs.length == 0) {
                 var gData = {};
                 gData.orderTransactionsCount = v.orderTransactionsCount;
+                gData.productFullName = v.productFullName;
                 gData.productName = v.productName;
                 gData.orderDateFormat = v.orderDateFormat;
                 gData.id = v.id;
@@ -393,6 +394,7 @@ class Common {
                     var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, orderTransactionsCount: 1 };
                     if (idx == 0) {
                         gData.orderTransactionsCount = v.orderTransactionsCount;
+                        gData.productFullName = v.productFullName;
                         gData.productName = v.productName;
                         gData.orderDateFormat = v.orderDateFormat;
                         gData.id = v.id;
@@ -415,7 +417,6 @@ class Common {
     }
 
     static BindValuesToOrderForm(model) {
-        //console.log('model:', model);
         $('#OrderErrorSection').empty();
         $('#Id').val(model.Id);
         $('#ProductId').val(model.ProductId).trigger('change');
@@ -431,7 +432,7 @@ class Common {
         $('#DiscountAmount').val(model.DiscountAmount);
         $('#NetAmount').val(model.NetAmount);
         $('#OrderTransactionSummarySectionPaidAmount').html(0);
-        $('#OrderTransactionSummarySectionPendingAmount').html(model.NetAmount);
+        $('#OrderTransactionSummarySectionPendingAmount').html(model.NetAmount ?? 0);
         if (model.OrderTransactions.length == 0) {
             $('#OrderTransactionBody').html("<tr><td colspan='5' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
@@ -627,7 +628,7 @@ class Common {
         //let ReceivedQuantity = $('#ReceivedQuantity').val();
         //let ReceivedDate = $('#ReceivedDate').val();
         let PricePerItem = $('#PricePerItem').val();
-        let Discount = $('#Discount').val();
+        let Discount = parseFloat($('#Discount').val());
         let Tax = $('#Tax').val();
         let DiscountAmount = $('#DiscountAmount').val();
         let NetAmount = $('#NetAmount').val();
@@ -785,6 +786,7 @@ class Common {
         $('#PartyId').val(null).trigger('change');
         $('#PaymentTypeId').val(null).trigger('change');
         $('#Amount').val(null);
+        $('#Amount').val(moment().format("YYYY-MM-DD"));
     }
     static async UpdateOrderTransactionGrid() {
         $('#OrderTransactionBody').empty();
@@ -820,10 +822,10 @@ class Common {
     static CalculateDiscountAndNetPay() {
         let Quantity = $('#Quantity').val() || 0;
         let PricePerItem = $('#PricePerItem').val() || 0;
-        let Discount = $('#Discount').val() || 0;
+        let Discount = $('#Discount').val() || '0';
         let Tax = $('#Tax').val() || 0;
         let TotalAmount = (Quantity * PricePerItem);
-        let DiscountAmount = (TotalAmount * Discount) / 100;
+        let DiscountAmount = Discount.toString().indexOf('%') == -1 ? Discount : (TotalAmount * parseFloat(Discount)) / 100;
         let NetTax = ((TotalAmount - DiscountAmount) * Tax) / 100;
         let NetAmount = (TotalAmount - DiscountAmount) + NetTax;
         return new DiscountAndNetPay(DiscountAmount, NetAmount);
