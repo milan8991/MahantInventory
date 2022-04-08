@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Tue Apr 5 22:46:53 2022
+-- File generated with SQLiteStudio v3.3.3 on Thu Apr 7 17:46:44 2022
 --
 -- Text encoding used: System
 --
@@ -710,6 +710,7 @@ WITH ords AS (
                o.LastModifiedById,
                o.ModifiedAt,
                p.Name AS ProductName,
+               p.Company,
                ost.Title AS Status,
                u.UserName AS LastModifiedBy,
                pi.Quantity AS CurrentStock,
