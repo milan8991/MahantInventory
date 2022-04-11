@@ -228,8 +228,8 @@ class Common {
                 );
 
                 $container.find(".select2-result-repository__title").text(repo.fullName);
-                let detail = ' Size:' + repo.size + ' ' + repo.unitTypeCode;
-                $container.find(".select2-result-repository__description").text(repo.description ?? '' + '' + detail);
+                let detail = ' Size : ' + repo.sizeUnitTypeCode;
+                $container.find(".select2-result-repository__description").text((repo.description + ',' ?? '') + '' + detail);
 
                 return $container;
             },

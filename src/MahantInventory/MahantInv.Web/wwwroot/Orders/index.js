@@ -403,12 +403,14 @@ class Common {
                 gData.netAmount = v.netAmount;
                 gData.paymentStatus = v.paymentStatus;
                 gData.pendingAmount = v.pendingAmount;
+                gData.orderDateFormat = v.orderDateFormat;
+                
                 gridData.push(gData);
             }
             else {
                 let idx = 0;
                 $.each(v.orderTransactionVMs, function (oti, otv) {
-                    var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, orderTransactionsCount: 1 };
+                    var gData = { payer: otv.party, paymentType: otv.paymentType, amount: otv.amount, paymentDateFormat : otv.paymentDateFormat, orderTransactionsCount: 1 };
                     if (idx == 0) {
                         gData.orderTransactionsCount = v.orderTransactionsCount;
                         gData.productFullName = v.productFullName;
@@ -445,7 +447,7 @@ class Common {
         //$('#ReceivedQuantity').val(model.ReceivedQuantity);
         //$('#ReceivedDate').val(moment(model.ReceivedDate).format("YYYY-MM-DD"));
         $('#PricePerItem').val(model.PricePerItem);
-        $('#Discount').val(model.Discount);
+        $('#Discount').val(model.Discount == model.DiscountAmount ? model.Discount : model.Discount.toString().concat('%'));
         $('#Tax').val(model.Tax);
         $('#DiscountAmount').val(model.DiscountAmount);
         $('#NetAmount').val(model.NetAmount);
@@ -455,7 +457,12 @@ class Common {
             $('#OrderTransactionBody').html("<tr><td colspan='5' class='text-center alert alert-info'>Transaction(s) will be appear here.</td></tr>");
         }
         else {
-            orderTransaction = model.OrderTransactions;
+            orderTransaction = [];
+            for (var i = 0; i < model.OrderTransactions.length; i++) {
+                orderTransaction.push(new OrderTransaction(model.OrderTransactions[i].Id, model.OrderTransactions[i].PartyId, model.OrderTransactions[i].Party,
+                    model.OrderTransactions[i].PaymentTypeId, model.OrderTransactions[i].PaymentType, model.OrderTransactions[i].Amount, moment(model.OrderTransactions[i].PaymentDate, 'DD/MM/YYYY').format('DD/MM/YYYY')))
+            }
+            //orderTransaction = model.OrderTransactions;
             Common.UpdateOrderTransactionGrid();
         }
     }
@@ -538,10 +545,9 @@ class Common {
                     "<div class='select2-result-repository__statistics'>" +
                     "</div>"
                 );
-
                 $container.find(".select2-result-repository__title").text(repo.fullName);
-                let detail = ' Size:' + repo.size + ' ' + repo.unitTypeCode;
-                $container.find(".select2-result-repository__description").text(repo.description ?? '' + '' + detail);
+                let detail = ' Size : ' + repo.sizeUnitTypeCode;
+                $container.find(".select2-result-repository__description").text((repo.description + ',' ?? '') + '' + detail);
 
                 return $container;
             },
@@ -554,6 +560,7 @@ class Common {
     static async SaveOrder(mthis) {
         $('#OrderErrorSection').empty();
         let order = Common.BuildOrderValues();
+        console.log('order:', order);
         var response = await fetch(baseUrl + 'api/order/save', {
             method: 'POST',
             body: JSON.stringify(order),
@@ -651,13 +658,17 @@ class Common {
         let DiscountAmount = $('#DiscountAmount').val();
         let NetAmount = $('#NetAmount').val();
         let order = new Order(Id, ProductId, Quantity, SellerId, OrderDate, Remark, PricePerItem, Discount, Tax, DiscountAmount, NetAmount);
-        order.OrderTransactions = orderTransaction;
+        //order.OrderTransactions = orderTransaction;
+        for (var i = 0; i < orderTransaction.length; i++) {
+            order.OrderTransactions.push(new OrderTransaction(orderTransaction[i].Id, orderTransaction[i].PartyId, orderTransaction[i].Party,
+                orderTransaction[i].PaymentTypeId, orderTransaction[i].PaymentType, orderTransaction[i].Amount, moment(orderTransaction[i].PaymentDate,'DD/MM/YYYY').format('MM/DD/YYYY')))
+        }        
         return order;
     }
 
     static async ReceiveOrder(mthis) {
         $('#OrderErrorSection').empty();
-        let order = Common.BuildOrderValues();
+        let order = Common.BuildOrderValues();        
         var response = await fetch(baseUrl + 'api/order/receive', {
             method: 'POST',
             body: JSON.stringify(order),
@@ -790,7 +801,7 @@ class Common {
             orderTransaction[editModeIdx].PaymentTypeId = PaymentTypeId;
             orderTransaction[editModeIdx].PaymentType = PaymentType;
             orderTransaction[editModeIdx].Amount = Amount;
-            orderTransaction[editModeIdx].PaymentDate = PaymentDate;
+            orderTransaction[editModeIdx].PaymentDate = moment(PaymentDate,'YYYY-MM-DD').format('DD/MM/YYYY');
             editModeIdx = -1;
         }
         Common.UpdateOrderTransactionGrid();
@@ -829,7 +840,7 @@ class Common {
         $('#PartyId').val(orderTransaction[idx].PartyId).trigger('change');
         $('#PaymentTypeId').val(orderTransaction[idx].PaymentTypeId).trigger('change');
         $('#Amount').val(orderTransaction[idx].Amount);
-        $('#PaymentDate').val(orderTransaction[idx].PaymentDate);
+        $('#PaymentDate').val(moment(orderTransaction[idx].PaymentDate,'DD/MM/YYYY').format('YYYY-MM-DD'));
         editModeIdx = idx;
     }
     static async DeleteOrderTransaction(mthis) {
