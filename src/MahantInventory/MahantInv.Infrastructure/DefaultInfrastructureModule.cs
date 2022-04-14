@@ -76,7 +76,7 @@ namespace MahantInv.Infrastructure
                 .AsImplementedInterfaces();
             }
 
-            builder.RegisterType<EmailSender>().As<IEmailSender>()
+            builder.RegisterType<EmailService>().As<IEmailService>()
                 .InstancePerLifetimeScope();
             builder.RegisterType<ProductsRepository>().As<IProductsRepository>()
                 .InstancePerLifetimeScope();

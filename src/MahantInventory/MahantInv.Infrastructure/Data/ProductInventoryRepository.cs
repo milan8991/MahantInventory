@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Dapper;
 using MahantInv.SharedKernel.Interfaces;
 using MahantInv.Core.Utility;
+using Microsoft.Extensions.Options;
+using MahantInv.Core.ViewModels;
 
 namespace MahantInv.Infrastructure.Data
 {
@@ -15,10 +17,12 @@ namespace MahantInv.Infrastructure.Data
     {
         private readonly IProductsRepository _productRepository;
         private readonly IAsyncRepository<Notification> _notificationRepository;
-        public ProductInventoryRepository(IAsyncRepository<Notification> notificationRepository, IProductsRepository productRepository, IDapperUnitOfWork uow) : base(uow)
+        private readonly IEmailService _emailService;
+        public ProductInventoryRepository(IEmailService emailService, IAsyncRepository<Notification> notificationRepository, IProductsRepository productRepository, IDapperUnitOfWork uow) : base(uow)
         {
             _productRepository = productRepository;
             _notificationRepository = notificationRepository;
+            _emailService = emailService;
         }
 
         public Task<ProductInventory> GetByProductId(int productId)
@@ -40,16 +44,31 @@ namespace MahantInv.Infrastructure.Data
             {
                 if ((decimal)productInventory.Quantity.Value < product.ReorderLevel.Value)
                 {
-
+                    Email email = new()
+                    {
+                        Subject = new StringBuilder("Low Stock")
+                        ,
+                        Body = new StringBuilder($@"{product.Name}, {product.UnitTypeCode}, {product.Size}. 
+                            Reorder Level:{product.ReorderLevel}. Current Stock:{productInventory.Quantity}")
+                        ,
+                        IsBodyHtml = true
+                    };
                     Notification notification = new()
                     {
                         Status = Meta.NotificationStatusTypes.Pending,
                         CreatedAt = Meta.Now,
                         ModifiedAt = Meta.Now,
-                        Title = "Low Stock",
-                        Message = $@"{product.Name}, {product.UnitTypeCode}, {product.Size}. 
-                            Reorder Level:{product.ReorderLevel}. Current Stock:{productInventory.Quantity}"
+                        Title = email.Subject.ToString(),
+                        Message = email.Body.ToString()
                     };
+                    try
+                    {
+                        await _emailService.SendEmailAsync(email);
+                    }
+                    catch (Exception)
+                    {
+                        //Log Error
+                    }
                     await _notificationRepository.AddAsync(notification);
                 }
             }
