@@ -324,7 +324,7 @@ class Common {
 
         //$('#PartyErrorSection').empty();
         //$('#Id').val(model.Id);
-        $('#Name').val('');
+        $('#ProductName').val('');
         $('#Type').val('');
         $('#CategoryId').val('');
         $('#PrimaryContact').val('');
@@ -509,7 +509,7 @@ class Common {
         $('#StorageNames').select2({
             dropdownParent: $('#AddProduct'),
             placeholder: 'Search Storage',
-            theme: "bootstrap4",
+            //theme: "bootstrap4",
             closeOnSelect: true,
             tags: true
         });
@@ -541,7 +541,7 @@ class Common {
                 var $container = $(
                     "<div class='select2-result-repository clearfix'>" +
                     "<div class='select2-result-repository__title'></div>" +
-                    "<div class='select2-result-repository__description' style='color:#fff;'></div>" +
+                    "<div class='select2-result-repository__description' style='color:#000;'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
                     "</div>"
                 );
@@ -585,7 +585,7 @@ class Common {
             let gridData = [];
             Common.BuildGridData([response.data], gridData);
             if (order.Id == 0) {
-                orderGridOptions.api.applyTransaction({ add: gridData });
+                orderGridOptions.api.applyTransaction({ add: gridData, addIndex:0 });
             }
             else {
                 orderGridOptions.api.applyTransaction({ update: gridData });
@@ -794,7 +794,7 @@ class Common {
         let Party = $('#PartyId option:selected').text();
         let PaymentType = $('#PaymentTypeId option:selected').text();
         if (editModeIdx === -1) {
-            orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount, PaymentDate));
+            orderTransaction.push(new OrderTransaction(0, PartyId, Party, PaymentTypeId, PaymentType, Amount, moment(PaymentDate, 'YYYY-MM-DD').format('DD/MM/YYYY')));
         } else {
             orderTransaction[editModeIdx].PartyId = PartyId;
             orderTransaction[editModeIdx].Party = Party;

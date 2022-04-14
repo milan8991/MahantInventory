@@ -25,10 +25,9 @@ namespace MahantInv.Core.SimpleAggregates
         [Display(Name = "Is Disposable?")]
         public bool IsDisposable { get; set; }
         public string Company { get; set; }
-        //[Required(ErrorMessage = "Storage field is required"), Display(Name = "Storage")]
+        [Required(ErrorMessage = "Storage field is required"), Display(Name = "Storage")]
         //public int? StorageId { get; set; }
         [Dapper.Contrib.Extensions.Write(false)]
-        [Display(Name ="Storage")]
         public string StorageNames { get; set; }
         [Dapper.Contrib.Extensions.Write(false)]
         public string StorageIds { get; set; }

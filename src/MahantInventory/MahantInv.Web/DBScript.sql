@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.3.3 on Thu Apr 7 17:46:44 2022
+-- File generated with SQLiteStudio v3.3.3 on Thu Apr 14 16:22:32 2022
 --
 -- Text encoding used: System
 --
@@ -519,7 +519,7 @@ CREATE TABLE Products (
     Name             VARCHAR (255)   NOT NULL,
     Size             NUMERIC (10, 2),
     Description      VARCHAR (900),
-    UnitTypeCode     VARCHAR (12)    NOT NULL,
+    UnitTypeCode     VARCHAR (12),
     ReorderLevel     NUMERIC (10, 2) NOT NULL,
     IsDisposable     BOOL            NOT NULL,
     Company          VARCHAR (256),

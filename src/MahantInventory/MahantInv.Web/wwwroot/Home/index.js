@@ -161,7 +161,6 @@ class Common {
         fetch(baseUrl + 'api/usages')
             .then((response) => response.json())
             .then(data => {
-                console.log('data:', data);
                 productUsageGridOptions.api.setRowData(data);
                 Common.InitSelect2();
             })
@@ -215,6 +214,7 @@ class Common {
             closeOnSelect: true,
             allowClear: true,
             data: response,
+            //language: "in-gu",
             templateResult: function (repo) {
                 if (repo.loading) {
                     return repo.fullName;
@@ -222,7 +222,7 @@ class Common {
                 var $container = $(
                     "<div class='select2-result-repository clearfix'>" +
                     "<div class='select2-result-repository__title'></div>" +
-                    "<div class='select2-result-repository__description' style='color:#fff;'></div>" +
+                    "<div class='select2-result-repository__description' style='color:#000;'></div>" +
                     "<div class='select2-result-repository__statistics'>" +
                     "</div>"
                 );

@@ -318,7 +318,7 @@ class Common {
         $('#StorageNames').select2({
             dropdownParent: $('#AddEditProduct'),
             placeholder: 'Search Storage',
-            theme: "bootstrap4",
+            //theme: "bootstrap4",
             closeOnSelect: true,
             tags: true
         });
