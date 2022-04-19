@@ -33,6 +33,14 @@ var orderGridOptions = {
 
     // define grid columns
     columnDefs: [
+
+        {
+            headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
+            , rowSpan: function (params) {
+                return params.data.orderTransactionsCount;
+            }
+            , cellClassRules: spanCellClassRules
+        },
         {
             headerName: 'Product', field: 'productFullName', filter: 'agTextColumnFilter', headerTooltip: 'Name'
             , rowSpan: function (params) {
@@ -91,13 +99,6 @@ var orderGridOptions = {
                 return params.data.orderTransactionsCount;
             },
             cellClassRules: spanCellClassRules
-        },
-        {
-            headerName: 'Order Date', field: 'orderDateFormat', filter: 'agDateColumnFilter', headerTooltip: 'Order Date'
-            , rowSpan: function (params) {
-                return params.data.orderTransactionsCount;
-            }
-            , cellClassRules: spanCellClassRules
         },
         {
             headerName: 'Status', field: 'status', filter: 'agSetColumnFilter', headerTooltip: 'Status',
