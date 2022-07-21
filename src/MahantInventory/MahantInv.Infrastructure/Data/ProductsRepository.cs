@@ -32,7 +32,8 @@ namespace MahantInv.Infrastructure.Data
                             where ps.ProductId = @productId
                             group by ps.ProductId
                         )
-                        select p.*, s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
+                        select p.Id,p.Name, cast(p.Size as real) Size, p.Description, p.UnitTypeCode,p.ReorderLevel, p.IsDisposable, p.Company, p.Enabled, p.LastModifiedById, p.ModifiedAt,
+                    s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
                         left outer join storagecte s on p.Id = s.ProductId
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
@@ -48,7 +49,8 @@ namespace MahantInv.Infrastructure.Data
                             left outer join Storages s on ps.StorageId = s.Id
                             group by ps.ProductId
                         )
-                        select p.*, s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
+                        select p.Id,p.Name, cast(p.Size as real) Size, p.Description, p.UnitTypeCode,p.ReorderLevel, p.IsDisposable, p.Company, p.Enabled, p.LastModifiedById, p.ModifiedAt,
+                        s.StorageIds,s.StorageNames, u.UserName as [LastModifiedBy], ut.Name as [UnitTypeName], pi.Quantity as [CurrentStock] from Products p
                         inner join AspNetUsers u on p.LastModifiedById = u.Id
                         left outer join storagecte s on p.Id = s.ProductId
                         left outer join UnitTypes ut on p.UnitTypeCode = ut.Code
